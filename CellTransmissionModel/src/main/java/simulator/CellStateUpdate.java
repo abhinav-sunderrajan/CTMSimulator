@@ -8,7 +8,7 @@ import ctm.Cell;
 /**
  * Updates the cells constituting a section of the road network.
  * 
- * @author abhinav
+ * @author abhinav sunderrajan.
  * 
  */
 public class CellStateUpdate implements Runnable {

@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.log4j.Logger;
 
@@ -51,14 +53,12 @@ public class CTMSimulator implements Runnable {
 	private static Map<Cell, Color> cellColorMap;
 
 	// kept public for now. The road network, turn ratios and the mean
-	// inter-arrival times for the source links.
+	// inter-arrival times for the source links
 	public static RoadNetworkModel roadNetwork;
 	public static Map<Integer, Double> turnRatios;
 	public static Map<Integer, Double> mergePriorities;
 	public static Map<Integer, Double> interArrivalTimes;
 	public static Random random;
-	private boolean inAccident = false;
-	private Thread rampThread;
 
 	// Final variables
 	private static final int PIE_ROADS[] = { 30633, 30634, 82, 28377, 30635, 28485, 30636, 38541,
@@ -72,9 +72,11 @@ public class CTMSimulator implements Runnable {
 	private static final boolean APPLY_METER = false;
 	private static final String ACCIDENT_CELL = "30651_3";
 	private static final Logger LOGGER = Logger.getLogger(CTMSimulator.class);
+	private static List<RampMeter> meteredRamps = new ArrayList<RampMeter>();
+	private ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool(4);
 
 	static {
-		random = new Random(110);
+		random = new Random(10);
 		roadNetwork = new QIRoadNetworkModel("jdbc:postgresql://172.25.187.111/abhinav", "abhinav",
 				"qwert$$123", "qi_roads", "qi_nodes");
 		turnRatios = new HashMap<Integer, Double>();
@@ -112,6 +114,8 @@ public class CTMSimulator implements Runnable {
 
 		LOGGER.info("Create a cell based network for the roads.");
 		cellNetwork = new CellNetwork(pieChangiOrdered);
+		meteredRamps.add(new RampMeter(roadNetwork.getAllRoadsMap().get(29131), cellNetwork
+				.getCellMap()));
 	}
 
 	/**
@@ -137,7 +141,6 @@ public class CTMSimulator implements Runnable {
 				}
 				cellColorMap.put(cell, color);
 			}
-
 		}
 
 		// Initialize the routing service provider.
@@ -196,7 +199,7 @@ public class CTMSimulator implements Runnable {
 
 				if (ins.size() == 0) {
 					if (road.getRoadClass() == 0)
-						interArrivalTimes.put(road.getRoadId(), 1.0 + random.nextDouble());
+						interArrivalTimes.put(road.getRoadId(), 0.10 + random.nextDouble());
 					else
 						interArrivalTimes.put(road.getRoadId(), 5.25 + random.nextDouble());
 				}
@@ -258,46 +261,8 @@ public class CTMSimulator implements Runnable {
 			}
 
 			System.out.println("Starting simulation..");
-
 			Thread th = new Thread(ctmSim);
 			th.start();
-
-			final int meterCellNum = roadNetwork.getAllRoadsMap().get(29131).getRoadNodes().size() - 2;
-			final Cell meterCell = cellNetwork.getCellMap().get("29131_" + meterCellNum);
-			final double qMaxMeterCell = meterCell.getQmax();
-			ctmSim.rampThread = new Thread(new Runnable() {
-				@Override
-				public void run() {
-					while (ctmSim.inAccident) {
-						boolean fullDensity = true;
-						for (int i = 0; i < meterCellNum; i++) {
-							Cell rampCell = cellNetwork.getCellMap().get("29131_" + i);
-							if (rampCell.getnMax() > rampCell.getNumOfVehiclesInCell()) {
-								fullDensity = false;
-								break;
-							}
-
-						}
-						if (!fullDensity) {
-							meterCell.setQmax(0);
-							System.out.println("Ramp meter red");
-						} else {
-							System.out.println("ramp meter green..");
-							meterCell.setQmax(qMaxMeterCell);
-						}
-						try {
-							Thread.sleep(50);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-
-					}
-					meterCell.setQmax(qMaxMeterCell);
-
-				}
-			});
-
-			ctmSim.rampThread.setDaemon(true);
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -318,7 +283,6 @@ public class CTMSimulator implements Runnable {
 
 				if (HAVE_ACCIDENT) {
 					if (time == 600) {
-						inAccident = true;
 						System.err.println(time + " : ACCIDENT START!!");
 						accidentCell = cellNetwork.getCellMap().get(ACCIDENT_CELL);
 						accidentCell.setQmax(accidentCell.getQmax() / 4);
@@ -326,15 +290,18 @@ public class CTMSimulator implements Runnable {
 
 					// Applying ramp metering
 
-					if ((HAVE_ACCIDENT && APPLY_METER) && time == 600) {
-						rampThread.start();
+					if (APPLY_METER && (time >= 600 && time < 3000)) {
+						for (RampMeter rampMeter : meteredRamps) {
+							rampMeter.setQueuePercentage(0.9);
+							scheduledExecutor.execute(rampMeter);
+						}
 					}
 
 					if (time == 2800) {
 						System.out.println(time + ":Accident clears");
 						accidentCell.setQmax(accidentCell.getQmax() * 4);
-						inAccident = false;
-						System.out.println("Stop ramp metering..");
+						if (APPLY_METER)
+							System.out.println("Stop ramp metering..");
 					}
 
 				}
@@ -352,13 +319,7 @@ public class CTMSimulator implements Runnable {
 				int n = 0;
 				for (Cell cell : cellNetwork.getCellMap().values()) {
 
-					if (/*
-						 * !(cell instanceof SinkCell || cell instanceof
-						 * SourceCell)
-						 */(cell.getCellId().contains("30650")
-							|| cell.getCellId().contains("30649") || cell.getCellId().contains(
-							"29131"))
-							&& time >= 600 && time <= 2800) {
+					if (!(cell instanceof SinkCell || cell instanceof SourceCell)) {
 						// equation 1)
 						// v=v_freeFlow-(v_freeFlow/jam_density)*density
 
@@ -370,8 +331,9 @@ public class CTMSimulator implements Runnable {
 						double cellDensity = cell.getNumOfVehiclesInCell() / cell.getnMax();
 						cellColorMap.put(cell, CTMSimViewer.numberToColor(1.0 - cellDensity));
 						// Compute average cell density for freeway alone.
-						if (cell.getCellId().contains("30650")
-								|| cell.getCellId().contains("30649")) {
+						if ((cell.getCellId().contains("30650") || cell.getCellId().contains(
+								"30649"))
+								&& (time >= 600 && time <= 2800)) {
 							avgCellDensity += cellDensity;
 							n++;
 						}

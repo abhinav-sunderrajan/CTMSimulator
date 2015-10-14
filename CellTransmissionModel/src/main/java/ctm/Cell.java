@@ -45,6 +45,7 @@ public abstract class Cell {
 	private double receivePotential;
 
 	/**
+	 * The abstract cell class.
 	 * 
 	 * @param cellId
 	 * @param length
@@ -75,6 +76,9 @@ public abstract class Cell {
 	}
 
 	/**
+	 * The number of vehicles that moves to the next cell(s) in this current
+	 * time step.
+	 * 
 	 * @return the outflow
 	 */
 	public double getOutflow() {
@@ -90,6 +94,8 @@ public abstract class Cell {
 	}
 
 	/**
+	 * The road ID associated with this cell.
+	 * 
 	 * @return the roadId
 	 */
 	public int getRoadId() {
@@ -225,42 +231,43 @@ public abstract class Cell {
 	}
 
 	/**
-	 * @return the nt
+	 * @return the nt the number of vehicles currently in the cell.
 	 */
 	public double getNumOfVehiclesInCell() {
 		return nt;
 	}
 
 	/**
-	 * @return the nMax
+	 * @return the nMax the maximum number of vehicles that can be accommodated
+	 *         in the cell.
 	 */
 	public double getnMax() {
 		return nMax;
 	}
 
 	/**
-	 * @return the length
+	 * @return the length of the cell.
 	 */
 	public double getLength() {
 		return length;
 	}
 
 	/**
-	 * @return the numOfLanes
+	 * @return the numOfLanes of lanes in this cell.
 	 */
 	public int getNumOfLanes() {
 		return numOfLanes;
 	}
 
 	/**
-	 * @return the freeFlowSpeed
+	 * @return the freeFlowSpeed of this cell.
 	 */
 	public double getFreeFlowSpeed() {
 		return freeFlowSpeed;
 	}
 
 	/**
-	 * @return the qmax
+	 * @return the qmax the capacity of this cell in number of vehicles/cell.
 	 */
 	public double getQmax() {
 		return Qmax;
