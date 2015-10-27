@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import rnwmodel.Road;
 import rnwmodel.RoadNetworkModel;
 import rnwmodel.RoadNode;
+import simulator.CTMSimulator;
 
 /**
  * Class representing the cell network. Right now the implementation is only for
@@ -38,6 +39,9 @@ public class CellNetwork {
 		generatePredecessorsAndSuccessors();
 	}
 
+	/**
+	 * Add predecessors and successors to the cells created.
+	 */
 	private void generatePredecessorsAndSuccessors() {
 		for (Road road : roads) {
 			RoadNode beginNode = road.getBeginNode();
@@ -154,13 +158,17 @@ public class CellNetwork {
 					} else if (outs.size() == 0) {
 						cell = new OrdinaryCell(cellId, cellLength, freeFlowSpeed, numOfLanes);
 						Cell sinkCell = new SinkCell(roadId + "_sink", 0, freeFlowSpeed, numOfLanes);
-						sinkCell.setRoadId(road.getRoadId());
+						sinkCell.setRoad(road);
 						cell.addSuccessor(sinkCell);
 						sinkCell.addPredecessor(cell);
 						cellMap.put(roadId + "_sink", sinkCell);
 
 						++sinkCellCount;
 					} else if (ins.size() == 2 && outs.size() == 1) {
+						if (road.getKind().equalsIgnoreCase("ramps")
+								|| road.getKind().equalsIgnoreCase("Interchange")) {
+							CTMSimulator.ramps.add(road);
+						}
 						cell = new MergingCell(cellId, cellLength, freeFlowSpeed, numOfLanes);
 						++mergingCellCount;
 

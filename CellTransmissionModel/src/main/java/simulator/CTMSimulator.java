@@ -7,7 +7,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,10 +40,19 @@ import ctm.SourceCell;
  * 
  * @author abhinav
  * 
+ * 
  */
+
+// TODO The simulation needs to spit out the total travel time across the
+// freeway and the total waiting time if any across the ramps each time-step.
+// TODO Have to design a reward system at the end of every time-step for
+// TD/Q-based Reinforcement learning. Put some thought into the reward
+// functions.
+
 public class CTMSimulator implements Runnable {
 
-	private static CellNetwork cellNetwork;
+	public static CellNetwork cellNetwork;
+	public static List<Road> ramps = new ArrayList<>();
 	public static long simulationTime;
 	private static Properties configProperties;
 	private static long startTime;
@@ -59,31 +67,34 @@ public class CTMSimulator implements Runnable {
 	public static Map<Integer, Double> mergePriorities;
 	public static Map<Integer, Double> interArrivalTimes;
 	public static Random random;
-
+	private static CTMSimulator simulator;
 	// Final variables
-	private static final int PIE_ROADS[] = { 30633, 30634, 82, 28377, 30635, 28485, 30636, 38541,
-			38260, 29309, 29310, 30637, 28578, 30638, 28946, 28947, 30639, 28516, 30640, 30788,
-			30789, 30790, 30641, 37976, 37981, 37980, 30642, 37982, 30643, 38539, 2355, 2356,
-			28595, 30644, 22009, 29152, 28594, 30645, 28597, 30646, 19116, 19117, 29005, 30647,
-			28387, 30648, 29552, 29553, 30649, 28611, 30650, 28613, 29131, 30651, 31985, 31991,
-			30580, 28500, 30581 };
-	private static final boolean HAVE_VIZ = true;
-	private static final boolean HAVE_ACCIDENT = true;
-	private static final boolean APPLY_METER = false;
+	private static int pieRoads[];
+	private static boolean haveVisualization = true;
+	private static boolean simulateAccident = true;
+	private static boolean applyRampMetering = true;
 	private static final String ACCIDENT_CELL = "30651_3";
-	private static final Logger LOGGER = Logger.getLogger(CTMSimulator.class);
 	private static List<RampMeter> meteredRamps = new ArrayList<RampMeter>();
 	private ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool(4);
+	private List<Cell> modifiedCells = new ArrayList<>();
+	private static final Logger LOGGER = Logger.getLogger(CTMSimulator.class);
 
-	static {
-		random = new Random(10);
+	private static void intialize(int[] roadIds, boolean haveAccident, boolean applyMetering,
+			boolean haveViz) {
+		random = new Random(SimulationConstants.SEED);
+		cellColorMap = new ConcurrentHashMap<>();
+		haveVisualization = haveViz;
+		simulateAccident = haveAccident;
+		applyRampMetering = applyMetering;
+
+		pieRoads = roadIds;
 		roadNetwork = new QIRoadNetworkModel("jdbc:postgresql://172.25.187.111/abhinav", "abhinav",
 				"qwert$$123", "qi_roads", "qi_nodes");
 		turnRatios = new HashMap<Integer, Double>();
 		mergePriorities = new HashMap<Integer, Double>();
 		interArrivalTimes = new HashMap<Integer, Double>();
 
-		List<Road> pieChangiOrdered = initialize();
+		List<Road> pieChangiOrdered = createCellNetwork();
 
 		// Need to do some repairs the roads are not exactly perfect.
 		// 1) Ensure that none of the roads have a single cell this is
@@ -98,8 +109,7 @@ public class CTMSimulator implements Runnable {
 			}
 		}
 
-		// Do not have long cells break them up. Just to see if this improves
-		// performance in any way.
+		// Do not have long cells break them up.
 		for (Road road : pieChangiOrdered) {
 			for (int i = 0; i < road.getSegmentsLength().length; i++) {
 				if (road.getSegmentsLength()[i] > 120.0) {
@@ -114,64 +124,94 @@ public class CTMSimulator implements Runnable {
 
 		LOGGER.info("Create a cell based network for the roads.");
 		cellNetwork = new CellNetwork(pieChangiOrdered);
-		meteredRamps.add(new RampMeter(roadNetwork.getAllRoadsMap().get(29131), cellNetwork
-				.getCellMap()));
+
+		for (Road ramp : ramps) {
+			RampMeter rampMeter = new RampMeter(ramp);
+			rampMeter.setQueuePercentage(0.8);
+			meteredRamps.add(rampMeter);
+		}
+
+		try {
+			configProperties = new Properties();
+			configProperties.load(new FileInputStream("src/main/resources/config.properties"));
+			if (haveVisualization) {
+				Properties dbConnectionProperties = new Properties();
+				dbConnectionProperties.load(new FileInputStream(
+						"src/main/resources/connection.properties"));
+				viewer = CTMSimViewer.getCTMViewerInstance("CTM Model", roadNetwork, cellColorMap,
+						dbConnectionProperties);
+			}
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			LOGGER.error("Error reading config file", e);
+		}
+
 	}
 
 	/**
+	 * Gets the CTM simulator instance.
 	 * 
-	 * @throws IOException
-	 * @throws SQLException
+	 * @param roadIds
+	 *            the roads to be simulated.
+	 * @param haveAccident
+	 *            simulate an accident?
+	 * @param applyMetering
+	 *            apply ramp metering ?
+	 * @param haveViz
+	 *            have a visualization?
+	 * @return the CTM simulator instance.
 	 */
-	private CTMSimulator() throws IOException, SQLException {
-
-		cellColorMap = new ConcurrentHashMap<>();
-		for (Cell cell : cellNetwork.getCellMap().values()) {
-			if (!(cell instanceof SinkCell || cell instanceof SourceCell)) {
-				Color color = null;
-				if (cell instanceof OrdinaryCell) {
-					// Gray for ordinary.
-					color = new Color(137, 112, 122, 225);
-				} else if (cell instanceof MergingCell) {
-					// Green for merging.
-					color = new Color(51, 255, 153, 225);
-				} else {
-					// Blue for diverging.
-					color = new Color(51, 51, 255, 225);
-				}
-				cellColorMap.put(cell, color);
-			}
+	public static CTMSimulator getSimulatorInstance(int[] roadIds, boolean haveAccident,
+			boolean applyMetering, boolean haveViz) {
+		if (simulator == null) {
+			intialize(roadIds, haveAccident, applyMetering, haveViz);
+			simulator = new CTMSimulator();
 		}
+		return simulator;
+	}
 
-		// Initialize the routing service provider.
+	private CTMSimulator() {
 
-		// Initialize the trip generator with required number of agents.
-		LOGGER.info("Initializing trip generator");
+		// Color coding the visualization
+		if (haveVisualization) {
+			for (Cell cell : cellNetwork.getCellMap().values()) {
+				if (!(cell instanceof SinkCell || cell instanceof SourceCell)) {
+					Color color = null;
+					if (cell instanceof OrdinaryCell) {
+						// Gray for ordinary cell.
+						color = new Color(137, 112, 122, 225);
+					} else if (cell instanceof MergingCell) {
+						// Green for merging cell.
+						color = new Color(51, 255, 153, 225);
+					} else {
+						// Blue for diverging cell.
+						color = new Color(51, 51, 255, 225);
+					}
+					cellColorMap.put(cell, color);
+				}
+			}
+
+		}
 
 		startTime = Long.parseLong(configProperties.getProperty("start.hour"));
 		endTime = Long.parseLong(configProperties.getProperty("end.hour"));
 
 	}
 
-	private static void intializeViz(Properties dbConnectionProperties) {
-		viewer = CTMSimViewer.getCTMViewerInstance("CTM Model", roadNetwork, cellColorMap,
-				dbConnectionProperties);
-
-	}
-
 	/**
 	 * Simulation initialization
 	 */
-	private static List<Road> initialize() {
+	private static List<Road> createCellNetwork() {
 		List<Road> pieChangiOrdered = new ArrayList<>();
-		for (int roadId : PIE_ROADS) {
+		for (int roadId : pieRoads) {
 			Road road = roadNetwork.getAllRoadsMap().get(roadId);
 			pieChangiOrdered.add(road);
 		}
 		BufferedReader br;
 		try {
-			br = new BufferedReader(new FileReader(new File(
-					"C:\\Users\\abhinav.sunderrajan\\Desktop\\Lanecount.txt")));
+			br = new BufferedReader(new FileReader(new File("src/main/resources/Lanecount.txt")));
 
 			while (br.ready()) {
 				String line = br.readLine();
@@ -201,7 +241,7 @@ public class CTMSimulator implements Runnable {
 					if (road.getRoadClass() == 0)
 						interArrivalTimes.put(road.getRoadId(), 0.10 + random.nextDouble());
 					else
-						interArrivalTimes.put(road.getRoadId(), 5.25 + random.nextDouble());
+						interArrivalTimes.put(road.getRoadId(), 1.25);
 				}
 
 				if (ins.size() > 1) {
@@ -247,63 +287,28 @@ public class CTMSimulator implements Runnable {
 		return roadNetwork;
 	}
 
-	public static void main(String[] args) {
-		try {
-			configProperties = new Properties();
-			configProperties.load(new FileInputStream("src/main/resources/config.properties"));
-			final CTMSimulator ctmSim = new CTMSimulator();
-
-			if (HAVE_VIZ) {
-				Properties dbConnectionProperties = new Properties();
-				dbConnectionProperties.load(new FileInputStream(
-						"src/main/resources/connection.properties"));
-				intializeViz(dbConnectionProperties);
-			}
-
-			System.out.println("Starting simulation..");
-			Thread th = new Thread(ctmSim);
-			th.start();
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			LOGGER.error("Error reading trip generator or config or connection properties file", e);
-		} catch (SQLException e) {
-			LOGGER.error("Error in database operation.", e);
-		}
-
-	}
-
 	@Override
 	public void run() {
 		try {
 
-			Cell accidentCell = null;
-			for (long time = startTime; time < endTime; time += SimulationConstants.TIME_STEP) {
+			Cell accidentCell = cellNetwork.getCellMap().get(ACCIDENT_CELL);
+			long time = System.currentTimeMillis();
 
-				if (HAVE_ACCIDENT) {
-					if (time == 600) {
-						System.err.println(time + " : ACCIDENT START!!");
-						accidentCell = cellNetwork.getCellMap().get(ACCIDENT_CELL);
+			for (simulationTime = startTime; simulationTime < endTime; simulationTime += SimulationConstants.TIME_STEP) {
+
+				// Simulate an accident.
+				if (simulateAccident) {
+					if (simulationTime == 5) {
+						System.err.println(simulationTime + " : ACCIDENT START!!");
 						accidentCell.setQmax(accidentCell.getQmax() / 4);
 					}
+				}
 
-					// Applying ramp metering
-
-					if (APPLY_METER && (time >= 600 && time < 3000)) {
-						for (RampMeter rampMeter : meteredRamps) {
-							rampMeter.setQueuePercentage(0.9);
-							scheduledExecutor.execute(rampMeter);
-						}
+				// Applying ramp metering
+				if (applyRampMetering) {
+					for (RampMeter rampMeter : meteredRamps) {
+						scheduledExecutor.execute(rampMeter);
 					}
-
-					if (time == 2800) {
-						System.out.println(time + ":Accident clears");
-						accidentCell.setQmax(accidentCell.getQmax() * 4);
-						if (APPLY_METER)
-							System.out.println("Stop ramp metering..");
-					}
-
 				}
 
 				// Update the outflows for all cells
@@ -313,54 +318,132 @@ public class CTMSimulator implements Runnable {
 				// Now update the number of vehicles in each cell.
 				for (Cell cell : cellNetwork.getCellMap().values())
 					cell.updateNumberOfVehiclesInCell();
-				if (time >= 600 && time <= 2800)
-					System.out.print("Average cell density at " + time + ": ");
-				double avgCellDensity = 0.0;
-				int n = 0;
+
+				// Reset all modified cells to their defaiult model values
+				if (simulationTime % (SimulationConstants.TIME_STEP * 2) == 0) {
+					for (Cell cell : modifiedCells)
+						cell.reset();
+					modifiedCells.clear();
+				}
+
+				// This loop performs two functions.
+				// 1) Computes cell statistics such as density and average speed
+				// used to compute travel time and waiting times.
+
+				// The second function is to introduce some degree of
+				// stochasticity by varying leff and time-gap.
+
+				double totalTravelTime = 0.0;
+				double totalWaitingTime = 0.0;
 				for (Cell cell : cellNetwork.getCellMap().values()) {
-
+					double cellSpeed = cell.getFreeFlowSpeed();
 					if (!(cell instanceof SinkCell || cell instanceof SourceCell)) {
-						// equation 1)
-						// v=v_freeFlow-(v_freeFlow/jam_density)*density
 
-						// equation 2) v=v_freeFlow* ln(jam_density/density)
-						// The disadvantage of equation two is that speed tends
-						// to infinity as the density becomes zero, this is
-						// resolved as shown in the below equation.
+						// v=v_freeFlow-(v_freeFlow/jam_density)*density
+						// v=v_freeFlow* ln(jam_density/density)
 
 						double cellDensity = cell.getNumOfVehiclesInCell() / cell.getnMax();
-						cellColorMap.put(cell, CTMSimViewer.numberToColor(1.0 - cellDensity));
-						// Compute average cell density for freeway alone.
-						if ((cell.getCellId().contains("30650") || cell.getCellId().contains(
-								"30649"))
-								&& (time >= 600 && time <= 2800)) {
-							avgCellDensity += cellDensity;
-							n++;
+						if (cell.getNumOfVehiclesInCell() > 0) {
+							cellSpeed = cell.getFreeFlowSpeed() * Math.log(1.0 / cellDensity);
+						}
+
+						if (cellSpeed > cell.getFreeFlowSpeed())
+							cellSpeed = cell.getFreeFlowSpeed();
+
+						if (cell.getRoad().getName().contains("P.I.E (Changi)")) {
+							if (cellSpeed > 2.0)
+								totalTravelTime += cell.getLength() / cellSpeed;
+							else
+								totalWaitingTime += SimulationConstants.TIME_STEP;
+
+						}
+
+						if (haveVisualization)
+							cellColorMap.put(cell, CTMSimViewer.numberToColor(1.0 - cellDensity));
+
+						// Introduce some kind of variations
+						// As noticed if the cell speed is less cars tend to
+						// bunch together and the reduce their time and distance
+						// headway.
+						if (cellSpeed < 5.0) {
+							cell.introduceStochasticty(
+									uniform(SimulationConstants.LEFF * 0.4,
+											SimulationConstants.LEFF * 0.6),
+									uniform(SimulationConstants.TIME_GAP * 0.6,
+											SimulationConstants.TIME_GAP * 0.8));
+
+						} else {
+							// Modify the dynamics of 1/3rd of all cells by
+							// changing their time and distance headway every
+							// three time steps.
+							if (simulationTime % (SimulationConstants.TIME_STEP * 3) == 0) {
+								if (random.nextDouble() < 0.3) {
+									// Do not mess with the accident cell and
+									// the metered ramp cells.
+									boolean isMetercell = false;
+									for (RampMeter rampMeter : meteredRamps) {
+										if (rampMeter.getMeterCell().equals(cell)) {
+											isMetercell = true;
+											break;
+										}
+									}
+
+									if (!(isMetercell || accidentCell.equals(cell))) {
+										cell.introduceStochasticty(
+												uniform(SimulationConstants.LEFF * 0.5,
+														SimulationConstants.LEFF * 1.5),
+												uniform(SimulationConstants.TIME_GAP * 0.8,
+														SimulationConstants.TIME_GAP * 1.4));
+										modifiedCells.add(cell);
+									}
+
+								}
+							}
+
 						}
 
 					}
 
 				}
 
-				if (time >= 600 && time <= 2800)
-					System.out.println(avgCellDensity / n);
-				if (HAVE_VIZ)
+				if (haveVisualization) {
+					// Repaint the map frame.
 					viewer.getMapFrame().repaint();
-				Thread.sleep(/*
-							 * (long) ((SimulationConstants.TIME_STEP * 1000) /
-							 * SimulationConstants.PACE)
-							 */50);
+					Thread.sleep(50);
+				}
+
+				System.out.println("Travel time  is " + (totalTravelTime / 60.0)
+						+ " and waiting time is " + (totalWaitingTime / 60.0) + " minutes");
 
 			}
 
-			LOGGER.info("Finished simulation");
-
+			LOGGER.info("Finished " + ((endTime - startTime) / 60.0) + " minute simulation in :"
+					+ (System.currentTimeMillis() - time) + " ms");
 			Thread.sleep(100);
-			viewer.getMapFrame().dispose();
+			if (haveVisualization)
+				viewer.getMapFrame().dispose();
 
 		} catch (InterruptedException e) {
 			LOGGER.error("Error waiting  for simulation time to advance.", e);
 		}
 
 	}
+
+	/**
+	 * Returns a random real number uniformly in [a, b).
+	 * 
+	 * @param a
+	 *            the left end-point
+	 * @param b
+	 *            the right end-point
+	 * @return a random real number uniformly in [a, b)
+	 * @throws IllegalArgumentException
+	 *             unless <tt>a < b</tt>
+	 */
+	public static double uniform(double a, double b) {
+		if (!(a < b))
+			throw new IllegalArgumentException("Invalid range");
+		return a + random.nextDouble() * (b - a);
+	}
+
 }

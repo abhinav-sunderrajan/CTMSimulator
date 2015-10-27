@@ -13,4 +13,7 @@ public class SimulationConstants {
 
 	public static final double PACE = 5.0;
 
+	// Seed for the simulation
+	public static final int SEED = 108;
+
 }

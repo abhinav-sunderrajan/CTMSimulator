@@ -26,7 +26,7 @@ public class SourceCell extends Cell {
 		super(cellId, length, freeFlowSpeed, numOfLanes);
 		nMax = Integer.MAX_VALUE;
 		nt = Integer.MAX_VALUE;
-		meanIat = CTMSimulator.interArrivalTimes.get(this.roadId);
+		meanIat = CTMSimulator.interArrivalTimes.get(road.getRoadId());
 
 	}
 
@@ -86,7 +86,7 @@ public class SourceCell extends Cell {
 		double p = 1;
 		do {
 			k = k + 1;
-			double u = Math.random();
+			double u = CTMSimulator.random.nextDouble();
 			p = p * u;
 		} while (p > L);
 		return k - 1;

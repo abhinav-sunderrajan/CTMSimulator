@@ -3,6 +3,7 @@ package ctm;
 import java.util.ArrayList;
 import java.util.List;
 
+import rnwmodel.Road;
 import simulator.CTMSimulator;
 import simulator.SimulationConstants;
 
@@ -18,7 +19,7 @@ public abstract class Cell {
 	protected List<Cell> predecessors;
 	protected List<Cell> successors;
 	// Id of the road the cell belongs
-	protected int roadId;
+	protected Road road;
 
 	protected int numOfLanes;
 
@@ -58,21 +59,56 @@ public abstract class Cell {
 		this.numOfLanes = numOfLanes;
 		this.length = length;
 		this.freeFlowSpeed = freeFlowSpeed;
-		w = SimulationConstants.LEFF / SimulationConstants.TIME_GAP;
-		double capacityPerLane = freeFlowSpeed
-				/ (freeFlowSpeed * SimulationConstants.TIME_GAP + SimulationConstants.LEFF);
-		double maxDesnsityPerlane = length / SimulationConstants.LEFF;
-
-		Qmax = capacityPerLane * numOfLanes * SimulationConstants.TIME_STEP;
-		nMax = maxDesnsityPerlane * numOfLanes;
-		nt = nMax / (2.0 + CTMSimulator.random.nextDouble());
 
 		String[] split = cellId.split("_");
-		this.roadId = Integer.parseInt(split[0]);
+
+		this.road = CTMSimulator.getRoadNetwork().getAllRoadsMap().get(Integer.parseInt(split[0]));
 		predecessors = new ArrayList<Cell>();
 		successors = new ArrayList<Cell>();
 		this.sendingPotential = Math.min(this.nt, this.Qmax);
 		this.receivePotential = (int) (Math.min(Qmax, getAlpha() * (nMax - nt)) + 0.5);
+
+		// Cell parameters are set to the default .
+		w = SimulationConstants.LEFF / SimulationConstants.TIME_GAP;
+		double capacityPerLane = freeFlowSpeed
+				/ (freeFlowSpeed * SimulationConstants.TIME_GAP + SimulationConstants.LEFF);
+		double maxDesnsityPerlane = length / SimulationConstants.LEFF;
+		Qmax = capacityPerLane * numOfLanes * SimulationConstants.TIME_STEP;
+		nMax = maxDesnsityPerlane * numOfLanes;
+
+		// Random number of vehicles in all cells initially.
+		nt = nMax / (2.0 + CTMSimulator.random.nextDouble());
+	}
+
+	/**
+	 * Introduces some amount of stochasticty in the simulation by means of
+	 * changing time gap and minimum distance headway.
+	 * 
+	 * @param leff
+	 *            the new minimum distance headway.
+	 * @param timeGap
+	 *            the new time-gap.
+	 */
+	public void introduceStochasticty(double leff, double timeGap) {
+		w = leff / timeGap;
+		double capacityPerLane = freeFlowSpeed / (freeFlowSpeed * timeGap + leff);
+		double maxDensityPerlane = length / SimulationConstants.LEFF;
+		Qmax = capacityPerLane * numOfLanes * SimulationConstants.TIME_STEP;
+		nMax = maxDensityPerlane * numOfLanes;
+
+	}
+
+	/**
+	 * Reset the cell parameters to the original values.
+	 */
+	public void reset() {
+		// Cell parameters are set to the default .
+		w = SimulationConstants.LEFF / SimulationConstants.TIME_GAP;
+		double capacityPerLane = freeFlowSpeed
+				/ (freeFlowSpeed * SimulationConstants.TIME_GAP + SimulationConstants.LEFF);
+		double maxDesnsityPerlane = length / SimulationConstants.LEFF;
+		Qmax = capacityPerLane * numOfLanes * SimulationConstants.TIME_STEP;
+		nMax = maxDesnsityPerlane * numOfLanes;
 	}
 
 	/**
@@ -98,8 +134,8 @@ public abstract class Cell {
 	 * 
 	 * @return the roadId
 	 */
-	public int getRoadId() {
-		return roadId;
+	public Road getRoad() {
+		return road;
 	}
 
 	/**
@@ -141,7 +177,7 @@ public abstract class Cell {
 		} else {
 			Cell predecessor = predecessors.get(0);
 			if (predecessor instanceof DivergingCell)
-				inflow = (int) (predecessor.outflow * CTMSimulator.turnRatios.get(this.roadId) + 0.5);
+				inflow = (int) (predecessor.outflow * CTMSimulator.turnRatios.get(road.getRoadId()) + 0.5);
 			else
 				inflow = predecessor.outflow;
 		}
@@ -203,8 +239,8 @@ public abstract class Cell {
 	 */
 	public abstract void updateOutFlow();
 
-	public void setRoadId(int roadId) {
-		this.roadId = roadId;
+	public void setRoad(Road road) {
+		this.road = road;
 	}
 
 	/**

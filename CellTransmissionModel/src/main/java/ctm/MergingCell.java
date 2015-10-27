@@ -23,7 +23,7 @@ public class MergingCell extends Cell {
 	 */
 	public MergingCell(String cellId, double length, double freeFlowSpeed, int numOfLanes) {
 		super(cellId, length, freeFlowSpeed, numOfLanes);
-		mergePriority = CTMSimulator.mergePriorities.get(this.roadId);
+		mergePriority = CTMSimulator.mergePriorities.get(road.getRoadId());
 	}
 
 	/**
