@@ -3,8 +3,8 @@ package ctm;
 import java.util.ArrayList;
 import java.util.List;
 
+import main.SimulatorCore;
 import rnwmodel.Road;
-import simulator.CTMSimulator;
 import simulator.SimulationConstants;
 
 /**
@@ -62,7 +62,7 @@ public abstract class Cell {
 
 		String[] split = cellId.split("_");
 
-		this.road = CTMSimulator.getRoadNetwork().getAllRoadsMap().get(Integer.parseInt(split[0]));
+		this.road = SimulatorCore.roadNetwork.getAllRoadsMap().get(Integer.parseInt(split[0]));
 		predecessors = new ArrayList<Cell>();
 		successors = new ArrayList<Cell>();
 		this.sendingPotential = Math.min(this.nt, this.Qmax);
@@ -77,7 +77,7 @@ public abstract class Cell {
 		nMax = maxDesnsityPerlane * numOfLanes;
 
 		// Random number of vehicles in all cells initially.
-		nt = nMax / (2.0 + CTMSimulator.random.nextDouble());
+		nt = nMax / (2.0 + SimulatorCore.random.nextDouble());
 	}
 
 	/**
@@ -177,7 +177,8 @@ public abstract class Cell {
 		} else {
 			Cell predecessor = predecessors.get(0);
 			if (predecessor instanceof DivergingCell)
-				inflow = (int) (predecessor.outflow * CTMSimulator.turnRatios.get(road.getRoadId()) + 0.5);
+				inflow = (int) (predecessor.outflow
+						* SimulatorCore.turnRatios.get(road.getRoadId()) + 0.5);
 			else
 				inflow = predecessor.outflow;
 		}

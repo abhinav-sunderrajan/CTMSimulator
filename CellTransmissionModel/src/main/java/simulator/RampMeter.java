@@ -9,7 +9,7 @@ import ctm.Cell;
  * @author abhinav.sunderrajan
  * 
  */
-public class RampMeter implements Runnable {
+public class RampMeter {
 
 	private Road ramp;
 	private double queuePercentage;
@@ -18,6 +18,7 @@ public class RampMeter implements Runnable {
 	private Cell meterCell;
 	private boolean red;
 	private boolean green;
+	private double qmax;
 
 	/**
 	 * The ramp to be controlled.
@@ -27,14 +28,16 @@ public class RampMeter implements Runnable {
 	 */
 	public RampMeter(Road ramp) {
 		this.ramp = ramp;
-		red = false;
-		green = true;
+		red = true;
+		green = false;
 		this.meterCellNum = ramp.getRoadNodes().size() - 2;
-		meterCell = CTMSimulator.cellNetwork.getCellMap()
-				.get(ramp.getRoadId() + "_" + meterCellNum);
+		meterCell = CellTransmissionModel.cellNetwork.getCellMap().get(
+				ramp.getRoadId() + "_" + meterCellNum);
 		for (int i = 0; i < meterCellNum; i++)
-			nMaxOnRamp += CTMSimulator.cellNetwork.getCellMap().get(ramp.getRoadId() + "_" + i)
-					.getnMax();
+			nMaxOnRamp += CellTransmissionModel.cellNetwork.getCellMap()
+					.get(ramp.getRoadId() + "_" + i).getnMax();
+		assert (green ^ red);
+		qmax = meterCell.getQmax();
 	}
 
 	/**
@@ -56,39 +59,29 @@ public class RampMeter implements Runnable {
 		this.queuePercentage = queuePercentage;
 	}
 
-	@Override
-	public void run() {
-
+	public boolean peakDensityReached() {
 		// The peak density parameter overrides the controller in case the size
 		// of the queue breaches the queuePercentage parameter.
 		boolean peakDensity = false;
-		double qMaxMeterCell = meterCell.getQmax();
 		double n = 0;
 		for (int i = 0; i < meterCellNum; i++) {
-			Cell rampCell = CTMSimulator.cellNetwork.getCellMap().get(ramp.getRoadId() + "_" + i);
+			Cell rampCell = CellTransmissionModel.cellNetwork.getCellMap().get(
+					ramp.getRoadId() + "_" + i);
 			n += rampCell.getNumOfVehiclesInCell();
 			if (n / nMaxOnRamp > queuePercentage) {
 				peakDensity = true;
 				break;
 			}
 		}
-		if (green) {
-			red = false;
-			meterCell.setQmax(qMaxMeterCell);
-		} else {
-			if (peakDensity) {
-				System.out
-						.println("Overriding ramp metering. Peak density reached. Setting to green");
-				meterCell.setQmax(qMaxMeterCell);
-				green = true;
-				red = false;
-			} else {
-				meterCell.setQmax(0);
-				green = false;
+		return peakDensity;
+	}
 
-			}
-		}
-
+	public void regulateFlow() {
+		assert (green ^ red);
+		if (red)
+			meterCell.setQmax(0);
+		else
+			meterCell.setQmax(qmax);
 	}
 
 	/**

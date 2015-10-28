@@ -1,6 +1,7 @@
 package ctm;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -8,7 +9,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import rnwmodel.Road;
 import rnwmodel.RoadNetworkModel;
 import rnwmodel.RoadNode;
-import simulator.CTMSimulator;
 
 /**
  * Class representing the cell network. Right now the implementation is only for
@@ -22,19 +22,24 @@ import simulator.CTMSimulator;
 public class CellNetwork {
 
 	private Map<String, Cell> cellMap;
-	private List<Road> roads;
+	private Collection<Road> roads;
+	private List<Road> ramps;
 
 	/**
 	 * Create the Cell transmission model for the road network model from the
 	 * {@link RoadNetworkModel}
 	 * 
+	 * @param ramps
+	 * 
 	 * @param model
 	 */
-	public CellNetwork(List<Road> roads) {
+	public CellNetwork(Collection<Road> roads, List<Road> ramps) {
 
 		cellMap = new ConcurrentHashMap<String, Cell>();
+
 		// Create cells and connectors to be used in the CTM model.
 		this.roads = roads;
+		this.ramps = ramps;
 		createCells();
 		generatePredecessorsAndSuccessors();
 	}
@@ -167,7 +172,7 @@ public class CellNetwork {
 					} else if (ins.size() == 2 && outs.size() == 1) {
 						if (road.getKind().equalsIgnoreCase("ramps")
 								|| road.getKind().equalsIgnoreCase("Interchange")) {
-							CTMSimulator.ramps.add(road);
+							this.ramps.add(road);
 						}
 						cell = new MergingCell(cellId, cellLength, freeFlowSpeed, numOfLanes);
 						++mergingCellCount;

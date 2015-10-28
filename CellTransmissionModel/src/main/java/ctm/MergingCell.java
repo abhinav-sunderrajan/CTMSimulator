@@ -1,6 +1,6 @@
 package ctm;
 
-import simulator.CTMSimulator;
+import main.SimulatorCore;
 
 /**
  * Update method for merging cells.
@@ -23,7 +23,7 @@ public class MergingCell extends Cell {
 	 */
 	public MergingCell(String cellId, double length, double freeFlowSpeed, int numOfLanes) {
 		super(cellId, length, freeFlowSpeed, numOfLanes);
-		mergePriority = CTMSimulator.mergePriorities.get(road.getRoadId());
+		mergePriority = SimulatorCore.mergePriorities.get(road.getRoadId());
 	}
 
 	/**

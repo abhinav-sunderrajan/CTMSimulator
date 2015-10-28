@@ -1,27 +1,23 @@
 package simulator;
 
 import java.awt.Color;
-import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
+
+import main.SimulatorCore;
 
 import org.apache.log4j.Logger;
 
-import rnwmodel.QIRoadNetworkModel;
 import rnwmodel.Road;
-import rnwmodel.RoadNetworkModel;
 import rnwmodel.RoadNode;
 import viz.CTMSimViewer;
 import ctm.Cell;
@@ -43,58 +39,54 @@ import ctm.SourceCell;
  * 
  */
 
-// TODO The simulation needs to spit out the total travel time across the
-// freeway and the total waiting time if any across the ramps each time-step.
+// TODO The simulation needs spits out total travel and total waiting times for
+// all ramps and the freeway. I'm still unsure about this. VERIFY!!!!!
+// TODO you are yet to compare CTM with microscopic simulation. Generate output
+// so that heat map can be reconstructed in R relatively easily for an
+// accident/non-accident scenario during peak hours to convince yourself and
+// others. Also vary the stochasticty parameters and see the effect in the
+// heat-maps.
 // TODO Have to design a reward system at the end of every time-step for
 // TD/Q-based Reinforcement learning. Put some thought into the reward
 // functions.
 
-public class CTMSimulator implements Runnable {
+public class CellTransmissionModel implements Runnable {
 
 	public static CellNetwork cellNetwork;
-	public static List<Road> ramps = new ArrayList<>();
-	public static long simulationTime;
-	private static Properties configProperties;
-	private static long startTime;
-	private static long endTime;
-	private static CTMSimViewer viewer;
-	private static Map<Cell, Color> cellColorMap;
-
-	// kept public for now. The road network, turn ratios and the mean
-	// inter-arrival times for the source links
-	public static RoadNetworkModel roadNetwork;
-	public static Map<Integer, Double> turnRatios;
-	public static Map<Integer, Double> mergePriorities;
-	public static Map<Integer, Double> interArrivalTimes;
-	public static Random random;
-	private static CTMSimulator simulator;
-	// Final variables
-	private static int pieRoads[];
-	private static boolean haveVisualization = true;
-	private static boolean simulateAccident = true;
-	private static boolean applyRampMetering = true;
-	private static final String ACCIDENT_CELL = "30651_3";
-	private static List<RampMeter> meteredRamps = new ArrayList<RampMeter>();
-	private ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool(4);
+	public List<Road> ramps;
+	public long simulationTime;
+	private long startTime;
+	private long endTime;
+	private CTMSimViewer viewer;
+	private Map<Cell, Color> cellColorMap;
+	private Collection<Road> pieChangiOrdered;
+	private boolean haveVisualization;
+	private boolean simulateAccident;
+	private boolean applyRampMetering;
+	private List<RampMeter> meteredRamps;
 	private List<Cell> modifiedCells = new ArrayList<>();
-	private static final Logger LOGGER = Logger.getLogger(CTMSimulator.class);
+	private DecimalFormat df = new DecimalFormat("#.###");
 
-	private static void intialize(int[] roadIds, boolean haveAccident, boolean applyMetering,
-			boolean haveViz) {
-		random = new Random(SimulationConstants.SEED);
-		cellColorMap = new ConcurrentHashMap<>();
-		haveVisualization = haveViz;
-		simulateAccident = haveAccident;
-		applyRampMetering = applyMetering;
+	// Static variables
+	private static final String ACCIDENT_CELL = "30651_3";
+	private static CellTransmissionModel simulator;
+	private static final Logger LOGGER = Logger.getLogger(CellTransmissionModel.class);
 
-		pieRoads = roadIds;
-		roadNetwork = new QIRoadNetworkModel("jdbc:postgresql://172.25.187.111/abhinav", "abhinav",
-				"qwert$$123", "qi_roads", "qi_nodes");
-		turnRatios = new HashMap<Integer, Double>();
-		mergePriorities = new HashMap<Integer, Double>();
-		interArrivalTimes = new HashMap<Integer, Double>();
+	/**
+	 * Initialize the Cell transmission model by creating the cell network from
+	 * the roads.
+	 */
+	private void intializeCTM(Collection<Road> roadCollection, boolean haveAccident,
+			boolean applyMetering, boolean haveViz) {
 
-		List<Road> pieChangiOrdered = createCellNetwork();
+		this.ramps = new ArrayList<>();
+		cellColorMap = new ConcurrentHashMap<Cell, Color>();
+		this.meteredRamps = new ArrayList<RampMeter>();
+		this.haveVisualization = haveViz;
+		this.simulateAccident = haveAccident;
+		this.applyRampMetering = applyMetering;
+		this.pieChangiOrdered = roadCollection;
+		df.setRoundingMode(RoundingMode.CEILING);
 
 		// Need to do some repairs the roads are not exactly perfect.
 		// 1) Ensure that none of the roads have a single cell this is
@@ -123,29 +115,17 @@ public class CTMSimulator implements Runnable {
 		}
 
 		LOGGER.info("Create a cell based network for the roads.");
-		cellNetwork = new CellNetwork(pieChangiOrdered);
+		cellNetwork = new CellNetwork(pieChangiOrdered, ramps);
 
 		for (Road ramp : ramps) {
 			RampMeter rampMeter = new RampMeter(ramp);
-			rampMeter.setQueuePercentage(0.8);
+			rampMeter.setQueuePercentage(1.0);
 			meteredRamps.add(rampMeter);
 		}
 
-		try {
-			configProperties = new Properties();
-			configProperties.load(new FileInputStream("src/main/resources/config.properties"));
-			if (haveVisualization) {
-				Properties dbConnectionProperties = new Properties();
-				dbConnectionProperties.load(new FileInputStream(
-						"src/main/resources/connection.properties"));
-				viewer = CTMSimViewer.getCTMViewerInstance("CTM Model", roadNetwork, cellColorMap,
-						dbConnectionProperties);
-			}
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			LOGGER.error("Error reading config file", e);
+		if (haveVisualization) {
+			viewer = CTMSimViewer.getCTMViewerInstance("CTM Model", SimulatorCore.roadNetwork,
+					cellColorMap, SimulatorCore.dbConnectionProperties);
 		}
 
 	}
@@ -153,7 +133,7 @@ public class CTMSimulator implements Runnable {
 	/**
 	 * Gets the CTM simulator instance.
 	 * 
-	 * @param roadIds
+	 * @param roadCollection
 	 *            the roads to be simulated.
 	 * @param haveAccident
 	 *            simulate an accident?
@@ -163,16 +143,19 @@ public class CTMSimulator implements Runnable {
 	 *            have a visualization?
 	 * @return the CTM simulator instance.
 	 */
-	public static CTMSimulator getSimulatorInstance(int[] roadIds, boolean haveAccident,
-			boolean applyMetering, boolean haveViz) {
+	public static CellTransmissionModel getSimulatorInstance(Collection<Road> roadCollection,
+			boolean haveAccident, boolean applyMetering, boolean haveViz) {
 		if (simulator == null) {
-			intialize(roadIds, haveAccident, applyMetering, haveViz);
-			simulator = new CTMSimulator();
+			simulator = new CellTransmissionModel(roadCollection, haveAccident, applyMetering,
+					haveViz);
 		}
 		return simulator;
 	}
 
-	private CTMSimulator() {
+	private CellTransmissionModel(Collection<Road> roadCollection, boolean haveAccident,
+			boolean applyMetering, boolean haveViz) {
+
+		intializeCTM(roadCollection, haveAccident, applyMetering, haveViz);
 
 		// Color coding the visualization
 		if (haveVisualization) {
@@ -195,96 +178,16 @@ public class CTMSimulator implements Runnable {
 
 		}
 
-		startTime = Long.parseLong(configProperties.getProperty("start.hour"));
-		endTime = Long.parseLong(configProperties.getProperty("end.hour"));
+		startTime = Long.parseLong(SimulatorCore.configProperties.getProperty("start.hour"));
+		endTime = Long.parseLong(SimulatorCore.configProperties.getProperty("end.hour"));
 
 	}
 
 	/**
-	 * Simulation initialization
+	 * @return the cellNetwork
 	 */
-	private static List<Road> createCellNetwork() {
-		List<Road> pieChangiOrdered = new ArrayList<>();
-		for (int roadId : pieRoads) {
-			Road road = roadNetwork.getAllRoadsMap().get(roadId);
-			pieChangiOrdered.add(road);
-		}
-		BufferedReader br;
-		try {
-			br = new BufferedReader(new FileReader(new File("src/main/resources/Lanecount.txt")));
-
-			while (br.ready()) {
-				String line = br.readLine();
-				String[] split = line.split("\t");
-				Road road = roadNetwork.getAllRoadsMap().get(Integer.parseInt(split[0]));
-				road.setLaneCount(Integer.parseInt(split[2]));
-
-			}
-			br.close();
-
-			for (Road road : pieChangiOrdered) {
-				RoadNode beginNode = road.getBeginNode();
-				RoadNode endNode = road.getEndNode();
-				List<Road> ins = new ArrayList<>();
-				for (Road inRoad : beginNode.getInRoads()) {
-					if (pieChangiOrdered.contains(inRoad) && !inRoad.equals(road))
-						ins.add(inRoad);
-				}
-
-				List<Road> outs = new ArrayList<>();
-				for (Road outRoad : endNode.getOutRoads()) {
-					if (pieChangiOrdered.contains(outRoad))
-						outs.add(outRoad);
-				}
-
-				if (ins.size() == 0) {
-					if (road.getRoadClass() == 0)
-						interArrivalTimes.put(road.getRoadId(), 0.10 + random.nextDouble());
-					else
-						interArrivalTimes.put(road.getRoadId(), 1.25);
-				}
-
-				if (ins.size() > 1) {
-					for (Road inRoad : ins) {
-
-						if (inRoad.getKind().equalsIgnoreCase("Ramps")
-								|| inRoad.getKind().equalsIgnoreCase("Interchange"))
-							mergePriorities.put(inRoad.getRoadId(), 1.0 / road.getLaneCount());
-						else
-							mergePriorities.put(inRoad.getRoadId(),
-									((double) inRoad.getLaneCount() / road.getLaneCount()));
-
-					}
-
-				}
-
-				if (outs.size() > 1) {
-					double x = 0.25;
-					for (Road outRoad : outs) {
-						if (outRoad.getKind().equalsIgnoreCase("Slip Road")
-								|| outRoad.getKind().equalsIgnoreCase("Interchange")) {
-							turnRatios.put(outRoad.getRoadId(), x);
-						} else {
-							turnRatios.put(outRoad.getRoadId(), 1 - x);
-						}
-					}
-
-				}
-
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return pieChangiOrdered;
-
-	}
-
-	/**
-	 * @return the roadNetwork
-	 */
-	public static RoadNetworkModel getRoadNetwork() {
-		return roadNetwork;
+	public CellNetwork getCellNetwork() {
+		return cellNetwork;
 	}
 
 	@Override
@@ -293,21 +196,35 @@ public class CTMSimulator implements Runnable {
 
 			Cell accidentCell = cellNetwork.getCellMap().get(ACCIDENT_CELL);
 			long time = System.currentTimeMillis();
-
+			double totalWaitingTime = 0.0;
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("ctmsim.txt")));
 			for (simulationTime = startTime; simulationTime < endTime; simulationTime += SimulationConstants.TIME_STEP) {
+
+				double totalTravelTime = 0.0;
 
 				// Simulate an accident.
 				if (simulateAccident) {
-					if (simulationTime == 5) {
+					if (simulationTime == SimulationConstants.TIME_STEP * 4) {
 						System.err.println(simulationTime + " : ACCIDENT START!!");
 						accidentCell.setQmax(accidentCell.getQmax() / 4);
 					}
 				}
 
 				// Applying ramp metering
-				if (applyRampMetering) {
+				if (applyRampMetering && simulationTime % (SimulationConstants.TIME_STEP * 4) == 0) {
 					for (RampMeter rampMeter : meteredRamps) {
-						scheduledExecutor.execute(rampMeter);
+						if (rampMeter.peakDensityReached()) {
+							rampMeter.setGreen(true);
+							rampMeter.setRed(false);
+						} else {
+							rampMeter.setGreen(false);
+							rampMeter.setRed(true);
+							// If the ramp meter is red then the vehicles do end
+							// up waiting.
+							totalWaitingTime += SimulationConstants.TIME_STEP * 4;
+						}
+
+						rampMeter.regulateFlow();
 					}
 				}
 
@@ -333,12 +250,11 @@ public class CTMSimulator implements Runnable {
 				// The second function is to introduce some degree of
 				// stochasticity by varying leff and time-gap.
 
-				double totalTravelTime = 0.0;
-				double totalWaitingTime = 0.0;
 				for (Cell cell : cellNetwork.getCellMap().values()) {
-					double cellSpeed = cell.getFreeFlowSpeed();
-					if (!(cell instanceof SinkCell || cell instanceof SourceCell)) {
 
+					// travel time computation along the freeway
+					if (!(cell instanceof SinkCell || cell instanceof SourceCell)) {
+						double cellSpeed = cell.getFreeFlowSpeed();
 						// v=v_freeFlow-(v_freeFlow/jam_density)*density
 						// v=v_freeFlow* ln(jam_density/density)
 
@@ -351,10 +267,18 @@ public class CTMSimulator implements Runnable {
 							cellSpeed = cell.getFreeFlowSpeed();
 
 						if (cell.getRoad().getName().contains("P.I.E (Changi)")) {
-							if (cellSpeed > 2.0)
+							if (cellSpeed > 1.0)
 								totalTravelTime += cell.getLength() / cellSpeed;
 							else
 								totalWaitingTime += SimulationConstants.TIME_STEP;
+
+							// File writing.
+							if (simulationTime >= 800) {
+								String split[] = cell.getCellId().split("_");
+								bw.write(cell.getRoad().getRoadId() + "," + split[1] + ","
+										+ cellSpeed + "," + simulationTime + "\n");
+
+							}
 
 						}
 
@@ -377,7 +301,7 @@ public class CTMSimulator implements Runnable {
 							// changing their time and distance headway every
 							// three time steps.
 							if (simulationTime % (SimulationConstants.TIME_STEP * 3) == 0) {
-								if (random.nextDouble() < 0.3) {
+								if (SimulatorCore.random.nextDouble() < 0.3) {
 									// Do not mess with the accident cell and
 									// the metered ramp cells.
 									boolean isMetercell = false;
@@ -406,16 +330,24 @@ public class CTMSimulator implements Runnable {
 
 				}
 
+				// Repaint the map frame with sleep.
 				if (haveVisualization) {
-					// Repaint the map frame.
 					viewer.getMapFrame().repaint();
 					Thread.sleep(50);
 				}
 
-				System.out.println("Travel time  is " + (totalTravelTime / 60.0)
-						+ " and waiting time is " + (totalWaitingTime / 60.0) + " minutes");
+				//
+				// System.out.println("travel time is " +
+				// df.format(totalTravelTime / (60.0))
+				// + " mins");
 
 			}
+
+			System.out.println("Total waiting time is " + df.format((totalWaitingTime / (60.0)))
+					+ " minutes");
+
+			bw.flush();
+			bw.close();
 
 			LOGGER.info("Finished " + ((endTime - startTime) / 60.0) + " minute simulation in :"
 					+ (System.currentTimeMillis() - time) + " ms");
@@ -425,6 +357,9 @@ public class CTMSimulator implements Runnable {
 
 		} catch (InterruptedException e) {
 			LOGGER.error("Error waiting  for simulation time to advance.", e);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 	}
@@ -443,7 +378,7 @@ public class CTMSimulator implements Runnable {
 	public static double uniform(double a, double b) {
 		if (!(a < b))
 			throw new IllegalArgumentException("Invalid range");
-		return a + random.nextDouble() * (b - a);
+		return a + SimulatorCore.random.nextDouble() * (b - a);
 	}
 
 }

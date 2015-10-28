@@ -1,6 +1,6 @@
 package ctm;
 
-import simulator.CTMSimulator;
+import main.SimulatorCore;
 
 /**
  * Update method for divergent cells.
@@ -28,7 +28,7 @@ public class DivergingCell extends Cell {
 		// The sending potential of this cell.
 		double min = getSendingPotential();
 		for (Cell successor : successors) {
-			double turnRatio = CTMSimulator.turnRatios.get(successor.getRoad().getRoadId());
+			double turnRatio = SimulatorCore.turnRatios.get(successor.getRoad().getRoadId());
 			// The receiving potential of the successor cells.
 			double recvPotential = successor.getReceivePotential() / turnRatio;
 			if (recvPotential < min)
