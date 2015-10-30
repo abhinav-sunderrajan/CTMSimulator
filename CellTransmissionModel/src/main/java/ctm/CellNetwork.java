@@ -113,7 +113,7 @@ public class CellNetwork {
 		int divergingCellCount = 0;
 
 		for (Road road : roads) {
-			double freeFlowSpeed = road.getSpeedLimit()[1] * 5.0 / 18;
+			double freeFlowSpeed = road.getFreeFlowSpeed();
 			int roadId = road.getRoadId();
 			int numOfLanes = road.getLaneCount();
 
@@ -125,8 +125,8 @@ public class CellNetwork {
 				Cell cell = null;
 				String cellId = roadId + "_" + i;
 
+				// Note the difference between a merging and diverging cells.
 				if (i == 0) {
-
 					List<Road> ins = new ArrayList<>();
 					for (Road inRoad : beginNode.getInRoads()) {
 						if (roads.contains(inRoad))
@@ -143,8 +143,7 @@ public class CellNetwork {
 						++sourceCellCount;
 					}
 
-				}// Note the difference between a merging and diverging cells.
-				else if (i == road.getRoadNodes().size() - 2) {
+				} else if (i == road.getRoadNodes().size() - 2) {
 					List<Road> outs = new ArrayList<>();
 					for (Road outRoad : endNode.getOutRoads()) {
 						if (roads.contains(outRoad))

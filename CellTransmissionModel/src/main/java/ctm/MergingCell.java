@@ -45,15 +45,17 @@ public class MergingCell extends Cell {
 	public void updateOutFlow() {
 		Cell Ek = this.successors.get(0);
 		// The receiving potential of the next cell.
-		double recvPotential = mergePriority * Ek.getReceivePotential();
+
 		// Receive potential next - Sending other
+		double recvPotential = this.mergePriority * Ek.getReceivePotential();
+
 		// double other = Ek.getReceivePotential() -
 		// othermergingCell.getSendingPotential();
 
 		// Mid will never work this needs to be verified
 
-		// double mid = Math.max(Math.min(sendingPotential, recvPotential),
-		// Math.min(Math.max(sendingPotential, recvPotential), other));
+		// double mid = Math.max(Math.min(getSendingPotential(), recvPotential),
+		// Math.min(Math.max(getSendingPotential(), recvPotential), other));
 
 		this.outflow = Math.min(recvPotential, getSendingPotential());
 

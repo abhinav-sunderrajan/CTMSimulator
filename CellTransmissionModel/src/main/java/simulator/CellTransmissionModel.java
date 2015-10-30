@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -18,7 +17,6 @@ import main.SimulatorCore;
 import org.apache.log4j.Logger;
 
 import rnwmodel.Road;
-import rnwmodel.RoadNode;
 import viz.CTMSimViewer;
 import ctm.Cell;
 import ctm.CellNetwork;
@@ -39,17 +37,6 @@ import ctm.SourceCell;
  * 
  */
 
-// TODO The simulation needs spits out total travel and total waiting times for
-// all ramps and the freeway. I'm still unsure about this. VERIFY!!!!!
-// TODO you are yet to compare CTM with microscopic simulation. Generate output
-// so that heat map can be reconstructed in R relatively easily for an
-// accident/non-accident scenario during peak hours to convince yourself and
-// others. Also vary the stochasticty parameters and see the effect in the
-// heat-maps.
-// TODO Have to design a reward system at the end of every time-step for
-// TD/Q-based Reinforcement learning. Put some thought into the reward
-// functions.
-
 public class CellTransmissionModel implements Runnable {
 
 	public static CellNetwork cellNetwork;
@@ -65,10 +52,9 @@ public class CellTransmissionModel implements Runnable {
 	private boolean applyRampMetering;
 	private List<RampMeter> meteredRamps;
 	private List<Cell> modifiedCells = new ArrayList<>();
-	private DecimalFormat df = new DecimalFormat("#.###");
 
 	// Static variables
-	private static final String ACCIDENT_CELL = "30651_3";
+	private static final String ACCIDENT_CELL = "30651_1";
 	private static CellTransmissionModel simulator;
 	private static final Logger LOGGER = Logger.getLogger(CellTransmissionModel.class);
 
@@ -86,33 +72,7 @@ public class CellTransmissionModel implements Runnable {
 		this.simulateAccident = haveAccident;
 		this.applyRampMetering = applyMetering;
 		this.pieChangiOrdered = roadCollection;
-		df.setRoundingMode(RoundingMode.CEILING);
-
-		// Need to do some repairs the roads are not exactly perfect.
-		// 1) Ensure that none of the roads have a single cell this is
-		// prone to errors. hence add an extra node in the middle of these
-		// single segment roads.
-		int nodeId = Integer.MAX_VALUE;
-		for (Road road : pieChangiOrdered) {
-			if (road.getSegmentsLength().length == 1) {
-				double x = (road.getBeginNode().getX() + road.getEndNode().getX()) / 2.0;
-				double y = (road.getBeginNode().getY() + road.getEndNode().getY()) / 2.0;
-				road.getRoadNodes().add(1, new RoadNode(nodeId--, x, y));
-			}
-		}
-
-		// Do not have long cells break them up.
-		for (Road road : pieChangiOrdered) {
-			for (int i = 0; i < road.getSegmentsLength().length; i++) {
-				if (road.getSegmentsLength()[i] > 120.0) {
-					double x = (road.getRoadNodes().get(i).getX() + road.getRoadNodes().get(i + 1)
-							.getX()) / 2.0;
-					double y = (road.getRoadNodes().get(i).getY() + road.getRoadNodes().get(i + 1)
-							.getY()) / 2.0;
-					road.getRoadNodes().add(i + 1, new RoadNode(nodeId--, x, y));
-				}
-			}
-		}
+		SimulatorCore.df.setRoundingMode(RoundingMode.CEILING);
 
 		LOGGER.info("Create a cell based network for the roads.");
 		cellNetwork = new CellNetwork(pieChangiOrdered, ramps);
@@ -193,20 +153,25 @@ public class CellTransmissionModel implements Runnable {
 	@Override
 	public void run() {
 		try {
-
 			Cell accidentCell = cellNetwork.getCellMap().get(ACCIDENT_CELL);
+			double qMaxAccCell = accidentCell.getQmax();
 			long time = System.currentTimeMillis();
 			double totalWaitingTime = 0.0;
-			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("ctmsim.txt")));
-			for (simulationTime = startTime; simulationTime < endTime; simulationTime += SimulationConstants.TIME_STEP) {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("ctmsim_acc.txt")));
+			for (simulationTime = startTime; simulationTime <= endTime; simulationTime += SimulationConstants.TIME_STEP) {
 
 				double totalTravelTime = 0.0;
 
 				// Simulate an accident.
 				if (simulateAccident) {
-					if (simulationTime == SimulationConstants.TIME_STEP * 4) {
+					if (simulationTime >= 1600 && simulationTime < 4300) {
 						System.err.println(simulationTime + " : ACCIDENT START!!");
-						accidentCell.setQmax(accidentCell.getQmax() / 4);
+						accidentCell.setQmax(qMaxAccCell * 0.75);
+					}
+
+					if (simulationTime == 4300) {
+						System.err.println(simulationTime + " : ACCIDENT CLEARS!!");
+						accidentCell.setQmax(qMaxAccCell);
 					}
 				}
 
@@ -247,9 +212,6 @@ public class CellTransmissionModel implements Runnable {
 				// 1) Computes cell statistics such as density and average speed
 				// used to compute travel time and waiting times.
 
-				// The second function is to introduce some degree of
-				// stochasticity by varying leff and time-gap.
-
 				for (Cell cell : cellNetwork.getCellMap().values()) {
 
 					// travel time computation along the freeway
@@ -259,6 +221,12 @@ public class CellTransmissionModel implements Runnable {
 						// v=v_freeFlow* ln(jam_density/density)
 
 						double cellDensity = cell.getNumOfVehiclesInCell() / cell.getnMax();
+
+						if (cellDensity > 1.0)
+							throw new IllegalStateException(
+									"There can never be more than nMax vehicles in cell"
+											+ cell.getCellId());
+
 						if (cell.getNumOfVehiclesInCell() > 0) {
 							cellSpeed = cell.getFreeFlowSpeed() * Math.log(1.0 / cellDensity);
 						}
@@ -267,7 +235,7 @@ public class CellTransmissionModel implements Runnable {
 							cellSpeed = cell.getFreeFlowSpeed();
 
 						if (cell.getRoad().getName().contains("P.I.E (Changi)")) {
-							if (cellSpeed > 1.0)
+							if (cellSpeed > 0.5)
 								totalTravelTime += cell.getLength() / cellSpeed;
 							else
 								totalWaitingTime += SimulationConstants.TIME_STEP;
@@ -275,8 +243,8 @@ public class CellTransmissionModel implements Runnable {
 							// File writing.
 							if (simulationTime >= 800) {
 								String split[] = cell.getCellId().split("_");
-								bw.write(cell.getRoad().getRoadId() + "," + split[1] + ","
-										+ cellSpeed + "," + simulationTime + "\n");
+								bw.write(split[0] + "," + split[1] + "," + cellSpeed + ","
+										+ simulationTime + "\n");
 
 							}
 
@@ -300,8 +268,8 @@ public class CellTransmissionModel implements Runnable {
 							// Modify the dynamics of 1/3rd of all cells by
 							// changing their time and distance headway every
 							// three time steps.
-							if (simulationTime % (SimulationConstants.TIME_STEP * 3) == 0) {
-								if (SimulatorCore.random.nextDouble() < 0.3) {
+							if (simulationTime % (SimulationConstants.TIME_STEP * 9) == 0) {
+								if (SimulatorCore.random.nextDouble() < 0.6) {
 									// Do not mess with the accident cell and
 									// the metered ramp cells.
 									boolean isMetercell = false;
@@ -336,15 +304,14 @@ public class CellTransmissionModel implements Runnable {
 					Thread.sleep(50);
 				}
 
-				//
-				// System.out.println("travel time is " +
-				// df.format(totalTravelTime / (60.0))
-				// + " mins");
+				// System.out.println("travel time is "
+				// + SimulatorCore.df.format(totalTravelTime / (60.0)) +
+				// " mins");
 
 			}
 
-			System.out.println("Total waiting time is " + df.format((totalWaitingTime / (60.0)))
-					+ " minutes");
+			System.out.println("Total waiting time is "
+					+ SimulatorCore.df.format((totalWaitingTime / (60.0))) + " minutes");
 
 			bw.flush();
 			bw.close();
@@ -352,8 +319,8 @@ public class CellTransmissionModel implements Runnable {
 			LOGGER.info("Finished " + ((endTime - startTime) / 60.0) + " minute simulation in :"
 					+ (System.currentTimeMillis() - time) + " ms");
 			Thread.sleep(100);
-			if (haveVisualization)
-				viewer.getMapFrame().dispose();
+			// if (haveVisualization)
+			// viewer.getMapFrame().dispose();
 
 		} catch (InterruptedException e) {
 			LOGGER.error("Error waiting  for simulation time to advance.", e);

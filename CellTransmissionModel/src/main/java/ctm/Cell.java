@@ -65,8 +65,6 @@ public abstract class Cell {
 		this.road = SimulatorCore.roadNetwork.getAllRoadsMap().get(Integer.parseInt(split[0]));
 		predecessors = new ArrayList<Cell>();
 		successors = new ArrayList<Cell>();
-		this.sendingPotential = Math.min(this.nt, this.Qmax);
-		this.receivePotential = (int) (Math.min(Qmax, getAlpha() * (nMax - nt)) + 0.5);
 
 		// Cell parameters are set to the default .
 		w = SimulationConstants.LEFF / SimulationConstants.TIME_GAP;
@@ -75,9 +73,11 @@ public abstract class Cell {
 		double maxDesnsityPerlane = length / SimulationConstants.LEFF;
 		Qmax = capacityPerLane * numOfLanes * SimulationConstants.TIME_STEP;
 		nMax = maxDesnsityPerlane * numOfLanes;
+		this.sendingPotential = Math.min(this.nt, this.Qmax);
+		this.receivePotential = Math.min(Qmax, getAlpha() * (nMax - nt));
 
 		// Random number of vehicles in all cells initially.
-		nt = nMax / (2.0 + SimulatorCore.random.nextDouble());
+		nt = nMax / (1.2 + SimulatorCore.random.nextDouble());
 	}
 
 	/**
@@ -177,8 +177,7 @@ public abstract class Cell {
 		} else {
 			Cell predecessor = predecessors.get(0);
 			if (predecessor instanceof DivergingCell)
-				inflow = (int) (predecessor.outflow
-						* SimulatorCore.turnRatios.get(road.getRoadId()) + 0.5);
+				inflow = predecessor.outflow * SimulatorCore.turnRatios.get(road.getRoadId());
 			else
 				inflow = predecessor.outflow;
 		}
@@ -315,7 +314,21 @@ public abstract class Cell {
 	 *            the qmax to set
 	 */
 	public void setQmax(double qmax) {
-		Qmax = qmax;
+		this.Qmax = qmax;
+	}
+
+	/**
+	 * @return the predecessors
+	 */
+	public List<Cell> getPredecessors() {
+		return predecessors;
+	}
+
+	/**
+	 * @return the successors
+	 */
+	public List<Cell> getSuccessors() {
+		return successors;
 	}
 
 }

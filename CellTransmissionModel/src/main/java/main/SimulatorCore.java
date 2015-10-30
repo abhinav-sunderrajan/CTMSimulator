@@ -6,6 +6,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -35,19 +37,33 @@ public class SimulatorCore {
 	public static Random random;
 	public static CellTransmissionModel cellTransmissionModel;
 
-	private static final int PIE_ROADS[] = { 30633, 30634, 82, 28377, 30635, 28485, 30636, 38541,
-			38260, 29309, 29310, 30637, 28578, 30638, 28946, 28947, 30639, 28516, 30640, 30788,
-			30789, 30790, 30641, 37976, 37981, 37980, 30642, 37982, 30643, 38539, 2355, 2356,
-			28595, 30644, 22009, 29152, 28594, 30645, 28597, 30646, 19116, 19117, 29005, 30647,
-			28387, 30648, 29553, 30649, 28611, 30650, 28613, 29131, 30651, 31985, 31991, 30580,
-			28500, 30581 };
+	private static final int PIE_ROADS[] = { 30633, 30634, 82, 28377, 30635, 28485, 30636, 29310,
+			30637, 28578, 30638, 28946, 28947, 30639, 28516, 30640, 30790, 30641, 37976, 37981,
+			37980, 30642, 37982, 30643, 38539, 28595, 30644, 29152, 28594, 30645, 28597, 30646,
+			29005, 30647, 28387, 30648, 29553, 30649, 28611, 30650, 28613, 29131, 30651, 31991,
+			30580, 28500, 30581 };
 	private static final Logger LOGGER = Logger.getLogger(SimulatorCore.class);
+	public static final DecimalFormat df = new DecimalFormat("#.###");
 
+	// TODO In repair roads When I break very large cells the simulation seems
+	// to break down for some inexplicable reason. Find out why. Breaking up
+	// large cells should improve graphs but I'm unable to do now.
+	// TODO The simulation needs spits out total travel and total waiting times
+	// for all ramps and the freeway. I'm still unsure about this. VERIFY!!!!!
+	// TODO you are yet to compare CTM with microscopic simulation. Generate
+	// output so that heat map can be reconstructed in R relatively easily for
+	// an accident/non-accident scenario during peak hours to convince yourself
+	// and others. Also vary the stochasticty parameters and see the effect in
+	// the heat-maps.
+	// TODO Have to design a reward system at the end of every time-step for
+	// TD/Q-based Reinforcement learning. Put some thought into the reward
+	// functions.
 	public static void main(String args[]) {
 
 		try {
 			// Initialization.
 			random = new Random(SimulationConstants.SEED);
+			df.setRoundingMode(RoundingMode.CEILING);
 			configProperties = new Properties();
 			configProperties.load(new FileInputStream("src/main/resources/config.properties"));
 			dbConnectionProperties = new Properties();
@@ -57,8 +73,14 @@ public class SimulatorCore {
 					"qi_nodes");
 
 			Map<Integer, Road> pieChangi = new HashMap<Integer, Road>();
-			for (int roadId : PIE_ROADS)
-				pieChangi.put(roadId, roadNetwork.getAllRoadsMap().get(roadId));
+			for (int roadId : PIE_ROADS) {
+				Road road = roadNetwork.getAllRoadsMap().get(roadId);
+				double freeFlowSpeed = road.getRoadClass() == 0 ? 80 * 5.0 / 18 : 60.0 * 5.0 / 18;
+				if (roadId == 37980 || roadId == 28387)
+					freeFlowSpeed = 40 * 5.0 / 18.0;
+				road.setFreeFlowSpeed(freeFlowSpeed);
+				pieChangi.put(roadId, road);
+			}
 
 			BufferedReader br;
 			br = new BufferedReader(new FileReader(new File("src/main/resources/Lanecount.txt")));
@@ -71,16 +93,30 @@ public class SimulatorCore {
 							Integer.parseInt(split[2]));
 			}
 			br.close();
+
+			// Repair the roads
+			repair(pieChangi.values());
+
+			// Test repair
+			for (Road road : pieChangi.values()) {
+				double minLength = road.getFreeFlowSpeed() * SimulationConstants.TIME_STEP;
+				for (int i = 0; i < road.getSegmentsLength().length; i++) {
+					if (road.getSegmentsLength()[i] < minLength) {
+						throw new IllegalStateException(
+								"cell length cannot be less than mimimum value");
+					}
+				}
+
+			}
+
 			turnRatios = new HashMap<Integer, Double>();
 			mergePriorities = new HashMap<Integer, Double>();
 			interArrivalTimes = new HashMap<Integer, Double>();
 
 			mergeTurnAndInterArrivals(pieChangi.values());
 
-			// Get the singleton instance of CTM to start the simulation thread.
-
 			cellTransmissionModel = CellTransmissionModel.getSimulatorInstance(pieChangi.values(),
-					false, false, false);
+					true, false, false);
 			Thread th = new Thread(cellTransmissionModel);
 			th.start();
 
@@ -89,6 +125,83 @@ public class SimulatorCore {
 		} catch (IOException e) {
 			LOGGER.error("Error reading config file", e);
 		}
+
+	}
+
+	/**
+	 * This method serves to ensure that none of the road segments which
+	 * ultimately form the cells have a length smaller than the minimum length
+	 * of V0*delta_T.
+	 * 
+	 * @param pieChangi
+	 */
+	public static void repair(Collection<Road> pieChangi) {
+
+		// Need to do some repairs the roads are not exactly perfect.
+		// 1) Ensure that none of the roads have a single cell this is
+		// prone to errors. hence add an extra node in the middle of these
+		// single segment roads.
+		int nodeId = Integer.MAX_VALUE;
+		for (Road road : pieChangi) {
+			if (road.getSegmentsLength().length == 1) {
+				double x = (road.getBeginNode().getX() + road.getEndNode().getX()) / 2.0;
+				double y = (road.getBeginNode().getY() + road.getEndNode().getY()) / 2.0;
+				road.getRoadNodes().add(1, new RoadNode(nodeId--, x, y));
+			}
+
+		}
+
+		// The main constraint of CTM is that the length of cell i li>=v*delta_T
+		// This loop ensures that no cell is smaller than v*delta_T.
+		for (Road road : pieChangi) {
+			double minLength = road.getFreeFlowSpeed() * SimulationConstants.TIME_STEP;
+			if (road.getSegmentsLength().length > 2) {
+				while (true) {
+					boolean noSmallSegments = true;
+					int numOfSegments = road.getSegmentsLength().length;
+					if (numOfSegments < 3)
+						break;
+					for (int i = 0; i < numOfSegments; i++) {
+						if (road.getSegmentsLength()[i] < minLength) {
+							if (i == numOfSegments - 1)
+								road.getRoadNodes().remove(i);
+							else
+								road.getRoadNodes().remove(i + 1);
+							noSmallSegments = false;
+							break;
+						}
+					}
+					if (noSmallSegments)
+						break;
+				}
+
+			}
+
+		}
+
+		// // Do not have long cells break them up. Just to see if this improves
+		// // graphs generated in any way.
+		// for (Road road : pieChangi) {
+		// double minLength = road.getFreeFlowSpeed() *
+		// SimulationConstants.TIME_STEP;
+		// while (true) {
+		// boolean noLargeSegments = true;
+		// int numOfSegments = road.getSegmentsLength().length;
+		// for (int i = 0; i < numOfSegments; i++) {
+		// if (road.getSegmentsLength()[i] > minLength * 2.0) {
+		// double x = (road.getRoadNodes().get(i).getX() + road.getRoadNodes()
+		// .get(i + 1).getX()) / 2.0;
+		// double y = (road.getRoadNodes().get(i).getY() + road.getRoadNodes()
+		// .get(i + 1).getY()) / 2.0;
+		// road.getRoadNodes().add(i + 1, new RoadNode(nodeId--, x, y));
+		// noLargeSegments = false;
+		// break;
+		// }
+		// }
+		// if (noLargeSegments)
+		// break;
+		// }
+		// }
 
 	}
 
@@ -116,22 +229,31 @@ public class SimulatorCore {
 						outs.add(outRoad);
 				}
 
+				// Interarrival rates represents the number of vehicles that
+				// enter a source link every time step
 				if (ins.size() == 0) {
+					double capacityPerLane = road.getFreeFlowSpeed()
+							/ (road.getFreeFlowSpeed() * SimulationConstants.TIME_GAP + SimulationConstants.LEFF);
+
 					if (road.getRoadClass() == 0)
-						interArrivalTimes.put(road.getRoadId(), 1.0);
+						interArrivalTimes.put(road.getRoadId(),
+								capacityPerLane * road.getLaneCount()
+										* SimulationConstants.TIME_STEP * 0.8);
 					else
-						interArrivalTimes.put(road.getRoadId(), 2.25);
+						interArrivalTimes.put(road.getRoadId(),
+								capacityPerLane * road.getLaneCount()
+										* SimulationConstants.TIME_STEP * 0.75);
 				}
 
 				if (ins.size() > 1) {
 					for (Road inRoad : ins) {
 
 						if (inRoad.getKind().equalsIgnoreCase("Ramps")
-								|| inRoad.getKind().equalsIgnoreCase("Interchange"))
-							mergePriorities.put(inRoad.getRoadId(), 1.0 / road.getLaneCount());
-						else
-							mergePriorities.put(inRoad.getRoadId(),
-									((double) inRoad.getLaneCount() / road.getLaneCount()));
+								|| inRoad.getKind().equalsIgnoreCase("Interchange")) {
+							mergePriorities.put(inRoad.getRoadId(), 0.5);
+						} else {
+							mergePriorities.put(inRoad.getRoadId(), 0.9);
+						}
 
 					}
 

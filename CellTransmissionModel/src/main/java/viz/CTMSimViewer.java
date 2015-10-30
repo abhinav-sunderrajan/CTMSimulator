@@ -38,9 +38,7 @@ public class CTMSimViewer extends RoadNetworkVisualizer {
 	private static final float MAX_VALUE = 1.0f;
 
 	public static Color numberToColor(final double value) {
-		if (value < 0) {
-			return Color.getHSBColor(0.0f, S, B);
-		} else if (value > MAX_VALUE) {
+		if (value > MAX_VALUE) {
 			return Color.getHSBColor(0.4f, S, B);
 		} else {
 			return Color.getHSBColor((float) (0.4 * value / MAX_VALUE), S, B);
@@ -160,7 +158,12 @@ public class CTMSimViewer extends RoadNetworkVisualizer {
 		double dx = x1 - x0;
 		double dy = y1 - y0;
 
-		Rectangle rectangle = new Rectangle(x0, y0, (int) Math.sqrt(dx * dx + dy * dy), 10);
+		double length = Math.sqrt(dx * dx + dy * dy);
+
+		// g2d.drawString(cellId + ", " +
+		// SimulatorCore.df.format(cell.getLength()), x0, y0);
+
+		Rectangle rectangle = new Rectangle(x0, y0, (int) length, 10);
 
 		// Compute the bearing with respect to east, that is why -Math.PI/2.
 		double alpha = Math.toRadians(EarthFunctions.bearing(segmentNode1.getPosition(),
