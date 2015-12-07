@@ -45,7 +45,7 @@ public class CTMDataToDB {
 	private final static int RING_SIZE = 65536;
 
 	private static boolean isAccident = true;
-	private static int iterCount = 2;
+	private static int iterCount = 4;
 	private static char CONGESTION = 'H';
 
 	static {
@@ -113,7 +113,7 @@ public class CTMDataToDB {
 
 		SimulatorCore.repair(pieChangiOrdered);
 
-		BufferedReader reader = new BufferedReader(new FileReader(new File("ctmsim_acc.txt")));
+		BufferedReader reader = new BufferedReader(new FileReader(new File("ctmsim_acc_ramp.txt")));
 		while (reader.ready()) {
 			String line = reader.readLine();
 			String[] split = line.split(",");

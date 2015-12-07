@@ -48,13 +48,7 @@ public class SimulatorCore {
 	// TODO In repair roads When I break very large cells the simulation seems
 	// to break down for some inexplicable reason. Find out why. Breaking up
 	// large cells should improve graphs but I'm unable to do now.
-	// TODO The simulation needs spits out total travel and total waiting times
-	// for all ramps and the freeway. I'm still unsure about this. VERIFY!!!!!
-	// TODO you are yet to compare CTM with microscopic simulation. Generate
-	// output so that heat map can be reconstructed in R relatively easily for
-	// an accident/non-accident scenario during peak hours to convince yourself
-	// and others. Also vary the stochasticty parameters and see the effect in
-	// the heat-maps.
+
 	// TODO Have to design a reward system at the end of every time-step for
 	// TD/Q-based Reinforcement learning. Put some thought into the reward
 	// functions.
@@ -82,8 +76,8 @@ public class SimulatorCore {
 				pieChangi.put(roadId, road);
 			}
 
-			BufferedReader br;
-			br = new BufferedReader(new FileReader(new File("src/main/resources/Lanecount.txt")));
+			BufferedReader br = new BufferedReader(new FileReader(new File(
+					"src/main/resources/Lanecount.txt")));
 
 			while (br.ready()) {
 				String line = br.readLine();
@@ -106,7 +100,6 @@ public class SimulatorCore {
 								"cell length cannot be less than mimimum value");
 					}
 				}
-
 			}
 
 			turnRatios = new HashMap<Integer, Double>();
@@ -116,7 +109,7 @@ public class SimulatorCore {
 			mergeTurnAndInterArrivals(pieChangi.values());
 
 			cellTransmissionModel = CellTransmissionModel.getSimulatorInstance(pieChangi.values(),
-					true, false, false);
+					false, false, true);
 			Thread th = new Thread(cellTransmissionModel);
 			th.start();
 
@@ -188,7 +181,7 @@ public class SimulatorCore {
 		// boolean noLargeSegments = true;
 		// int numOfSegments = road.getSegmentsLength().length;
 		// for (int i = 0; i < numOfSegments; i++) {
-		// if (road.getSegmentsLength()[i] > minLength * 2.0) {
+		// if (road.getSegmentsLength()[i] > (minLength * 2.5)) {
 		// double x = (road.getRoadNodes().get(i).getX() + road.getRoadNodes()
 		// .get(i + 1).getX()) / 2.0;
 		// double y = (road.getRoadNodes().get(i).getY() + road.getRoadNodes()
@@ -229,7 +222,7 @@ public class SimulatorCore {
 						outs.add(outRoad);
 				}
 
-				// Interarrival rates represents the number of vehicles that
+				// Inter-arrival rates represents the number of vehicles that
 				// enter a source link every time step
 				if (ins.size() == 0) {
 					double capacityPerLane = road.getFreeFlowSpeed()
@@ -242,7 +235,7 @@ public class SimulatorCore {
 					else
 						interArrivalTimes.put(road.getRoadId(),
 								capacityPerLane * road.getLaneCount()
-										* SimulationConstants.TIME_STEP * 0.75);
+										* SimulationConstants.TIME_STEP * 0.7);
 				}
 
 				if (ins.size() > 1) {

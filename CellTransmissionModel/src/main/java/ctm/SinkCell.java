@@ -9,8 +9,8 @@ package ctm;
  */
 public class SinkCell extends Cell {
 
-	public SinkCell(String cellId, double length, double freeFlowSpeed, int numOfLanes) {
-		super(cellId, length, freeFlowSpeed, numOfLanes);
+	public SinkCell(String cellId, double length) {
+		super(cellId, length);
 		assert (successors.size() == 0);
 		nMax = Integer.MAX_VALUE;
 	}

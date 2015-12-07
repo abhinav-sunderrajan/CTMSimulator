@@ -54,7 +54,6 @@ public class CellTransmissionModel implements Runnable {
 	private List<Cell> modifiedCells = new ArrayList<>();
 
 	// Static variables
-	private static final String ACCIDENT_CELL = "30651_1";
 	private static CellTransmissionModel simulator;
 	private static final Logger LOGGER = Logger.getLogger(CellTransmissionModel.class);
 
@@ -79,7 +78,7 @@ public class CellTransmissionModel implements Runnable {
 
 		for (Road ramp : ramps) {
 			RampMeter rampMeter = new RampMeter(ramp);
-			rampMeter.setQueuePercentage(1.0);
+			rampMeter.setQueuePercentage(0.7);
 			meteredRamps.add(rampMeter);
 		}
 
@@ -153,11 +152,11 @@ public class CellTransmissionModel implements Runnable {
 	@Override
 	public void run() {
 		try {
-			Cell accidentCell = cellNetwork.getCellMap().get(ACCIDENT_CELL);
+			Cell accidentCell = cellNetwork.getCellMap().get(SimulationConstants.ACCIDENT_CELL);
 			double qMaxAccCell = accidentCell.getQmax();
 			long time = System.currentTimeMillis();
 			double totalWaitingTime = 0.0;
-			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("ctmsim_acc.txt")));
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("ctmsim_acc_ramp.txt")));
 			for (simulationTime = startTime; simulationTime <= endTime; simulationTime += SimulationConstants.TIME_STEP) {
 
 				double totalTravelTime = 0.0;
@@ -166,7 +165,10 @@ public class CellTransmissionModel implements Runnable {
 				if (simulateAccident) {
 					if (simulationTime >= 1600 && simulationTime < 4300) {
 						System.err.println(simulationTime + " : ACCIDENT START!!");
-						accidentCell.setQmax(qMaxAccCell * 0.75);
+						accidentCell
+								.setQmax(qMaxAccCell
+										* ((double) (accidentCell.getNumOfLanes() - SimulationConstants.LANES_CLOSED))
+										/ accidentCell.getNumOfLanes());
 					}
 
 					if (simulationTime == 4300) {
@@ -175,21 +177,24 @@ public class CellTransmissionModel implements Runnable {
 					}
 				}
 
-				// Applying ramp metering
-				if (applyRampMetering && simulationTime % (SimulationConstants.TIME_STEP * 4) == 0) {
-					for (RampMeter rampMeter : meteredRamps) {
-						if (rampMeter.peakDensityReached()) {
-							rampMeter.setGreen(true);
-							rampMeter.setRed(false);
-						} else {
-							rampMeter.setGreen(false);
-							rampMeter.setRed(true);
-							// If the ramp meter is red then the vehicles do end
-							// up waiting.
-							totalWaitingTime += SimulationConstants.TIME_STEP * 4;
+				// Applying ramp metering after accident and some time after the
+				// accident clears.
+				if (applyRampMetering && (simulationTime >= 1600 && simulationTime < 6000)) {
+					if (simulationTime % (SimulationConstants.TIME_STEP * 10) == 0) {
+						for (RampMeter rampMeter : meteredRamps) {
+							if (rampMeter.peakDensityReached()) {
+								rampMeter.setGreen(true);
+								rampMeter.setRed(false);
+								System.out.println("Peak density reached ramp meter green");
+							} else {
+								rampMeter.setGreen(false);
+								rampMeter.setRed(true);
+								// If the ramp meter is red then the vehicles do
+								// end up waiting.
+								totalWaitingTime += SimulationConstants.TIME_STEP * 4;
+							}
+							rampMeter.regulateFlow();
 						}
-
-						rampMeter.regulateFlow();
 					}
 				}
 

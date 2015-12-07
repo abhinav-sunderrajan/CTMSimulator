@@ -113,9 +113,7 @@ public class CellNetwork {
 		int divergingCellCount = 0;
 
 		for (Road road : roads) {
-			double freeFlowSpeed = road.getFreeFlowSpeed();
 			int roadId = road.getRoadId();
-			int numOfLanes = road.getLaneCount();
 
 			RoadNode beginNode = road.getBeginNode();
 			RoadNode endNode = road.getEndNode();
@@ -133,10 +131,9 @@ public class CellNetwork {
 							ins.add(inRoad);
 					}
 
-					cell = new OrdinaryCell(cellId, cellLength, freeFlowSpeed, numOfLanes);
+					cell = new OrdinaryCell(cellId, cellLength);
 					if (ins.size() == 0) {
-						Cell sourceCell = new SourceCell(roadId + "_source", 0, freeFlowSpeed,
-								numOfLanes);
+						Cell sourceCell = new SourceCell(roadId + "_source", 0);
 						sourceCell.addSuccessor(cell);
 						cell.addPredecessor(sourceCell);
 						cellMap.put(roadId + "_source", sourceCell);
@@ -157,11 +154,11 @@ public class CellNetwork {
 					}
 
 					if (outs.size() > 1) {
-						cell = new DivergingCell(cellId, cellLength, freeFlowSpeed, numOfLanes);
+						cell = new DivergingCell(cellId, cellLength);
 						++divergingCellCount;
 					} else if (outs.size() == 0) {
-						cell = new OrdinaryCell(cellId, cellLength, freeFlowSpeed, numOfLanes);
-						Cell sinkCell = new SinkCell(roadId + "_sink", 0, freeFlowSpeed, numOfLanes);
+						cell = new OrdinaryCell(cellId, cellLength);
+						Cell sinkCell = new SinkCell(roadId + "_sink", 0);
 						sinkCell.setRoad(road);
 						cell.addSuccessor(sinkCell);
 						sinkCell.addPredecessor(cell);
@@ -173,15 +170,15 @@ public class CellNetwork {
 								|| road.getKind().equalsIgnoreCase("Interchange")) {
 							this.ramps.add(road);
 						}
-						cell = new MergingCell(cellId, cellLength, freeFlowSpeed, numOfLanes);
+						cell = new MergingCell(cellId, cellLength);
 						++mergingCellCount;
 
 					} else {
-						cell = new OrdinaryCell(cellId, cellLength, freeFlowSpeed, numOfLanes);
+						cell = new OrdinaryCell(cellId, cellLength);
 					}
 
 				} else {
-					cell = new OrdinaryCell(cellId, cellLength, freeFlowSpeed, numOfLanes);
+					cell = new OrdinaryCell(cellId, cellLength);
 
 				}
 

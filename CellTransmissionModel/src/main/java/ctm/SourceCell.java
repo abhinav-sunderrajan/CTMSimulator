@@ -17,12 +17,9 @@ public class SourceCell extends Cell {
 	 * 
 	 * @param cellId
 	 * @param length
-	 * @param freeFlowSpeed
-	 * @param jamDensity
-	 * @param w
 	 */
-	public SourceCell(String cellId, double length, double freeFlowSpeed, int numOfLanes) {
-		super(cellId, length, freeFlowSpeed, numOfLanes);
+	public SourceCell(String cellId, double length) {
+		super(cellId, length);
 		nMax = Integer.MAX_VALUE;
 		nt = Integer.MAX_VALUE;
 		meanNoVehiclesEveryTimeStep = SimulatorCore.interArrivalTimes.get(road.getRoadId());

@@ -14,6 +14,12 @@ public class SimulationConstants {
 	public static final double PACE = 5.0;
 
 	// Seed for the simulation
-	public static final int SEED = 23061985;
+	public static final int SEED = 998;
+
+	// The accident cell ID>
+	public static final String ACCIDENT_CELL = "30651_1";
+
+	// Number of lanes to be closed in the case of an accident
+	public static final int LANES_CLOSED = 1;
 
 }

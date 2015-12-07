@@ -50,19 +50,16 @@ public abstract class Cell {
 	 * 
 	 * @param cellId
 	 * @param length
-	 * @param freeFlowSpeed
-	 * @param jamDensity
 	 * @param w
 	 */
-	public Cell(String cellId, double length, double freeFlowSpeed, int numOfLanes) {
+	public Cell(String cellId, double length) {
 		this.cellId = cellId;
-		this.numOfLanes = numOfLanes;
-		this.length = length;
-		this.freeFlowSpeed = freeFlowSpeed;
-
 		String[] split = cellId.split("_");
-
 		this.road = SimulatorCore.roadNetwork.getAllRoadsMap().get(Integer.parseInt(split[0]));
+
+		this.numOfLanes = road.getLaneCount();
+		this.length = length;
+		this.freeFlowSpeed = road.getFreeFlowSpeed();
 		predecessors = new ArrayList<Cell>();
 		successors = new ArrayList<Cell>();
 

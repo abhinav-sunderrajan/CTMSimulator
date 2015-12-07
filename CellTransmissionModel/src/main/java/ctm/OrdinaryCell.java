@@ -10,8 +10,8 @@ package ctm;
  */
 public class OrdinaryCell extends Cell {
 
-	public OrdinaryCell(String cellId, double length, double freeFlowSpeed, int numOfLanes) {
-		super(cellId, length, freeFlowSpeed, numOfLanes);
+	public OrdinaryCell(String cellId, double length) {
+		super(cellId, length);
 	}
 
 	@Override

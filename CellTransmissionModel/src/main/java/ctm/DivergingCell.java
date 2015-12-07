@@ -18,8 +18,8 @@ public class DivergingCell extends Cell {
 	 * @param jamDensity
 	 * @param w
 	 */
-	public DivergingCell(String cellId, double length, double freeFlowSpeed, int numOfLanes) {
-		super(cellId, length, freeFlowSpeed, numOfLanes);
+	public DivergingCell(String cellId, double length) {
+		super(cellId, length);
 	}
 
 	@Override

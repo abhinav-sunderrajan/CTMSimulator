@@ -18,11 +18,9 @@ public class MergingCell extends Cell {
 	 * 
 	 * @param cellId
 	 * @param length
-	 * @param freeFlowSpeed
-	 * @param numOfLanes
 	 */
-	public MergingCell(String cellId, double length, double freeFlowSpeed, int numOfLanes) {
-		super(cellId, length, freeFlowSpeed, numOfLanes);
+	public MergingCell(String cellId, double length) {
+		super(cellId, length);
 		mergePriority = SimulatorCore.mergePriorities.get(road.getRoadId());
 	}
 
