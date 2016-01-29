@@ -10,27 +10,16 @@ import main.SimulatorCore;
  */
 public class DivergingCell extends Cell {
 
-	/**
-	 * 
-	 * @param cellId
-	 * @param length
-	 * @param freeFlowSpeed
-	 * @param jamDensity
-	 * @param w
-	 */
 	public DivergingCell(String cellId, double length) {
 		super(cellId, length);
 	}
 
 	@Override
 	public void updateOutFlow() {
-
-		// The sending potential of this cell.
-		double min = getSendingPotential();
+		double min = sendingPotential;
 		for (Cell successor : successors) {
 			double turnRatio = SimulatorCore.turnRatios.get(successor.getRoad().getRoadId());
-			// The receiving potential of the successor cells.
-			double recvPotential = successor.getReceivePotential() / turnRatio;
+			double recvPotential = successor.receivePotential / turnRatio;
 			if (recvPotential < min)
 				min = recvPotential;
 		}

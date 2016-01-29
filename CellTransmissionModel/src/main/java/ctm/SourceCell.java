@@ -1,6 +1,7 @@
 package ctm;
 
 import main.SimulatorCore;
+import simulator.SimulationConstants;
 
 /**
  * Represents a cell where the number of incoming connectors is equal to zero.
@@ -20,9 +21,10 @@ public class SourceCell extends Cell {
 	 */
 	public SourceCell(String cellId, double length) {
 		super(cellId, length);
-		nMax = Integer.MAX_VALUE;
 		nt = Integer.MAX_VALUE;
-		meanNoVehiclesEveryTimeStep = SimulatorCore.interArrivalTimes.get(road.getRoadId());
+		meanNoVehiclesEveryTimeStep = SimulatorCore.flowRates.get(road.getRoadId())
+				* SimulationConstants.TIME_STEP / 3600.0;
+		densityAntic = 0.0;
 
 	}
 
@@ -33,7 +35,7 @@ public class SourceCell extends Cell {
 		// the space left in the first link.
 		Cell successor = successors.get(0);
 		this.outflow = Math.min(poissonRandomNumber(meanNoVehiclesEveryTimeStep),
-				successor.getReceivePotential());
+				successor.receivePotential);
 
 	}
 

@@ -8,15 +8,18 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 
 import rnwmodel.QIRoadNetworkModel;
 import rnwmodel.Road;
@@ -24,6 +27,7 @@ import rnwmodel.RoadNetworkModel;
 import rnwmodel.RoadNode;
 import simulator.CellTransmissionModel;
 import simulator.SimulationConstants;
+import utils.DatabaseAccess;
 
 public class SimulatorCore {
 
@@ -33,7 +37,7 @@ public class SimulatorCore {
 	public static RoadNetworkModel roadNetwork;
 	public static Map<Integer, Double> turnRatios;
 	public static Map<Integer, Double> mergePriorities;
-	public static Map<Integer, Double> interArrivalTimes;
+	public static Map<Integer, Double> flowRates;
 	public static Random random;
 	public static CellTransmissionModel cellTransmissionModel;
 
@@ -44,6 +48,8 @@ public class SimulatorCore {
 			30580, 28500, 30581 };
 	private static final Logger LOGGER = Logger.getLogger(SimulatorCore.class);
 	public static final DecimalFormat df = new DecimalFormat("#.###");
+	public static final SAXReader SAX_READER = new SAXReader();
+	public static DatabaseAccess dba;
 
 	// TODO In repair roads When I break very large cells the simulation seems
 	// to break down for some inexplicable reason. Find out why. Breaking up
@@ -62,16 +68,17 @@ public class SimulatorCore {
 			configProperties.load(new FileInputStream("src/main/resources/config.properties"));
 			dbConnectionProperties = new Properties();
 			dbConnectionProperties.load(new FileInputStream(
-					"src/main/resources/connectionLocal.properties"));
+					"src/main/resources/connection.properties"));
 			roadNetwork = new QIRoadNetworkModel(SimulatorCore.dbConnectionProperties, "qi_roads",
 					"qi_nodes");
+			dba = new DatabaseAccess(dbConnectionProperties);
 
 			Map<Integer, Road> pieChangi = new HashMap<Integer, Road>();
 			for (int roadId : PIE_ROADS) {
 				Road road = roadNetwork.getAllRoadsMap().get(roadId);
-				double freeFlowSpeed = road.getRoadClass() == 0 ? 80 * 5.0 / 18 : 60.0 * 5.0 / 18;
+				double freeFlowSpeed = road.getRoadClass() == 0 ? 90 * 5.0 / 18 : 60.0 * 5.0 / 18;
 				if (roadId == 37980 || roadId == 28387)
-					freeFlowSpeed = 40 * 5.0 / 18.0;
+					freeFlowSpeed = 50 * 5.0 / 18.0;
 				road.setFreeFlowSpeed(freeFlowSpeed);
 				pieChangi.put(roadId, road);
 			}
@@ -104,7 +111,7 @@ public class SimulatorCore {
 
 			turnRatios = new HashMap<Integer, Double>();
 			mergePriorities = new HashMap<Integer, Double>();
-			interArrivalTimes = new HashMap<Integer, Double>();
+			flowRates = new HashMap<Integer, Double>();
 
 			mergeTurnAndInterArrivals(pieChangi.values());
 
@@ -144,7 +151,7 @@ public class SimulatorCore {
 
 		}
 
-		// The main constraint of CTM is that the length of cell i li>=v*delta_T
+		// The main constraint of CTM is that the length of cell i li>v*delta_T
 		// This loop ensures that no cell is smaller than v*delta_T.
 		for (Road road : pieChangi) {
 			double minLength = road.getFreeFlowSpeed() * SimulationConstants.TIME_STEP;
@@ -172,8 +179,8 @@ public class SimulatorCore {
 
 		}
 
-		// // Do not have long cells break them up. Just to see if this improves
-		// // graphs generated in any way.
+		// Do not have long cells break them up. Just to see if this improves
+		// graphs generated in any way.
 		// for (Road road : pieChangi) {
 		// double minLength = road.getFreeFlowSpeed() *
 		// SimulationConstants.TIME_STEP;
@@ -206,65 +213,38 @@ public class SimulatorCore {
 	 */
 	private static void mergeTurnAndInterArrivals(Collection<Road> pieChangi) {
 		try {
+			Document document = SAX_READER.read("road_state.xml");
 
-			for (Road road : pieChangi) {
-				RoadNode beginNode = road.getBeginNode();
-				RoadNode endNode = road.getEndNode();
-				List<Road> ins = new ArrayList<>();
-				for (Road inRoad : beginNode.getInRoads()) {
-					if (pieChangi.contains(inRoad) && !inRoad.equals(road))
-						ins.add(inRoad);
-				}
+			// Flow at sources
+			Element flow = document.getRootElement().element("Flow");
+			for (Iterator<?> i = flow.elementIterator("source"); i.hasNext();) {
+				Element source = (Element) i.next();
+				flowRates.put(Integer.parseInt(source.attributeValue("id")),
+						Double.parseDouble(source.getStringValue()));
+			}
 
-				List<Road> outs = new ArrayList<>();
-				for (Road outRoad : endNode.getOutRoads()) {
-					if (pieChangi.contains(outRoad))
-						outs.add(outRoad);
-				}
-
-				// Inter-arrival rates represents the number of vehicles that
-				// enter a source link every time step
-				if (ins.size() == 0) {
-					double capacityPerLane = road.getFreeFlowSpeed()
-							/ (road.getFreeFlowSpeed() * SimulationConstants.TIME_GAP + SimulationConstants.LEFF);
-
-					if (road.getRoadClass() == 0)
-						interArrivalTimes.put(road.getRoadId(),
-								capacityPerLane * road.getLaneCount()
-										* SimulationConstants.TIME_STEP * 0.8);
-					else
-						interArrivalTimes.put(road.getRoadId(),
-								capacityPerLane * road.getLaneCount()
-										* SimulationConstants.TIME_STEP * 0.7);
-				}
-
-				if (ins.size() > 1) {
-					for (Road inRoad : ins) {
-
-						if (inRoad.getKind().equalsIgnoreCase("Ramps")
-								|| inRoad.getKind().equalsIgnoreCase("Interchange")) {
-							mergePriorities.put(inRoad.getRoadId(), 0.5);
-						} else {
-							mergePriorities.put(inRoad.getRoadId(), 0.9);
-						}
-
-					}
+			// Merge priorities at on-rmaps
+			Element mergePriority = document.getRootElement().element("MergePriorities");
+			for (Iterator<?> i = mergePriority.elementIterator("merge"); i.hasNext();) {
+				Element merge = (Element) i.next();
+				List<Element> roadElementList = merge.elements("road");
+				for (Element roadElement : roadElementList) {
+					mergePriorities.put(Integer.parseInt(roadElement.attributeValue("id")),
+							Double.parseDouble(roadElement.getStringValue()));
 
 				}
 
-				if (outs.size() > 1) {
-					double x = 0.25;
-					for (Road outRoad : outs) {
-						if (outRoad.getKind().equalsIgnoreCase("Slip Road")
-								|| outRoad.getKind().equalsIgnoreCase("Interchange")) {
-							turnRatios.put(outRoad.getRoadId(), x);
-						} else {
-							turnRatios.put(outRoad.getRoadId(), 1 - x);
-						}
-					}
+			}
 
+			// Turn ratios at off-ramps
+			Element turnRatioElements = document.getRootElement().element("TurnRatios");
+			for (Iterator<?> i = turnRatioElements.elementIterator("turn"); i.hasNext();) {
+				Element turn = (Element) i.next();
+				List<Element> roadElementList = turn.elements("road");
+				for (Element roadElement : roadElementList) {
+					turnRatios.put(Integer.parseInt(roadElement.attributeValue("id")),
+							Double.parseDouble(roadElement.getStringValue()));
 				}
-
 			}
 
 		} catch (Exception e) {

@@ -18,7 +18,6 @@ public class RampMeter {
 	private Cell meterCell;
 	private boolean red;
 	private boolean green;
-	private double qmax;
 
 	/**
 	 * The ramp to be controlled.
@@ -37,7 +36,6 @@ public class RampMeter {
 			nMaxOnRamp += CellTransmissionModel.cellNetwork.getCellMap()
 					.get(ramp.getRoadId() + "_" + i).getnMax();
 		assert (green ^ red);
-		qmax = meterCell.getQmax();
 	}
 
 	/**
@@ -67,7 +65,7 @@ public class RampMeter {
 		for (int i = 0; i < meterCellNum; i++) {
 			Cell rampCell = CellTransmissionModel.cellNetwork.getCellMap().get(
 					ramp.getRoadId() + "_" + i);
-			n += rampCell.getNumOfVehiclesInCell();
+			n += rampCell.getNumOfVehicles();
 			if (n / nMaxOnRamp > queuePercentage) {
 				peakDensity = true;
 				break;
@@ -77,11 +75,6 @@ public class RampMeter {
 	}
 
 	public void regulateFlow() {
-		assert (green ^ red);
-		if (red)
-			meterCell.setQmax(0);
-		else
-			meterCell.setQmax(qmax);
 	}
 
 	/**

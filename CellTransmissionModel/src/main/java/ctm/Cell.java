@@ -28,22 +28,27 @@ public abstract class Cell {
 	// Cell length
 	protected double length;
 	// maximum number of vehicles that can be contained in a cell.
-	protected double nMax;
 	// Number of vehicles present in the cell at time t
-	protected double nt;
-	// max number of vehicles that flow in or out of this cell at given time t.
-	protected double Qmax;
+	protected int nt;
 	// free flow speed
 	protected double freeFlowSpeed;
 	// backward propagation speed.
-	protected double w;
 
 	// The number of vehicles that leave the cell in a time unit
 	protected double outflow;
 
-	private double sendingPotential;
+	protected double sendingPotential;
 
-	private double receivePotential;
+	protected double receivePotential;
+	private double ntBefore;
+	private double weightedSpeedIncoming;
+
+	protected double meanSpeed;
+
+	protected double sdSpeed;
+	protected double densityAntic;
+	protected double density;
+	protected double beta;
 
 	/**
 	 * The abstract cell class.
@@ -56,56 +61,67 @@ public abstract class Cell {
 		this.cellId = cellId;
 		String[] split = cellId.split("_");
 		this.road = SimulatorCore.roadNetwork.getAllRoadsMap().get(Integer.parseInt(split[0]));
-
 		this.numOfLanes = road.getLaneCount();
 		this.length = length;
 		this.freeFlowSpeed = road.getFreeFlowSpeed();
 		predecessors = new ArrayList<Cell>();
 		successors = new ArrayList<Cell>();
 
-		// Cell parameters are set to the default .
-		w = SimulationConstants.LEFF / SimulationConstants.TIME_GAP;
-		double capacityPerLane = freeFlowSpeed
-				/ (freeFlowSpeed * SimulationConstants.TIME_GAP + SimulationConstants.LEFF);
-		double maxDesnsityPerlane = length / SimulationConstants.LEFF;
-		Qmax = capacityPerLane * numOfLanes * SimulationConstants.TIME_STEP;
-		nMax = maxDesnsityPerlane * numOfLanes;
-		this.sendingPotential = Math.min(this.nt, this.Qmax);
-		this.receivePotential = Math.min(Qmax, getAlpha() * (nMax - nt));
-
-		// Random number of vehicles in all cells initially.
-		nt = nMax / (1.2 + SimulatorCore.random.nextDouble());
-	}
-
-	/**
-	 * Introduces some amount of stochasticty in the simulation by means of
-	 * changing time gap and minimum distance headway.
-	 * 
-	 * @param leff
-	 *            the new minimum distance headway.
-	 * @param timeGap
-	 *            the new time-gap.
-	 */
-	public void introduceStochasticty(double leff, double timeGap) {
-		w = leff / timeGap;
-		double capacityPerLane = freeFlowSpeed / (freeFlowSpeed * timeGap + leff);
-		double maxDensityPerlane = length / SimulationConstants.LEFF;
-		Qmax = capacityPerLane * numOfLanes * SimulationConstants.TIME_STEP;
-		nMax = maxDensityPerlane * numOfLanes;
+		if (length > 0) {
+			this.meanSpeed = road.getFreeFlowSpeed();
+			this.sdSpeed = 0;
+			// Initialize sending and receiving potentials for the very first
+			// time.
+			// The simulation will take care from here onwards,
+			determineSendingPotential();
+			determineReceivePotential();
+		}
 
 	}
 
 	/**
-	 * Reset the cell parameters to the original values.
+	 * @return the density
 	 */
-	public void reset() {
-		// Cell parameters are set to the default .
-		w = SimulationConstants.LEFF / SimulationConstants.TIME_GAP;
-		double capacityPerLane = freeFlowSpeed
-				/ (freeFlowSpeed * SimulationConstants.TIME_GAP + SimulationConstants.LEFF);
-		double maxDesnsityPerlane = length / SimulationConstants.LEFF;
-		Qmax = capacityPerLane * numOfLanes * SimulationConstants.TIME_STEP;
-		nMax = maxDesnsityPerlane * numOfLanes;
+	public double getDensity() {
+		return density;
+	}
+
+	/**
+	 * @param density
+	 *            the density to set
+	 */
+	public void setDensity(double density) {
+		this.density = density;
+	}
+
+	/**
+	 * @return the meanSpeed
+	 */
+	public double getMeanSpeed() {
+		return meanSpeed;
+	}
+
+	/**
+	 * @param meanSpeed
+	 *            the meanSpeed to set
+	 */
+	public void setMeanSpeed(double meanSpeed) {
+		this.meanSpeed = meanSpeed;
+	}
+
+	/**
+	 * @return the sdSpeed
+	 */
+	public double getSdSpeed() {
+		return sdSpeed;
+	}
+
+	/**
+	 * @param sdSpeed
+	 *            the sdSpeed to set
+	 */
+	public void setSdSpeed(double sdSpeed) {
+		this.sdSpeed = sdSpeed;
 	}
 
 	/**
@@ -151,38 +167,94 @@ public abstract class Cell {
 	}
 
 	/**
-	 * A dimension-less constant representing the ratio of the backward moving
-	 * wave speed to the free flow speed
-	 * 
-	 * @return
-	 */
-	private double getAlpha() {
-		return nt <= Qmax ? 1.0 : w / freeFlowSpeed;
-	}
-
-	/**
 	 * Update the number of vehicles in each cell after simulation tick. Based
 	 * on the law of conservation vehicles.
 	 */
 	public void updateNumberOfVehiclesInCell() {
 		double inflow = 0;
+		weightedSpeedIncoming = 0.0;
 
-		// merging cells
+		// Update the number of vehicles in the cell.
 		if (predecessors.size() > 1) {
-			for (Cell predecessor : predecessors)
+			for (Cell predecessor : predecessors) {
 				inflow += predecessor.outflow;
+				weightedSpeedIncoming += predecessor.outflow * predecessor.meanSpeed;
+			}
 		} else {
 			Cell predecessor = predecessors.get(0);
-			if (predecessor instanceof DivergingCell)
-				inflow = predecessor.outflow * SimulatorCore.turnRatios.get(road.getRoadId());
-			else
+			if (predecessor instanceof DivergingCell) {
+				double turnRatio = SimulatorCore.turnRatios.get(road.getRoadId());
+				inflow = predecessor.outflow * turnRatio;
+			} else {
 				inflow = predecessor.outflow;
+			}
+			weightedSpeedIncoming = predecessor.outflow * predecessor.meanSpeed;
 		}
 
-		if (predecessors.size() == 1 && predecessors.get(0) instanceof SourceCell) {
-			nt = (nt + inflow - outflow) < 0 ? 0 : nt + inflow - outflow;
-		} else {
-			nt = nt + inflow - outflow;
+		this.ntBefore = nt;
+		nt = (int) Math.round(nt + inflow - outflow);
+
+		if (nt < 0) {
+			nt = 0;
+		}
+
+	}
+
+	/**
+	 * Update the anticipated density for the next time step.
+	 */
+	public void updateAnticipatedDensity() {
+
+		// update the density in the cell.
+		density = nt / (length * numOfLanes);
+
+		// Update anticipated density
+		if (!(this instanceof SourceCell || this instanceof SinkCell)) {
+			densityAntic = SimulationConstants.ALPHA_ANTIC * nt / (length * numOfLanes);
+			for (Cell successor : successors) {
+				double turnRatio = (SimulatorCore.turnRatios.get(successor.getRoad().getRoadId()) == null) ? 1.0
+						: SimulatorCore.turnRatios.get(successor.getRoad().getRoadId());
+				densityAntic += (1 - SimulationConstants.ALPHA_ANTIC) * successor.nt
+						/ (successor.length * successor.numOfLanes) * turnRatio;
+			}
+		}
+
+	}
+
+	/**
+	 * Update the mean speed of the cell.
+	 */
+	public void updateMeanSpeed() {
+
+		if (!(this instanceof SourceCell || this instanceof SinkCell)) {
+
+			double vinTerm = -1;
+			if (nt > 0) {
+				double speedofVehiclesremaining = (ntBefore - outflow) * meanSpeed;
+				vinTerm = (speedofVehiclesremaining + weightedSpeedIncoming) / nt;
+			} else {
+				vinTerm = freeFlowSpeed;
+			}
+
+			double successorDensityAntic = 0.0;
+			for (Cell successor : successors) {
+				double turnRatio = (SimulatorCore.turnRatios.get(successor.getRoad().getRoadId()) == null) ? 1.0
+						: SimulatorCore.turnRatios.get(successor.getRoad().getRoadId());
+				successorDensityAntic = +turnRatio * successor.densityAntic;
+			}
+
+			beta = (Math.abs(densityAntic - successorDensityAntic) >= 1) ? 0.3 : 0.7;
+			meanSpeed = beta
+					* vinTerm
+					+ (1 - beta)
+					* freeFlowSpeed
+					* Math.exp((-1 / SimulationConstants.AM)
+							* Math.pow(nt / getnMax(), SimulationConstants.AM));
+
+			if (nt > Math.round(getnMax()) || meanSpeed < 0)
+				System.err.println("cell ID:" + cellId + " nt:" + nt + " nmax:"
+						+ Math.round(getnMax()) + " mean speed:" + meanSpeed);
+
 		}
 
 	}
@@ -192,9 +264,11 @@ public abstract class Cell {
 	 * 
 	 * @return
 	 */
-	public double getReceivePotential() {
-		this.receivePotential = Math.min(this.Qmax, getAlpha() * (nMax - nt));
-		return receivePotential;
+	public void determineReceivePotential() {
+		this.receivePotential = getnMax() + outflow - nt;
+		if (receivePotential < 0) {
+			receivePotential = outflow;
+		}
 	}
 
 	/**
@@ -202,9 +276,11 @@ public abstract class Cell {
 	 * 
 	 * @return
 	 */
-	public double getSendingPotential() {
-		this.sendingPotential = Math.min(this.nt, this.Qmax);
-		return sendingPotential;
+	public void determineSendingPotential() {
+		double param1 = nt * meanSpeed * SimulationConstants.TIME_STEP / length;
+		double param2 = nt * SimulationConstants.V_OUT_MIN * SimulationConstants.TIME_STEP / length;
+		this.sendingPotential = Math.max(param1, param2);
+		outflow = sendingPotential;
 	}
 
 	@Override
@@ -264,9 +340,19 @@ public abstract class Cell {
 	}
 
 	/**
+	 * Set the number of vehicles in the cell.
+	 * 
+	 * @param nt
+	 */
+	public void setNumberOfvehicles(int nt) {
+		this.nt = nt;
+		this.density = nt / (length * numOfLanes);
+	}
+
+	/**
 	 * @return the nt the number of vehicles currently in the cell.
 	 */
-	public double getNumOfVehiclesInCell() {
+	public double getNumOfVehicles() {
 		return nt;
 	}
 
@@ -275,6 +361,10 @@ public abstract class Cell {
 	 *         in the cell.
 	 */
 	public double getnMax() {
+
+		double maxDesnsityPerlane = length
+				/ (SimulationConstants.TIME_GAP * meanSpeed + SimulationConstants.VEHICLE_LENGTH);
+		double nMax = maxDesnsityPerlane * numOfLanes;
 		return nMax;
 	}
 
@@ -297,21 +387,6 @@ public abstract class Cell {
 	 */
 	public double getFreeFlowSpeed() {
 		return freeFlowSpeed;
-	}
-
-	/**
-	 * @return the qmax the capacity of this cell in number of vehicles/cell.
-	 */
-	public double getQmax() {
-		return Qmax;
-	}
-
-	/**
-	 * @param qmax
-	 *            the qmax to set
-	 */
-	public void setQmax(double qmax) {
-		this.Qmax = qmax;
 	}
 
 	/**

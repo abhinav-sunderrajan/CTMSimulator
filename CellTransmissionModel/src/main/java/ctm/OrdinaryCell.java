@@ -1,5 +1,7 @@
 package ctm;
 
+import simulator.SimulationConstants;
+
 /**
  * An ordinary cell has only one outgoing cell. Can have multiple incoming
  * cells.
@@ -17,11 +19,11 @@ public class OrdinaryCell extends Cell {
 	@Override
 	public void updateOutFlow() {
 		Cell Ek = this.successors.get(0);
-
-		if (!(Ek instanceof SinkCell))
-			this.outflow = Math.min(getSendingPotential(), Ek.getReceivePotential());
-		else
-			this.outflow = Math.min(nt, Qmax);
+		if (Ek instanceof SinkCell) {
+			this.outflow = Math.min(nt, density * meanSpeed * SimulationConstants.TIME_STEP);
+		} else {
+			this.outflow = Math.min(Ek.receivePotential, sendingPotential);
+		}
 
 	}
 }

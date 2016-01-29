@@ -42,6 +42,7 @@ public class CellNetwork {
 		this.ramps = ramps;
 		createCells();
 		generatePredecessorsAndSuccessors();
+
 	}
 
 	/**

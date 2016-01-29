@@ -12,7 +12,7 @@ public class SinkCell extends Cell {
 	public SinkCell(String cellId, double length) {
 		super(cellId, length);
 		assert (successors.size() == 0);
-		nMax = Integer.MAX_VALUE;
+		densityAntic = 0.0;
 	}
 
 	@Override

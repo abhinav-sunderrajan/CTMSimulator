@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The flow in number of vehicles per hour -->
+
+<RoadParameters>
+<Flow>
+	<source id="30633">1600</source>
+	<source id="82">1000</source>
+	<source id="29310">2000</source>
+	<source id="28946">1800</source>
+	<source id="30790">1800</source>
+	<source id="37980">1800</source>
+	<source id="28595">1800</source>
+	<source id="29152">1800</source>
+	<source id="29005">2800</source>
+	<source id="29553">1800</source>
+	<source id="28613">1800</source>
+	<source id="31991">1800</source>
+</Flow>
+
+<MergePriorities>
+		<merge>
+			<road id="28377">0.5</road>
+			<road id="30634">0.5</road>
+		</merge>
+		<merge>
+			<road id="29310">0.25</road>
+			<road id="30636">0.75</road>
+		</merge>
+		<merge>
+			<road id="28947">0.25</road>
+			<road id="30638">0.75</road>
+		</merge>
+		<merge>
+			<road id="30790">0.25</road>
+			<road id="30640">0.75</road>
+		</merge>
+		<merge>
+			<road id="37980">0.25</road>
+			<road id="37981">0.75</road>
+		</merge>
+		<merge>
+			<road id="28595">0.25</road>
+			<road id="38539">0.75</road>
+		</merge>
+		<merge>
+			<road id="31991">0.25</road>
+			<road id="30651">0.75</road>
+		</merge>
+		<merge>
+			<road id="28594">0.25</road>
+			<road id="30644">0.75</road>
+		</merge>
+		<merge>
+			<road id="29005">0.5</road>
+			<road id="30646">0.75</road>
+		</merge>
+		<merge>
+			<road id="28594">0.5</road>
+			<road id="30644">0.75</road>
+		</merge>
+		<merge>
+			<road id="29553">0.5</road>
+			<road id="30648">0.75</road>
+		</merge>
+		<merge>
+			<road id="29131">0.5</road>
+			<road id="30650">0.75</road>
+		</merge>
+
+</MergePriorities>
+
+<TurnRatios>
+	<turn>
+		<road id="28485">0.25</road>
+		<road id="30636">0.75</road>
+	</turn>
+	<turn>
+		<road id="28578">0.25</road>
+		<road id="30638">0.75</road>
+	</turn>
+	<turn>
+		<road id="28516">0.25</road>
+		<road id="30640">0.75</road>
+	</turn>
+	<turn>
+		<road id="37976">0.25</road>
+		<road id="37981">0.75</road>
+	</turn>
+	<turn>
+		<road id="37982">0.25</road>
+		<road id="30643">0.75</road>
+	</turn>
+	<turn>
+		<road id="28500">0.25</road>
+		<road id="30581">0.75</road>
+	</turn>
+	<turn>
+		<road id="28597">0.25</road>
+		<road id="30646">0.75</road>
+	</turn>
+	<turn>
+		<road id="28387">0.25</road>
+		<road id="30648">0.75</road>
+	</turn>
+	<turn>
+		<road id="28611">0.25</road>
+		<road id="30650">0.75</road>
+	</turn>
+
+</TurnRatios>
+
+<TrafficState simid="57" timestep="4200">
+	<zone from="0.0" to="1437">
+		<speed mean="7.65" sd="0.424"/>
+		<density upper="115" lower="112">113</density>
+	</zone>
+	<zone from="1437" to="1834">
+		<speed mean="15.12" sd="0.95"/>
+		<density upper="31" lower="25">28</density>
+	</zone>
+	<zone from="1834" to="7017">
+		<speed mean="9.78" sd="0.35"/>
+		<density upper="85" lower="81">83</density>
+	</zone>
+	<zone from="7017" to="7742">
+		<speed mean="7.15" sd="0.6"/>
+		<density upper="124" lower="120">122</density>
+	</zone>
+	<zone from="7742" to="8077">
+		<speed mean="15.05" sd="1.24"/>
+		<density upper="31" lower="24">28</density>
+	</zone>
+	<zone from="8077" to="8525">
+		<speed mean="9.21" sd="1.53"/>
+		<density upper="94" lower="88">92</density>
+	</zone>
+	<zone from="8525" to="8863">
+		<speed mean="6.85" sd="0.95"/>
+		<density upper="132" lower="126">129</density>
+	</zone>
+	<zone from="8863" to="9465">
+		<speed mean="2.5" sd="0.43"/>
+		<density upper="258" lower="254">256</density>
+	</zone>
+	<zone from="9465" to="10099">
+		<speed mean="5.17" sd="0.34"/>
+		<density upper="165" lower="161">163</density>
+	</zone>
+	<zone from="10099" to="12500">
+		<speed mean="9.057" sd="0.45"/>
+		<density upper="94" lower="90">92</density>
+	</zone>
+</TrafficState>
+
+</RoadParameters>
+
