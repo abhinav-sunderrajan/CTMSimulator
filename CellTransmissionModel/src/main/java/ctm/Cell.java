@@ -35,13 +35,12 @@ public abstract class Cell {
 	// backward propagation speed.
 
 	// The number of vehicles that leave the cell in a time unit
-	protected double outflow;
+	protected int outflow;
 
 	protected double sendingPotential;
 
 	protected double receivePotential;
 	private double ntBefore;
-	private double weightedSpeedIncoming;
 
 	protected double meanSpeed;
 
@@ -49,6 +48,7 @@ public abstract class Cell {
 	protected double densityAntic;
 	protected double density;
 	protected double beta;
+	protected double criticalDensity;
 
 	/**
 	 * The abstract cell class.
@@ -66,7 +66,6 @@ public abstract class Cell {
 		this.freeFlowSpeed = road.getFreeFlowSpeed();
 		predecessors = new ArrayList<Cell>();
 		successors = new ArrayList<Cell>();
-
 		if (length > 0) {
 			this.meanSpeed = road.getFreeFlowSpeed();
 			this.sdSpeed = 0;
@@ -75,6 +74,7 @@ public abstract class Cell {
 			// The simulation will take care from here onwards,
 			determineSendingPotential();
 			determineReceivePotential();
+			criticalDensity = getnMax() / (numOfLanes * length);
 		}
 
 	}
@@ -130,7 +130,7 @@ public abstract class Cell {
 	 * 
 	 * @return the outflow
 	 */
-	public double getOutflow() {
+	public int getOutflow() {
 		return outflow;
 	}
 
@@ -138,7 +138,7 @@ public abstract class Cell {
 	 * @param outflow
 	 *            the outflow to set
 	 */
-	public void setOutflow(double outflow) {
+	public void setOutflow(int outflow) {
 		this.outflow = outflow;
 	}
 
@@ -172,14 +172,11 @@ public abstract class Cell {
 	 */
 	public void updateNumberOfVehiclesInCell() {
 		double inflow = 0;
-		weightedSpeedIncoming = 0.0;
 
 		// Update the number of vehicles in the cell.
 		if (predecessors.size() > 1) {
-			for (Cell predecessor : predecessors) {
+			for (Cell predecessor : predecessors)
 				inflow += predecessor.outflow;
-				weightedSpeedIncoming += predecessor.outflow * predecessor.meanSpeed;
-			}
 		} else {
 			Cell predecessor = predecessors.get(0);
 			if (predecessor instanceof DivergingCell) {
@@ -188,7 +185,6 @@ public abstract class Cell {
 			} else {
 				inflow = predecessor.outflow;
 			}
-			weightedSpeedIncoming = predecessor.outflow * predecessor.meanSpeed;
 		}
 
 		this.ntBefore = nt;
@@ -212,10 +208,14 @@ public abstract class Cell {
 		if (!(this instanceof SourceCell || this instanceof SinkCell)) {
 			densityAntic = SimulationConstants.ALPHA_ANTIC * nt / (length * numOfLanes);
 			for (Cell successor : successors) {
+				if (successor instanceof SinkCell) {
+					densityAntic = 0.0;
+					break;
+				}
 				double turnRatio = (SimulatorCore.turnRatios.get(successor.getRoad().getRoadId()) == null) ? 1.0
 						: SimulatorCore.turnRatios.get(successor.getRoad().getRoadId());
-				densityAntic += (1 - SimulationConstants.ALPHA_ANTIC) * successor.nt
-						/ (successor.length * successor.numOfLanes) * turnRatio;
+				densityAntic += (1 - SimulationConstants.ALPHA_ANTIC)
+						* (successor.nt / (successor.length * successor.numOfLanes)) * turnRatio;
 			}
 		}
 
@@ -230,11 +230,26 @@ public abstract class Cell {
 
 			double vinTerm = -1;
 			if (nt > 0) {
+
+				double speedofIncomingVehicles = 0.0;
+				for (Cell predecessor : predecessors) {
+					if (predecessor instanceof DivergingCell) {
+						speedofIncomingVehicles += predecessor.outflow * predecessor.meanSpeed
+								* SimulatorCore.turnRatios.get(road.getRoadId());
+					} else if (predecessor instanceof SourceCell) {
+						speedofIncomingVehicles += predecessor.outflow * predecessor.freeFlowSpeed;
+					} else {
+						speedofIncomingVehicles += predecessor.outflow * predecessor.meanSpeed;
+					}
+				}
+
 				double speedofVehiclesremaining = (ntBefore - outflow) * meanSpeed;
-				vinTerm = (speedofVehiclesremaining + weightedSpeedIncoming) / nt;
+				vinTerm = (speedofVehiclesremaining + speedofIncomingVehicles) / nt;
 			} else {
 				vinTerm = freeFlowSpeed;
 			}
+
+			vinTerm = Math.max(SimulationConstants.V_OUT_MIN, vinTerm);
 
 			double successorDensityAntic = 0.0;
 			for (Cell successor : successors) {
@@ -243,17 +258,25 @@ public abstract class Cell {
 				successorDensityAntic = +turnRatio * successor.densityAntic;
 			}
 
-			beta = (Math.abs(densityAntic - successorDensityAntic) >= 1) ? 0.3 : 0.7;
-			meanSpeed = beta
+			// if density difference is large then give more weightage to the
+			// anticipated part of the term below.
+			beta = (Math.abs(densityAntic - successorDensityAntic) >= 1) ? 0.2 : 0.8;
+			double densityRatio = densityAntic / criticalDensity;
+			this.meanSpeed = beta
 					* vinTerm
 					+ (1 - beta)
 					* freeFlowSpeed
 					* Math.exp((-1 / SimulationConstants.AM)
-							* Math.pow(nt / getnMax(), SimulationConstants.AM));
+							* Math.pow(densityRatio, SimulationConstants.AM));
 
-			if (nt > Math.round(getnMax()) || meanSpeed < 0)
-				System.err.println("cell ID:" + cellId + " nt:" + nt + " nmax:"
-						+ Math.round(getnMax()) + " mean speed:" + meanSpeed);
+			// The noise added has a mean as determined and the standard
+			// deviation as determined while traffic state is input.
+			this.meanSpeed = freeFlowSpeed
+					* Math.exp((-1 / SimulationConstants.AM)
+							* Math.pow((density / criticalDensity), SimulationConstants.AM))
+					+ SimulatorCore.random.nextGaussian() * 0.5;
+
+			this.meanSpeed = meanSpeed > freeFlowSpeed ? freeFlowSpeed : meanSpeed;
 
 		}
 
@@ -265,6 +288,7 @@ public abstract class Cell {
 	 * @return
 	 */
 	public void determineReceivePotential() {
+
 		this.receivePotential = getnMax() + outflow - nt;
 		if (receivePotential < 0) {
 			receivePotential = outflow;
@@ -272,15 +296,17 @@ public abstract class Cell {
 	}
 
 	/**
-	 * return the sending potential of this cell.
+	 * Computes and sets the sending potential of this cell.
 	 * 
 	 * @return
 	 */
 	public void determineSendingPotential() {
-		double param1 = nt * meanSpeed * SimulationConstants.TIME_STEP / length;
-		double param2 = nt * SimulationConstants.V_OUT_MIN * SimulationConstants.TIME_STEP / length;
+
+		double param1 = (nt * meanSpeed * SimulationConstants.TIME_STEP) / length;
+		double param2 = (nt * SimulationConstants.V_OUT_MIN * SimulationConstants.TIME_STEP)
+				/ length;
 		this.sendingPotential = Math.max(param1, param2);
-		outflow = sendingPotential;
+		outflow = (int) Math.round(sendingPotential);
 	}
 
 	@Override
@@ -360,12 +386,10 @@ public abstract class Cell {
 	 * @return the nMax the maximum number of vehicles that can be accommodated
 	 *         in the cell.
 	 */
-	public double getnMax() {
-
+	public int getnMax() {
 		double maxDesnsityPerlane = length
 				/ (SimulationConstants.TIME_GAP * meanSpeed + SimulationConstants.VEHICLE_LENGTH);
-		double nMax = maxDesnsityPerlane * numOfLanes;
-		return nMax;
+		return (int) Math.round(maxDesnsityPerlane * numOfLanes);
 	}
 
 	/**
@@ -401,6 +425,13 @@ public abstract class Cell {
 	 */
 	public List<Cell> getSuccessors() {
 		return successors;
+	}
+
+	/**
+	 * @return the criticalDensity
+	 */
+	public double getCriticalDensity() {
+		return criticalDensity;
 	}
 
 }

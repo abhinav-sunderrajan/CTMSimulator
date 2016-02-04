@@ -1,7 +1,5 @@
 package utils;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Iterator;
 
 import main.SimulatorCore;
@@ -28,28 +26,14 @@ public class TrafficStateInitialize {
 	 * Initialize traffic state
 	 */
 	static {
-		try {
-			String expresswayRoadList = null;
-			ResultSet rs = SimulatorCore.dba
-					.retrieveQueryResult("SELECT road_id_list from express_way_groupings where road_name LIKE 'P.I.E (Changi)' and town LIKE 'CENTRAL'");
-
-			while (rs.next())
-				expresswayRoadList = rs.getString("road_id_list");
-
-			rs.close();
-
-			String roads = expresswayRoadList.replace("(", "");
-			roads = roads.replace(")", "");
-			String roadArr[] = roads.split(",");
-			pieMainRoads = new Road[roadArr.length];
-			int i = 0;
-			for (String roadStr : roadArr) {
-				Integer roadId = Integer.parseInt(roadStr);
-				pieMainRoads[i] = SimulatorCore.roadNetwork.getAllRoadsMap().get(roadId);
-				i++;
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+		String expresswayRoadList = "30634,30635,30636,30637,30638,30639,30640,30641,37981,30642,30643,38539,30644,30645,30646,30647,30648,30649,30650,30651,30580,30581";
+		String roadArr[] = expresswayRoadList.split(",");
+		pieMainRoads = new Road[roadArr.length];
+		int i = 0;
+		for (String roadStr : roadArr) {
+			Integer roadId = Integer.parseInt(roadStr);
+			pieMainRoads[i] = SimulatorCore.roadNetwork.getAllRoadsMap().get(roadId);
+			i++;
 		}
 
 	}
@@ -94,6 +78,10 @@ public class TrafficStateInitialize {
 									.nextInt((upperDensity - lowerDensity) + 1) + lowerDensity;
 							cell.setNumberOfvehicles((int) Math.round(density * cell.getLength()
 									* 0.001));
+
+							System.out.println(cell.getClass().getSimpleName() + "- id:"
+									+ cell.getCellId() + " nt:" + cell.getNumOfVehicles()
+									+ " mean-speed:" + cell.getMeanSpeed());
 							if (cell.getnMax() < cell.getNumOfVehicles())
 								System.err.println("Cell ID:" + cell.getCellId() + " nmax:"
 										+ cell.getnMax() + " nt:" + cell.getNumOfVehicles());

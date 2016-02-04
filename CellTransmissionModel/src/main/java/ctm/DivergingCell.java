@@ -16,15 +16,12 @@ public class DivergingCell extends Cell {
 
 	@Override
 	public void updateOutFlow() {
-		double min = sendingPotential;
+		this.outflow = 0;
 		for (Cell successor : successors) {
 			double turnRatio = SimulatorCore.turnRatios.get(successor.getRoad().getRoadId());
-			double recvPotential = successor.receivePotential / turnRatio;
-			if (recvPotential < min)
-				min = recvPotential;
+			outflow += (int) Math.round(Math.min(successor.receivePotential, turnRatio
+					* this.sendingPotential));
 		}
-
-		this.outflow = min;
 
 	}
 

@@ -24,12 +24,13 @@ public class SimulationConstants {
 
 	public static final double VEHICLE_LENGTH = 3.0;
 
-	public static final double ALPHA_ANTIC = 0.3;
+	public static final double ALPHA_ANTIC = 0.15;
 
+	// From the meta-net paper.
 	public static final double AM = 2.34;
 
 	// The rate at which vehicles move at the down stream section of a
 	// congested region.
-	public static final double V_OUT_MIN = 2.05;
+	public static final double V_OUT_MIN = 7.0;
 
 }

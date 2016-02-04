@@ -68,7 +68,7 @@ public class SimulatorCore {
 			configProperties.load(new FileInputStream("src/main/resources/config.properties"));
 			dbConnectionProperties = new Properties();
 			dbConnectionProperties.load(new FileInputStream(
-					"src/main/resources/connection.properties"));
+					"src/main/resources/connectionLocal.properties"));
 			roadNetwork = new QIRoadNetworkModel(SimulatorCore.dbConnectionProperties, "qi_roads",
 					"qi_nodes");
 			dba = new DatabaseAccess(dbConnectionProperties);
@@ -223,7 +223,7 @@ public class SimulatorCore {
 						Double.parseDouble(source.getStringValue()));
 			}
 
-			// Merge priorities at on-rmaps
+			// Merge priorities at on-ramps
 			Element mergePriority = document.getRootElement().element("MergePriorities");
 			for (Iterator<?> i = mergePriority.elementIterator("merge"); i.hasNext();) {
 				Element merge = (Element) i.next();

@@ -20,9 +20,15 @@ public class OrdinaryCell extends Cell {
 	public void updateOutFlow() {
 		Cell Ek = this.successors.get(0);
 		if (Ek instanceof SinkCell) {
-			this.outflow = Math.min(nt, density * meanSpeed * SimulationConstants.TIME_STEP);
+			this.outflow = (int) Math.round(Math.min(nt, density * meanSpeed * numOfLanes
+					* SimulationConstants.TIME_STEP));
 		} else {
-			this.outflow = Math.min(Ek.receivePotential, sendingPotential);
+			this.outflow = (int) Math.round(Math.min(Ek.receivePotential, sendingPotential));
+			// if (cellId.equals("30633_0")) {
+			// System.out.println("sending potential:" + this.sendingPotential +
+			// " nt:" + this.nt
+			// + " mean speed:" + this.meanSpeed + " length:" + length);
+			// }
 		}
 
 	}

@@ -65,12 +65,26 @@ public class CellNetwork {
 							ins.add(inRoad);
 					}
 
+					Cell otherMergingCell = null;
+					boolean findOther = false;
 					for (Road inRoad : ins) {
 						String inCellId = inRoad.getRoadId() + "_"
 								+ (inRoad.getSegmentsLength().length - 1);
 						Cell inCell = cellMap.get(inCellId);
 						inCell.addSuccessor(cell);
 						cell.addPredecessor(inCell);
+						if (ins.size() == 2 && (inCell instanceof MergingCell && !findOther)) {
+							otherMergingCell = inCell;
+							findOther = true;
+						}
+
+						if (findOther && inCell instanceof MergingCell) {
+							((MergingCell) otherMergingCell)
+									.setOthermergingCell((MergingCell) inCell);
+							((MergingCell) inCell)
+									.setOthermergingCell((MergingCell) otherMergingCell);
+						}
+
 					}
 
 					cell.addSuccessor(cellMap.get(roadId + "_1"));

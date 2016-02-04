@@ -34,9 +34,8 @@ public class SourceCell extends Cell {
 		// The number of vehicles that enters first link is either the mean or
 		// the space left in the first link.
 		Cell successor = successors.get(0);
-		this.outflow = Math.min(poissonRandomNumber(meanNoVehiclesEveryTimeStep),
-				successor.receivePotential);
-
+		this.outflow = (int) Math.round(Math.min(poissonRandomNumber(meanNoVehiclesEveryTimeStep),
+				successor.receivePotential));
 	}
 
 	@Override

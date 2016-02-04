@@ -41,7 +41,8 @@ public class CTMSimViewer extends RoadNetworkVisualizer {
 		if (value > MAX_VALUE) {
 			return Color.getHSBColor(0.4f, S, B);
 		} else {
-			return Color.getHSBColor((float) (0.4 * value / MAX_VALUE), S, B);
+			double val = 0.4 * (value / MAX_VALUE);
+			return Color.getHSBColor((float) (val), S, B);
 		}
 
 	}

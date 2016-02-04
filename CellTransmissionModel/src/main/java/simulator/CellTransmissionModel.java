@@ -1,6 +1,10 @@
 package simulator;
 
 import java.awt.Color;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,10 +48,8 @@ public class CellTransmissionModel implements Runnable {
 	private Map<Cell, Color> cellColorMap;
 	private Collection<Road> pieChangiOrdered;
 	private boolean haveVisualization;
-	private boolean simulateAccident;
-	private boolean applyRampMetering;
 	private List<RampMeter> meteredRamps;
-	private List<Cell> modifiedCells = new ArrayList<>();
+	private BufferedWriter bw;
 
 	// Static variables
 	private static CellTransmissionModel simulator;
@@ -56,31 +58,49 @@ public class CellTransmissionModel implements Runnable {
 	/**
 	 * Initialize the Cell transmission model by creating the cell network from
 	 * the roads.
+	 * 
+	 * @throws IOException
 	 */
 	private void intializeCTM(Collection<Road> roadCollection, boolean haveAccident,
-			boolean applyMetering, boolean haveViz) {
+			boolean applyMetering, boolean haveViz) throws IOException {
 
 		this.ramps = new ArrayList<>();
 		cellColorMap = new ConcurrentHashMap<Cell, Color>();
 		this.meteredRamps = new ArrayList<RampMeter>();
 		this.haveVisualization = haveViz;
-		this.simulateAccident = haveAccident;
-		this.applyRampMetering = applyMetering;
 		this.pieChangiOrdered = roadCollection;
 		SimulatorCore.df.setRoundingMode(RoundingMode.CEILING);
+		bw = new BufferedWriter(new FileWriter(new File("simoutput.csv")));
+		bw.write("time,cell-id,speed,density,flow\n");
 
 		LOGGER.info("Create a cell based network for the roads.");
 		cellNetwork = new CellNetwork(pieChangiOrdered, ramps);
 
-		// LOGGER.info("Initializing traffic state for the cells created..");
+		LOGGER.info("Initializing traffic state for the cells created..");
 		// TrafficStateInitialize.parseXML();
-		// LOGGER.info("Traffic state for the cells initialized..");
+		for (Cell cell : cellNetwork.getCellMap().values()) {
+			if (!(cell instanceof SinkCell || cell instanceof SourceCell)) {
+				int nt = (int) (cell.getCriticalDensity() * cell.getLength() * cell.getNumOfLanes() * 1.25);
+				cell.setNumberOfvehicles(nt);
 
-		for (Road ramp : ramps) {
-			RampMeter rampMeter = new RampMeter(ramp);
-			rampMeter.setQueuePercentage(0.7);
-			meteredRamps.add(rampMeter);
+				double density = nt / (cell.getLength() * cell.getNumOfLanes());
+				double meanSpeed = cell.getFreeFlowSpeed()
+						* Math.exp((-1 / SimulationConstants.AM)
+								* Math.pow((density / cell.getCriticalDensity()),
+										SimulationConstants.AM));
+				cell.setMeanSpeed(meanSpeed);
+				System.out.println(cell.getCellId() + "--> mean:" + meanSpeed + " freeflow:"
+						+ cell.getFreeFlowSpeed() + " nt:" + nt + " nmax:" + cell.getnMax());
+			}
 		}
+
+		LOGGER.info("Traffic state for the cells initialized..");
+
+		// for (Road ramp : ramps) {
+		// RampMeter rampMeter = new RampMeter(ramp);
+		// rampMeter.setQueuePercentage(0.7);
+		// meteredRamps.add(rampMeter);
+		// }
 
 		if (haveVisualization) {
 			viewer = CTMSimViewer.getCTMViewerInstance("CTM Model", SimulatorCore.roadNetwork,
@@ -114,7 +134,11 @@ public class CellTransmissionModel implements Runnable {
 	private CellTransmissionModel(Collection<Road> roadCollection, boolean haveAccident,
 			boolean applyMetering, boolean haveViz) {
 
-		intializeCTM(roadCollection, haveAccident, applyMetering, haveViz);
+		try {
+			intializeCTM(roadCollection, haveAccident, applyMetering, haveViz);
+		} catch (IOException e) {
+			LOGGER.error("error creating simulation-output file");
+		}
 
 		// Color coding the visualization
 		if (haveVisualization) {
@@ -165,11 +189,14 @@ public class CellTransmissionModel implements Runnable {
 
 				}
 
-				// Update the receiving potential, out flow and the speed of
-				// cells.
+				// Update the receiving potential,
 				for (Cell cell : cellNetwork.getCellMap().values()) {
 					if (!(cell instanceof SourceCell || cell instanceof SinkCell))
 						cell.determineReceivePotential();
+				}
+
+				// Update out flow and the speed of cells.
+				for (Cell cell : cellNetwork.getCellMap().values()) {
 					cell.updateOutFlow();
 					// Update mean speed flow/density.
 					if (!(cell instanceof SourceCell || cell instanceof SinkCell)) {
@@ -197,10 +224,6 @@ public class CellTransmissionModel implements Runnable {
 				for (Cell cell : cellNetwork.getCellMap().values())
 					cell.updateMeanSpeed();
 
-				if (simulationTime % SimulationConstants.TIME_STEP == 0) {
-					System.out.println("Finished iteration at " + simulationTime);
-				}
-
 				// This loop performs two functions.
 				// 1) Computes cell statistics such as density and average speed
 				// used to compute travel time and waiting times.
@@ -210,13 +233,18 @@ public class CellTransmissionModel implements Runnable {
 						if (!(cell instanceof SinkCell || cell instanceof SourceCell)) {
 							cellColorMap.put(
 									cell,
-									CTMSimViewer.numberToColor(cell.getNumOfVehicles()
-											/ cell.getnMax()));
+									CTMSimViewer.numberToColor(cell.getMeanSpeed()
+											/ cell.getFreeFlowSpeed()));
+							bw.write(simulationTime + "," + cell.getCellId() + ","
+									+ cell.getMeanSpeed() + "," + (cell.getDensity() * 1000.0)
+									+ "," + (cell.getDensity() * cell.getMeanSpeed() * 3600) + "\n");
 						}
 					}
 
 					viewer.getMapFrame().repaint();
-					Thread.sleep(50);
+					Thread.sleep(10);
+					if (simulationTime % 100 == 0)
+						System.out.println("time:" + simulationTime);
 				}
 			}
 
@@ -225,12 +253,16 @@ public class CellTransmissionModel implements Runnable {
 
 			LOGGER.info("Finished " + ((endTime - startTime) / 60.0) + " minute simulation in :"
 					+ (System.currentTimeMillis() - time) + " ms");
+
+			bw.flush();
 			Thread.sleep(100);
-			// if (haveVisualization)
-			// viewer.getMapFrame().dispose();
+			if (haveVisualization)
+				viewer.getMapFrame().dispose();
 
 		} catch (InterruptedException e) {
 			LOGGER.error("Error waiting  for simulation time to advance.", e);
+		} catch (IOException e) {
+			LOGGER.error("Error writing to file");
 		}
 
 	}
