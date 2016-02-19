@@ -3,35 +3,35 @@
 
 <RoadParameters>
 <Flow>
-	<source id="30633">3600</source>
-	<source id="82">2000</source>
-	<source id="29310">1800</source>
-	<source id="28946">1800</source>
-	<source id="30790">1800</source>
-	<source id="37980">1800</source>
-	<source id="28595">1800</source>
-	<source id="29152">1800</source>
-	<source id="29005">1800</source>
-	<source id="29553">1800</source>
-	<source id="28613">1800</source>
-	<source id="31991">1800</source>
+	<source id="30633">3900</source>
+	<source id="82">2500</source>
+	<source id="29310">1000</source>
+	<source id="28946">1000</source>
+	<source id="30790">1000</source>
+	<source id="37980">1000</source>
+	<source id="28595">1300</source>
+	<source id="29152">1200</source>
+	<source id="29005">1000</source>
+	<source id="29553">2400</source>
+	<source id="28613">2400</source>
+	<source id="31991">1000</source>
 </Flow>
 
 <MergePriorities>
 		<merge>
 			<road id="28377">0.75</road>
-			<road id="30634">0.85</road>
+			<road id="30634">0.95</road>
 		</merge>
 		<merge>
 			<road id="29310">0.55</road>
-			<road id="30636">0.85</road>
+			<road id="30636">0.95</road>
 		</merge>
 		<merge>
-			<road id="28947">0.55</road>
+			<road id="28947">0.75</road>
 			<road id="30638">0.85</road>
 		</merge>
 		<merge>
-			<road id="30790">0.55</road>
+			<road id="30790">0.75</road>
 			<road id="30640">0.85</road>
 		</merge>
 		<merge>
@@ -39,7 +39,7 @@
 			<road id="37981">0.85</road>
 		</merge>
 		<merge>
-			<road id="28595">0.55</road>
+			<road id="28595">0.75</road>
 			<road id="38539">0.85</road>
 		</merge>
 		<merge>
@@ -47,19 +47,19 @@
 			<road id="30651">0.85</road>
 		</merge>
 		<merge>
-			<road id="28594">0.55</road>
+			<road id="28594">0.75</road>
 			<road id="30644">0.85</road>
 		</merge>
 		<merge>
-			<road id="29005">0.58</road>
-			<road id="30646">0.75</road>
+			<road id="29005">0.68</road>
+			<road id="30646">0.95</road>
 		</merge>
 		<merge>
-			<road id="28594">0.75</road>
+			<road id="28594">0.55</road>
 			<road id="30644">0.75</road>
 		</merge>
 		<merge>
-			<road id="29553">0.5</road>
+			<road id="29553">0.55</road>
 			<road id="30648">0.75</road>
 		</merge>
 		<merge>

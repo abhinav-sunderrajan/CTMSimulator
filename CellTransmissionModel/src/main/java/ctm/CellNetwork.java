@@ -202,10 +202,11 @@ public class CellNetwork {
 			}
 		}
 
-		System.out.println("Number of source cells:" + sourceCellCount);
-		System.out.println("Number of sink cells:" + sinkCellCount);
-		System.out.println("Number of merging cells:" + mergingCellCount);
-		System.out.println("Number of diverging cells:" + divergingCellCount);
+		// System.out.println("Number of source cells:" + sourceCellCount);
+		// System.out.println("Number of sink cells:" + sinkCellCount);
+		// System.out.println("Number of merging cells:" + mergingCellCount);
+		// System.out.println("Number of diverging cells:" +
+		// divergingCellCount);
 
 	}
 

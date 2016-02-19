@@ -25,7 +25,6 @@ import rnwmodel.QIRoadNetworkModel;
 import rnwmodel.Road;
 import rnwmodel.RoadNetworkModel;
 import rnwmodel.RoadNode;
-import simulator.CellTransmissionModel;
 import simulator.SimulationConstants;
 import utils.DatabaseAccess;
 
@@ -39,9 +38,8 @@ public class SimulatorCore {
 	public static Map<Integer, Double> mergePriorities;
 	public static Map<Integer, Double> flowRates;
 	public static Random random;
-	public static CellTransmissionModel cellTransmissionModel;
 
-	private static final int PIE_ROADS[] = { 30633, 30634, 82, 28377, 30635, 28485, 30636, 29310,
+	public static final int PIE_ROADS[] = { 30633, 30634, 82, 28377, 30635, 28485, 30636, 29310,
 			30637, 28578, 30638, 28946, 28947, 30639, 28516, 30640, 30790, 30641, 37976, 37981,
 			37980, 30642, 37982, 30643, 38539, 28595, 30644, 29152, 28594, 30645, 28597, 30646,
 			29005, 30647, 28387, 30648, 29553, 30649, 28611, 30650, 28613, 29131, 30651, 31991,
@@ -50,15 +48,9 @@ public class SimulatorCore {
 	public static final DecimalFormat df = new DecimalFormat("#.###");
 	public static final SAXReader SAX_READER = new SAXReader();
 	public static DatabaseAccess dba;
+	private static Map<Integer, Road> pieChangi;
 
-	// TODO In repair roads When I break very large cells the simulation seems
-	// to break down for some inexplicable reason. Find out why. Breaking up
-	// large cells should improve graphs but I'm unable to do now.
-
-	// TODO Have to design a reward system at the end of every time-step for
-	// TD/Q-based Reinforcement learning. Put some thought into the reward
-	// functions.
-	public static void main(String args[]) {
+	static {
 
 		try {
 			// Initialization.
@@ -73,7 +65,7 @@ public class SimulatorCore {
 					"qi_nodes");
 			dba = new DatabaseAccess(dbConnectionProperties);
 
-			Map<Integer, Road> pieChangi = new HashMap<Integer, Road>();
+			pieChangi = new HashMap<Integer, Road>();
 			for (int roadId : PIE_ROADS) {
 				Road road = roadNetwork.getAllRoadsMap().get(roadId);
 				double freeFlowSpeed = road.getRoadClass() == 0 ? 90 * 5.0 / 18 : 60.0 * 5.0 / 18;
@@ -114,18 +106,19 @@ public class SimulatorCore {
 			flowRates = new HashMap<Integer, Double>();
 
 			mergeTurnAndInterArrivals(pieChangi.values());
-
-			cellTransmissionModel = CellTransmissionModel.getSimulatorInstance(pieChangi.values(),
-					false, false, true);
-			Thread th = new Thread(cellTransmissionModel);
-			th.start();
-
 		} catch (FileNotFoundException e) {
 			LOGGER.error("Unable to find the properties file", e);
 		} catch (IOException e) {
 			LOGGER.error("Error reading config file", e);
 		}
 
+	}
+
+	/**
+	 * @return the pieChangi
+	 */
+	public static Map<Integer, Road> getPieChangi() {
+		return pieChangi;
 	}
 
 	/**
@@ -181,29 +174,45 @@ public class SimulatorCore {
 
 		// Do not have long cells break them up. Just to see if this improves
 		// graphs generated in any way.
-		// for (Road road : pieChangi) {
-		// double minLength = road.getFreeFlowSpeed() *
-		// SimulationConstants.TIME_STEP;
-		// while (true) {
-		// boolean noLargeSegments = true;
-		// int numOfSegments = road.getSegmentsLength().length;
-		// for (int i = 0; i < numOfSegments; i++) {
-		// if (road.getSegmentsLength()[i] > (minLength * 2.5)) {
-		// double x = (road.getRoadNodes().get(i).getX() + road.getRoadNodes()
-		// .get(i + 1).getX()) / 2.0;
-		// double y = (road.getRoadNodes().get(i).getY() + road.getRoadNodes()
-		// .get(i + 1).getY()) / 2.0;
-		// road.getRoadNodes().add(i + 1, new RoadNode(nodeId--, x, y));
-		// noLargeSegments = false;
-		// break;
-		// }
-		// }
-		// if (noLargeSegments)
-		// break;
-		// }
-		// }
+		for (Road road : pieChangi) {
+			double minLength = road.getFreeFlowSpeed() * SimulationConstants.TIME_STEP;
+			while (true) {
+				boolean noLargeSegments = true;
+				int numOfSegments = road.getSegmentsLength().length;
+				for (int i = 0; i < numOfSegments; i++) {
+					if (road.getSegmentsLength()[i] > (minLength * 2.5)) {
+						double x = (road.getRoadNodes().get(i).getX() + road.getRoadNodes()
+								.get(i + 1).getX()) / 2.0;
+						double y = (road.getRoadNodes().get(i).getY() + road.getRoadNodes()
+								.get(i + 1).getY()) / 2.0;
+						road.getRoadNodes().add(i + 1, new RoadNode(nodeId--, x, y));
+						noLargeSegments = false;
+						break;
+					}
+				}
+				if (noLargeSegments)
+					break;
+			}
+		}
 
 	}
+
+	// public static void main(String args[]) {
+	// CellTransmissionModel ctm = new CellTransmissionModel(pieChangi.values(),
+	// false, true,
+	// false, 900);
+	//
+	// for (RampMeter meter : ctm.getMeteredRamps().values()) {
+	// double queuePercentage = 0.21 + random.nextDouble() * 0.75;
+	// queuePercentage = Math.round(queuePercentage * 100.0) / 100.0;
+	// System.out.println("queue percentage:" + queuePercentage);
+	// meter.setQueuePercentage(queuePercentage);
+	// }
+	//
+	// Thread th = new Thread(ctm);
+	// th.start();
+	//
+	// }
 
 	/**
 	 * Set the merge priorities, turn ratios and inter-arrival times for the

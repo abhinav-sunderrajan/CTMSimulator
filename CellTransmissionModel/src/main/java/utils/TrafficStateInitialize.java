@@ -9,8 +9,8 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 
 import rnwmodel.Road;
-import simulator.CellTransmissionModel;
 import ctm.Cell;
+import ctm.CellNetwork;
 
 /**
  * Initializes traffic state from an XML file.
@@ -26,19 +26,19 @@ public class TrafficStateInitialize {
 	 * Initialize traffic state
 	 */
 	static {
-		String expresswayRoadList = "30634,30635,30636,30637,30638,30639,30640,30641,37981,30642,30643,38539,30644,30645,30646,30647,30648,30649,30650,30651,30580,30581";
-		String roadArr[] = expresswayRoadList.split(",");
-		pieMainRoads = new Road[roadArr.length];
+		int[] expresswayRoadList = { 30634, 30635, 30636, 30637, 30638, 30639, 30640, 30641, 37981,
+				30642, 30643, 38539, 30644, 30645, 30646, 30647, 30648, 30649, 30650, 30651, 30580,
+				30581 };
+		pieMainRoads = new Road[expresswayRoadList.length];
 		int i = 0;
-		for (String roadStr : roadArr) {
-			Integer roadId = Integer.parseInt(roadStr);
+		for (int roadId : expresswayRoadList) {
 			pieMainRoads[i] = SimulatorCore.roadNetwork.getAllRoadsMap().get(roadId);
 			i++;
 		}
 
 	}
 
-	public static void parseXML() {
+	public static void parseXML(CellNetwork cellNetwork) {
 		try {
 			Document document = SimulatorCore.SAX_READER.read("road_state.xml");
 			Element trafficState = document.getRootElement().element("TrafficState");
@@ -70,7 +70,7 @@ public class TrafficStateInitialize {
 							breakpremature = true;
 							break;
 						} else {
-							Cell cell = CellTransmissionModel.cellNetwork.getCellMap().get(
+							Cell cell = cellNetwork.getCellMap().get(
 									pieMainRoads[roadIndex] + "_" + s);
 							cell.setMeanSpeed(meanSpeed);
 							cell.setSdSpeed(sdSpeed);
@@ -78,22 +78,16 @@ public class TrafficStateInitialize {
 									.nextInt((upperDensity - lowerDensity) + 1) + lowerDensity;
 							cell.setNumberOfvehicles((int) Math.round(density * cell.getLength()
 									* 0.001));
-
-							System.out.println(cell.getClass().getSimpleName() + "- id:"
-									+ cell.getCellId() + " nt:" + cell.getNumOfVehicles()
-									+ " mean-speed:" + cell.getMeanSpeed());
-							if (cell.getnMax() < cell.getNumOfVehicles())
-								System.err.println("Cell ID:" + cell.getCellId() + " nmax:"
-										+ cell.getnMax() + " nt:" + cell.getNumOfVehicles());
+							cell.setInitilalized(true);
 						}
 						distance += segmentLengths[s];
 					}
 					if (breakpremature) {
 						break;
 					} else {
+						segmentIndex = 0;
+						roadIndex++;
 						if (distance < to) {
-							segmentIndex = 0;
-							roadIndex++;
 							continue;
 						} else {
 							break;
@@ -103,8 +97,6 @@ public class TrafficStateInitialize {
 
 			}
 
-			System.out
-					.println("Finished trafffic state intialization for all roads on P.I.E changi central");
 		} catch (DocumentException e) {
 			e.printStackTrace();
 		}

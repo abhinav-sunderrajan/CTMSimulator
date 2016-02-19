@@ -50,6 +50,8 @@ public abstract class Cell {
 	protected double beta;
 	protected double criticalDensity;
 
+	protected boolean initilalized;
+
 	/**
 	 * The abstract cell class.
 	 * 
@@ -277,6 +279,7 @@ public abstract class Cell {
 					+ SimulatorCore.random.nextGaussian() * 0.5;
 
 			this.meanSpeed = meanSpeed > freeFlowSpeed ? freeFlowSpeed : meanSpeed;
+			this.meanSpeed = meanSpeed < 0 ? 0 : meanSpeed;
 
 		}
 
@@ -290,6 +293,7 @@ public abstract class Cell {
 	public void determineReceivePotential() {
 
 		this.receivePotential = getnMax() + outflow - nt;
+
 		if (receivePotential < 0) {
 			receivePotential = outflow;
 		}
@@ -306,7 +310,6 @@ public abstract class Cell {
 		double param2 = (nt * SimulationConstants.V_OUT_MIN * SimulationConstants.TIME_STEP)
 				/ length;
 		this.sendingPotential = Math.max(param1, param2);
-		outflow = (int) Math.round(sendingPotential);
 	}
 
 	@Override
@@ -432,6 +435,21 @@ public abstract class Cell {
 	 */
 	public double getCriticalDensity() {
 		return criticalDensity;
+	}
+
+	/**
+	 * @return the initilalized
+	 */
+	public boolean isInitilalized() {
+		return initilalized;
+	}
+
+	/**
+	 * @param initilalized
+	 *            the initilalized to set
+	 */
+	public void setInitilalized(boolean initilalized) {
+		this.initilalized = initilalized;
 	}
 
 }

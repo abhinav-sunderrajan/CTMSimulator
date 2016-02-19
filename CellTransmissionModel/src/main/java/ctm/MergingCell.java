@@ -1,7 +1,5 @@
 package ctm;
 
-import java.util.Arrays;
-
 import main.SimulatorCore;
 
 /**
@@ -44,10 +42,15 @@ public class MergingCell extends Cell {
 	@Override
 	public void updateOutFlow() {
 		Cell Ek = this.successors.get(0);
-		double arr[] = { mergePriority * Ek.receivePotential, sendingPotential,
-				Ek.receivePotential - othermergingCell.sendingPotential };
-		Arrays.sort(arr);
-		this.outflow = (int) Math.round(arr[0]);
+
+		if (Ek.receivePotential > (this.sendingPotential + othermergingCell.sendingPotential)) {
+			double temp = (mergePriority * Ek.receivePotential)
+					/ (mergePriority + othermergingCell.mergePriority);
+			this.outflow = (int) Math.round(Math.min(temp, sendingPotential));
+		} else {
+			this.outflow = (int) Math.round(Math.min(mergePriority * Ek.receivePotential,
+					sendingPotential));
+		}
 
 	}
 }
