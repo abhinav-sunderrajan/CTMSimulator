@@ -65,11 +65,11 @@ public abstract class Cell {
 		this.road = SimulatorCore.roadNetwork.getAllRoadsMap().get(Integer.parseInt(split[0]));
 		this.numOfLanes = road.getLaneCount();
 		this.length = length;
-		this.freeFlowSpeed = road.getFreeFlowSpeed();
+		this.freeFlowSpeed = road.getSpeedLimit()[1] * (5.0 / 18);
 		predecessors = new ArrayList<Cell>();
 		successors = new ArrayList<Cell>();
 		if (length > 0) {
-			this.meanSpeed = road.getFreeFlowSpeed();
+			this.meanSpeed = freeFlowSpeed;
 			this.sdSpeed = 0;
 			// Initialize sending and receiving potentials for the very first
 			// time.

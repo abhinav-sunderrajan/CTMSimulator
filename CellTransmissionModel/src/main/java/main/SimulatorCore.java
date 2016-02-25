@@ -15,6 +15,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
@@ -25,8 +28,10 @@ import rnwmodel.QIRoadNetworkModel;
 import rnwmodel.Road;
 import rnwmodel.RoadNetworkModel;
 import rnwmodel.RoadNode;
+import simulator.CellTransmissionModel;
 import simulator.SimulationConstants;
 import utils.DatabaseAccess;
+import utils.ThreadPoolExecutorService;
 
 public class SimulatorCore {
 
@@ -68,10 +73,6 @@ public class SimulatorCore {
 			pieChangi = new HashMap<Integer, Road>();
 			for (int roadId : PIE_ROADS) {
 				Road road = roadNetwork.getAllRoadsMap().get(roadId);
-				double freeFlowSpeed = road.getRoadClass() == 0 ? 90 * 5.0 / 18 : 60.0 * 5.0 / 18;
-				if (roadId == 37980 || roadId == 28387)
-					freeFlowSpeed = 50 * 5.0 / 18.0;
-				road.setFreeFlowSpeed(freeFlowSpeed);
 				pieChangi.put(roadId, road);
 			}
 
@@ -92,11 +93,13 @@ public class SimulatorCore {
 
 			// Test repair
 			for (Road road : pieChangi.values()) {
-				double minLength = road.getFreeFlowSpeed() * SimulationConstants.TIME_STEP;
+				double minLength = (road.getSpeedLimit()[1] * (5 / 18.0))
+						* SimulationConstants.TIME_STEP;
 				for (int i = 0; i < road.getSegmentsLength().length; i++) {
 					if (road.getSegmentsLength()[i] < minLength) {
 						throw new IllegalStateException(
-								"cell length cannot be less than mimimum value");
+								"cell length cannot be less than mimimum value for road:"
+										+ road.getRoadId());
 					}
 				}
 			}
@@ -147,7 +150,8 @@ public class SimulatorCore {
 		// The main constraint of CTM is that the length of cell i li>v*delta_T
 		// This loop ensures that no cell is smaller than v*delta_T.
 		for (Road road : pieChangi) {
-			double minLength = road.getFreeFlowSpeed() * SimulationConstants.TIME_STEP;
+			double minLength = (road.getSpeedLimit()[1] * (5 / 18.0))
+					* SimulationConstants.TIME_STEP;
 			if (road.getSegmentsLength().length > 2) {
 				while (true) {
 					boolean noSmallSegments = true;
@@ -175,7 +179,8 @@ public class SimulatorCore {
 		// Do not have long cells break them up. Just to see if this improves
 		// graphs generated in any way.
 		for (Road road : pieChangi) {
-			double minLength = road.getFreeFlowSpeed() * SimulationConstants.TIME_STEP;
+			double minLength = (road.getSpeedLimit()[1] * (5 / 18.0))
+					* SimulationConstants.TIME_STEP;
 			while (true) {
 				boolean noLargeSegments = true;
 				int numOfSegments = road.getSegmentsLength().length;
@@ -197,22 +202,17 @@ public class SimulatorCore {
 
 	}
 
-	// public static void main(String args[]) {
-	// CellTransmissionModel ctm = new CellTransmissionModel(pieChangi.values(),
-	// false, true,
-	// false, 900);
-	//
-	// for (RampMeter meter : ctm.getMeteredRamps().values()) {
-	// double queuePercentage = 0.21 + random.nextDouble() * 0.75;
-	// queuePercentage = Math.round(queuePercentage * 100.0) / 100.0;
-	// System.out.println("queue percentage:" + queuePercentage);
-	// meter.setQueuePercentage(queuePercentage);
-	// }
-	//
-	// Thread th = new Thread(ctm);
-	// th.start();
-	//
-	// }
+	public static void main(String args[]) throws InterruptedException, ExecutionException {
+		CellTransmissionModel ctm = new CellTransmissionModel(pieChangi.values(), false, false,
+				false, false, 1000);
+
+		ThreadPoolExecutor executor = ThreadPoolExecutorService.getExecutorInstance().getExecutor();
+		Future<Integer> future = executor.submit(ctm);
+		future.get();
+		System.out.println("Finished simulation..");
+		executor.shutdown();
+
+	}
 
 	/**
 	 * Set the merge priorities, turn ratios and inter-arrival times for the

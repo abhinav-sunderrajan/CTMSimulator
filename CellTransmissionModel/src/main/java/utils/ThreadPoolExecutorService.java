@@ -1,11 +1,10 @@
 package utils;
 
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * For a thread pool executor with a core pool size of as many threads as the
@@ -16,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ThreadPoolExecutorService {
 
-	private ThreadPoolExecutor executor;
+	private ScheduledThreadPoolExecutor executor;
 	private static ThreadPoolExecutorService executorUtils;
 
 	private ThreadPoolExecutorService() {
@@ -28,8 +27,7 @@ public class ThreadPoolExecutorService {
 				System.out.println("Task Rejected : " + (r));
 			}
 		};
-		executor = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors(), 50, 100000,
-				TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(22000), threadFactory, handler);
+		executor = new ScheduledThreadPoolExecutor(Runtime.getRuntime().availableProcessors());
 
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 

@@ -1,9 +1,13 @@
 package simulator;
 
 import java.awt.Color;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +54,7 @@ public class CellTransmissionModel implements Callable<Integer> {
 	private boolean applyRampMetering;
 	private static final Logger LOGGER = Logger.getLogger(CellTransmissionModel.class);
 	private boolean determineRampFlows;
+	private static final boolean PRINT_FINAL_STATE = true;
 
 	/**
 	 * Initialize the Cell transmission model by creating the cell network from
@@ -252,6 +257,61 @@ public class CellTransmissionModel implements Callable<Integer> {
 						+ meter.getQueuePercentage() + " total red-time:" + meter.getTotalRedTime()
 						+ " total green-time:" + meter.getTotalGreenTime());
 			}
+		}
+
+		// State at the end of simulation
+		if (PRINT_FINAL_STATE) {
+			try {
+
+				int mainRoads[] = { 30634, 30635, 30636, 30637, 30638, 30639, 30640, 30641, 37981,
+						30642, 30643, 38539, 30644, 30645, 30646, 30647, 30648, 30649, 30650,
+						30651, 30580, 30581 };
+
+				double distance = 0.0;
+				Road prev = null;
+				HashMap<Integer, Double> distanceMap = new LinkedHashMap<>();
+				for (Integer roadId : mainRoads) {
+					Road road = SimulatorCore.getPieChangi().get(roadId);
+					if (prev != null)
+						distance += prev.getWeight();
+					distanceMap.put(roadId, Math.round(distance * 100.0) / 100.0);
+					prev = road;
+				}
+
+				List<Integer> pieList = new ArrayList<>();
+				for (int roadId : mainRoads)
+					pieList.add(roadId);
+
+				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("ctmop.txt")));
+				bw.write("cell_id\tspeed\tnum_of_vehicles\tdistance\n");
+				for (Cell cell : cellNetwork.getCellMap().values()) {
+					if (cell.getCellId().contains("source") || cell.getCellId().contains("sink"))
+						continue;
+					if (pieList.contains(cell.getRoad().getRoadId())) {
+						double speed = Math.round(cell.getMeanSpeed() * 100.0) / 100.0;
+						String split[] = cell.getCellId().split("_");
+						Integer roadId = Integer.parseInt(split[0]);
+						Road road = SimulatorCore.getPieChangi().get(roadId);
+						Integer segment = Integer.parseInt(split[1]);
+						if (distanceMap.containsKey(roadId)) {
+							double distanceAlongRoad = distanceMap.get(roadId);
+							for (int i = 0; i < segment; i++) {
+								distanceAlongRoad += road.getSegmentsLength()[i];
+							}
+							distanceAlongRoad = Math.round((distanceAlongRoad * 100.0) / 100.0);
+							bw.write(cell.getCellId() + "\t" + speed + "\t"
+									+ cell.getNumOfVehicles() + "\t" + distanceAlongRoad + "\n");
+						}
+					}
+
+					bw.flush();
+				}
+
+				bw.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
 		}
 
 		return tts;
