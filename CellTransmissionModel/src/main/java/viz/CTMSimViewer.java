@@ -33,19 +33,19 @@ public class CTMSimViewer extends RoadNetworkVisualizer {
 
 	private static CTMSimViewer viewerInstance;
 
-	private static final float S = 0.9f; // Saturation
-	private static final float B = 0.9f; // Brightness
-	private static final float MAX_VALUE = 1.0f;
-
-	public static Color numberToColor(final double value) {
-		if (value > MAX_VALUE) {
-			return Color.getHSBColor(0.4f, S, B);
-		} else {
-			double val = 0.4 * (value / MAX_VALUE);
-			return Color.getHSBColor((float) (val), S, B);
-		}
-
-	}
+	// private static final float S = 0.9f; // Saturation
+	// private static final float B = 0.9f; // Brightness
+	// private static final float MAX_VALUE = 1.0f;
+	//
+	// public static Color numberToColor(final double value) {
+	// if (value > MAX_VALUE) {
+	// return Color.getHSBColor(0.4f, S, B);
+	// } else {
+	// double val = 0.4 * (value / MAX_VALUE);
+	// return Color.getHSBColor((float) (val), S, B);
+	// }
+	//
+	// }
 
 	/**
 	 * Only one viewer instance.

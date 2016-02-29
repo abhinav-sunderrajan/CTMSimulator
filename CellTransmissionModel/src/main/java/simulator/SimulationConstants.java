@@ -33,4 +33,13 @@ public class SimulationConstants {
 	// congested region.
 	public static final double V_OUT_MIN = 7.0;
 
+	// METANET ramp merging term
+	public static final double RAMP_DELTA = 0.12;
+
+	// METANET constant term for on ramp merging term
+	public static final double KAPPA = 0.04;
+
+	// METANET constant term for off ramp lane dropping.
+	public static final double PHI = 2.2;
+
 }

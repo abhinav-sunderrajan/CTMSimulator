@@ -21,6 +21,7 @@ import org.apache.log4j.Logger;
 import rnwmodel.Road;
 import utils.TrafficStateInitialize;
 import viz.CTMSimViewer;
+import viz.ColorHelper;
 import ctm.Cell;
 import ctm.CellNetwork;
 import ctm.MergingCell;
@@ -217,10 +218,7 @@ public class CellTransmissionModel implements Callable<Integer> {
 				if (haveVisualization) {
 					for (Cell cell : cellNetwork.getCellMap().values()) {
 						if (!(cell instanceof SinkCell || cell instanceof SourceCell)) {
-							cellColorMap.put(
-									cell,
-									CTMSimViewer.numberToColor(cell.getMeanSpeed()
-											/ cell.getFreeFlowSpeed()));
+							cellColorMap.put(cell, ColorHelper.numberToColor(cell.getMeanSpeed()));
 						}
 					}
 
@@ -259,6 +257,8 @@ public class CellTransmissionModel implements Callable<Integer> {
 			}
 		}
 
+		// double leastSquare = 0.0;
+
 		// State at the end of simulation
 		if (PRINT_FINAL_STATE) {
 			try {
@@ -271,7 +271,7 @@ public class CellTransmissionModel implements Callable<Integer> {
 				Road prev = null;
 				HashMap<Integer, Double> distanceMap = new LinkedHashMap<>();
 				for (Integer roadId : mainRoads) {
-					Road road = SimulatorCore.getPieChangi().get(roadId);
+					Road road = SimulatorCore.pieChangi.get(roadId);
 					if (prev != null)
 						distance += prev.getWeight();
 					distanceMap.put(roadId, Math.round(distance * 100.0) / 100.0);
@@ -284,6 +284,11 @@ public class CellTransmissionModel implements Callable<Integer> {
 
 				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("ctmop.txt")));
 				bw.write("cell_id\tspeed\tnum_of_vehicles\tdistance\n");
+
+				// Minor deletions.
+				// Map<Double, Double> speedDistanceMap = new TreeMap<Double,
+				// Double>();
+
 				for (Cell cell : cellNetwork.getCellMap().values()) {
 					if (cell.getCellId().contains("source") || cell.getCellId().contains("sink"))
 						continue;
@@ -291,7 +296,7 @@ public class CellTransmissionModel implements Callable<Integer> {
 						double speed = Math.round(cell.getMeanSpeed() * 100.0) / 100.0;
 						String split[] = cell.getCellId().split("_");
 						Integer roadId = Integer.parseInt(split[0]);
-						Road road = SimulatorCore.getPieChangi().get(roadId);
+						Road road = SimulatorCore.pieChangi.get(roadId);
 						Integer segment = Integer.parseInt(split[1]);
 						if (distanceMap.containsKey(roadId)) {
 							double distanceAlongRoad = distanceMap.get(roadId);
@@ -301,6 +306,9 @@ public class CellTransmissionModel implements Callable<Integer> {
 							distanceAlongRoad = Math.round((distanceAlongRoad * 100.0) / 100.0);
 							bw.write(cell.getCellId() + "\t" + speed + "\t"
 									+ cell.getNumOfVehicles() + "\t" + distanceAlongRoad + "\n");
+
+							// delete
+							// speedDistanceMap.put(distanceAlongRoad, speed);
 						}
 					}
 
@@ -308,12 +316,21 @@ public class CellTransmissionModel implements Callable<Integer> {
 				}
 
 				bw.close();
+
+				// for (Entry<Double, Double> entry :
+				// SimulatorCore.semSIMDistanceMap.entrySet()) {
+				// leastSquare += (entry.getValue() -
+				// speedDistanceMap.get(entry.getKey()))
+				// * (entry.getValue() - speedDistanceMap.get(entry.getKey()));
+				// }
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 
 		}
 
+		// return (int) Math.sqrt(leastSquare);
 		return tts;
 
 	}

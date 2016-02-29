@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
+import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -53,13 +54,17 @@ public class SimulatorCore {
 	public static final DecimalFormat df = new DecimalFormat("#.###");
 	public static final SAXReader SAX_READER = new SAXReader();
 	public static DatabaseAccess dba;
-	private static Map<Integer, Road> pieChangi;
+	public static Map<Integer, Road> pieChangi;
+
+	// To be deleted
+
+	public static Map<Double, Double> semSIMDistanceMap = new TreeMap<Double, Double>();
 
 	static {
 
 		try {
 			// Initialization.
-			random = new Random(SimulationConstants.SEED);
+			random = new Random(501);
 			df.setRoundingMode(RoundingMode.CEILING);
 			configProperties = new Properties();
 			configProperties.load(new FileInputStream("src/main/resources/config.properties"));
@@ -76,8 +81,22 @@ public class SimulatorCore {
 				pieChangi.put(roadId, road);
 			}
 
-			BufferedReader br = new BufferedReader(new FileReader(new File(
-					"src/main/resources/Lanecount.txt")));
+			// Delete not needed
+			BufferedReader br = new BufferedReader(new FileReader(new File("dist-speed-map.txt")));
+			if (br.ready()) {
+				while (true) {
+					String line = br.readLine();
+					if (line == null)
+						break;
+					String split[] = line.split("\t");
+					semSIMDistanceMap.put(Double.parseDouble(split[0]),
+							Double.parseDouble(split[1]));
+				}
+			}
+
+			br.close();
+
+			br = new BufferedReader(new FileReader(new File("src/main/resources/Lanecount.txt")));
 
 			while (br.ready()) {
 				String line = br.readLine();
@@ -118,13 +137,6 @@ public class SimulatorCore {
 	}
 
 	/**
-	 * @return the pieChangi
-	 */
-	public static Map<Integer, Road> getPieChangi() {
-		return pieChangi;
-	}
-
-	/**
 	 * This method serves to ensure that none of the road segments which
 	 * ultimately form the cells have a length smaller than the minimum length
 	 * of V0*delta_T.
@@ -133,6 +145,7 @@ public class SimulatorCore {
 	 */
 	public static void repair(Collection<Road> pieChangi) {
 
+		System.out.println("Repairing roads..");
 		// Need to do some repairs the roads are not exactly perfect.
 		// 1) Ensure that none of the roads have a single cell this is
 		// prone to errors. hence add an extra node in the middle of these
@@ -204,7 +217,7 @@ public class SimulatorCore {
 
 	public static void main(String args[]) throws InterruptedException, ExecutionException {
 		CellTransmissionModel ctm = new CellTransmissionModel(pieChangi.values(), false, false,
-				false, false, 1000);
+				true, false, 7200);
 
 		ThreadPoolExecutor executor = ThreadPoolExecutorService.getExecutorInstance().getExecutor();
 		Future<Integer> future = executor.submit(ctm);

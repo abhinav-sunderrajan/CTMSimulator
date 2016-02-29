@@ -264,6 +264,31 @@ public abstract class Cell {
 			// anticipated part of the term below.
 			beta = (Math.abs(densityAntic - successorDensityAntic) >= 1) ? 0.2 : 0.8;
 			double densityRatio = densityAntic / criticalDensity;
+
+			// This is the on ramp merging term as suggested by METANET.
+
+			double rampTerm = -1.0;
+			if (predecessors.size() > 1) {
+				MergingCell onRampCell = null;
+				if (predecessors.get(0).numOfLanes == 2)
+					onRampCell = (MergingCell) predecessors.get(0);
+				else
+					onRampCell = (MergingCell) predecessors.get(1);
+
+				rampTerm = SimulationConstants.RAMP_DELTA * SimulationConstants.TIME_STEP
+						* onRampCell.getOutflow() * meanSpeed
+						/ (numOfLanes * length * (density + SimulationConstants.KAPPA));
+			}
+
+			// For the speed drop occurring due lane drops at on ramp P.I.E
+			// merger.
+
+			double laneDropTerm = -1.0;
+			if (this instanceof MergingCell && numOfLanes == 2)
+				laneDropTerm = (SimulationConstants.PHI * SimulationConstants.TIME_STEP * density
+						* meanSpeed * meanSpeed)
+						/ (length * numOfLanes * criticalDensity);
+
 			this.meanSpeed = beta
 					* vinTerm
 					+ (1 - beta)
@@ -279,6 +304,13 @@ public abstract class Cell {
 					+ SimulatorCore.random.nextGaussian() * 0.5;
 
 			this.meanSpeed = meanSpeed > freeFlowSpeed ? freeFlowSpeed : meanSpeed;
+
+			if (predecessors.size() > 1)
+				this.meanSpeed = this.meanSpeed - rampTerm;
+
+			if (this instanceof MergingCell && numOfLanes == 2)
+				this.meanSpeed = this.meanSpeed - laneDropTerm;
+
 			this.meanSpeed = meanSpeed < 0 ? 0 : meanSpeed;
 
 		}
