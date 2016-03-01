@@ -19,8 +19,7 @@ public class DivergingCell extends Cell {
 		this.outflow = 0;
 		for (Cell successor : successors) {
 			double turnRatio = SimulatorCore.turnRatios.get(successor.getRoad().getRoadId());
-			outflow += (int) Math.round(Math.min(successor.receivePotential, turnRatio
-					* this.sendingPotential));
+			outflow += Math.min(successor.receivePotential, turnRatio * this.sendingPotential);
 		}
 
 	}

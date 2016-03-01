@@ -64,7 +64,7 @@ public class SimulatorCore {
 
 		try {
 			// Initialization.
-			random = new Random(501);
+			random = new Random(108);
 			df.setRoundingMode(RoundingMode.CEILING);
 			configProperties = new Properties();
 			configProperties.load(new FileInputStream("src/main/resources/config.properties"));

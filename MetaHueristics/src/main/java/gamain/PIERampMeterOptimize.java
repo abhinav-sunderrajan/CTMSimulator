@@ -1,4 +1,4 @@
-package main;
+package gamain;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,10 +16,20 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import main.SimulatorCore;
+
 import simulator.CellTransmissionModel;
+import simulator.RampMeter;
 import utils.ThreadPoolExecutorService;
 
-public class ReduceCTMSEMSimDifference {
+/**
+ * A GA implementation for controlling ramp flow rates.
+ * 
+ * @author abhinav.sunderrajan
+ * 
+ */
+public class PIERampMeterOptimize {
+
 	private Queue<Future<Integer>> futures;
 	private Map<Integer, List<Double>> futuresMap;
 	private Map<List<Double>, Integer> populationFitnessMap;
@@ -27,31 +37,23 @@ public class ReduceCTMSEMSimDifference {
 	private Random random;
 	private double crossOverrate;
 	private static final int POPULATION_SIZE = 25;
-	private static final int MAX_ITERS = 100;
+	private static final int MAX_ITERS = 40;
+	private static final int NUM_OF_RAMPS = 11;
 	private static final int MU = 3;
-	private static final double MUTATE_PROB = 0.1;
+	private static final double MUTATE_PROB = 0.07;
 	private static final int TOURANAMENT_SIZE = 3;
 
-	private static final int[] roadArr = { 30634, 30635, 30636, 30637, 30638, 30639, 30640, 30641,
-			37981, 30642, 30643, 38539, 30644, 30645, 30646, 30647, 30648, 30649, 30650, 30651,
-			30580, 30581 };
-
-	public ReduceCTMSEMSimDifference() {
+	public PIERampMeterOptimize() {
 		this.futures = new ConcurrentLinkedQueue<Future<Integer>>();
 		executor = ThreadPoolExecutorService.getExecutorInstance().getExecutor();
-		random = new Random();
+		random = SimulatorCore.random;
 		futuresMap = new ConcurrentHashMap<Integer, List<Double>>();
 		populationFitnessMap = new LinkedHashMap<List<Double>, Integer>();
 		this.crossOverrate = 0.5;
 
 	}
 
-	/**
-	 * 
-	 * @author abhinav.sunderrajan
-	 * 
-	 */
-	private class CTMSEMSimSimilarity implements Runnable {
+	private class AnalyzeTotalTimeSpent implements Runnable {
 
 		@Override
 		public void run() {
@@ -63,10 +65,20 @@ public class ReduceCTMSEMSimDifference {
 					}
 
 					Future<Integer> future = futures.poll();
-					List<Double> mergepriorities = futuresMap.get(future.hashCode());
+					List<Double> queuepercentages = futuresMap.get(future.hashCode());
 					Integer tts = future.get();
+					boolean noRampMetering = true;
+					for (double percentage : queuepercentages) {
+						if (percentage > 0) {
+							noRampMetering = false;
+							break;
+						}
+					}
 
-					populationFitnessMap.put(mergepriorities, tts);
+					if (noRampMetering)
+						System.out.println("No ramp metering case TTS:" + tts);
+
+					populationFitnessMap.put(queuepercentages, tts);
 					futuresMap.remove(future.hashCode());
 					future.cancel(true);
 
@@ -81,60 +93,50 @@ public class ReduceCTMSEMSimDifference {
 	}
 
 	public static void main(String args[]) throws InterruptedException {
-		ReduceCTMSEMSimDifference ga = new ReduceCTMSEMSimDifference();
-
-		List<Integer> pieList = new ArrayList<>();
-		for (Integer roadId : roadArr)
-			pieList.add(roadId);
-
-		ga.executor.submit(ga.new CTMSEMSimSimilarity());
+		PIERampMeterOptimize pieOptimize = new PIERampMeterOptimize();
+		pieOptimize.executor.submit(pieOptimize.new AnalyzeTotalTimeSpent());
 
 		// Initialize the a population
 		for (int i = 0; i < POPULATION_SIZE; i++) {
-			List<Double> mergePriority = new ArrayList<>();
-			for (int j = 0; j < 2; j++) {
-				if (j == 0) {
-					double val = 0.05 + ga.random.nextDouble() * 0.65;
-					mergePriority.add(Math.round(val * 100.0) / 100.0);
-				} else {
-					double val = 0.6 + ga.random.nextDouble() * 0.35;
-					mergePriority.add(Math.round(val * 100.0) / 100.0);
+			List<Double> queuePercentageArr = new ArrayList<>();
+			for (int j = 0; j < NUM_OF_RAMPS; j++) {
+				if (i == 0)
+					queuePercentageArr.add(0.0);
+				else {
+					double val = pieOptimize.random.nextDouble() * 0.8;
+					queuePercentageArr.add(Math.round(val * 100.0) / 100.0);
 				}
-
 			}
-			ga.populationFitnessMap.put(mergePriority, Integer.MAX_VALUE);
-
+			pieOptimize.populationFitnessMap.put(queuePercentageArr, Integer.MAX_VALUE);
 		}
 
 		for (int iter = 0; iter < MAX_ITERS; iter++) {
 			// Analyze the fitness the of the population
-			for (Entry<List<Double>, Integer> entry : ga.populationFitnessMap.entrySet()) {
+			for (Entry<List<Double>, Integer> entry : pieOptimize.populationFitnessMap.entrySet()) {
 				if (entry.getValue() == Integer.MAX_VALUE) {
-					List<Double> mergePriorities = entry.getKey();
-					for (Integer roadId : SimulatorCore.mergePriorities.keySet()) {
-						if (pieList.contains(roadId))
-							SimulatorCore.mergePriorities.put(roadId, mergePriorities.get(1));
-						else
-							SimulatorCore.mergePriorities.put(roadId, mergePriorities.get(0));
-					}
-
 					CellTransmissionModel ctm = new CellTransmissionModel(
-							SimulatorCore.pieChangi.values(), false, false, false, false, 1000);
-					Future<Integer> future = ga.executor.submit(ctm);
-					ga.futures.add(future);
-					ga.futuresMap.put(future.hashCode(), entry.getKey());
+							SimulatorCore.pieChangi.values(), false, true, false, false, 900);
+					List<Double> queuePercentages = entry.getKey();
+					int index = 0;
+					for (RampMeter meter : ctm.getMeteredRamps().values()) {
+						meter.setQueuePercentage(queuePercentages.get(index));
+						index++;
+					}
+					Future<Integer> future = pieOptimize.executor.submit(ctm);
+					pieOptimize.futures.add(future);
+					pieOptimize.futuresMap.put(future.hashCode(), entry.getKey());
 
 				}
 			}
 
 			while (true) {
-				if (ga.futuresMap.size() == 0)
+				if (pieOptimize.futuresMap.size() == 0)
 					break;
 				else
-					Thread.sleep(10);
+					Thread.sleep(1);
 			}
 
-			ga.populationFitnessMap = sortByValue(ga.populationFitnessMap);
+			pieOptimize.populationFitnessMap = sortByValue(pieOptimize.populationFitnessMap);
 
 			if (iter == (MAX_ITERS - 1))
 				break;
@@ -143,7 +145,7 @@ public class ReduceCTMSEMSimDifference {
 			Map<List<Double>, Integer> newGen = new LinkedHashMap<List<Double>, Integer>();
 			// /Retain the best MU values from the previous generation.
 			int num = 0;
-			for (Entry<List<Double>, Integer> entry : ga.populationFitnessMap.entrySet()) {
+			for (Entry<List<Double>, Integer> entry : pieOptimize.populationFitnessMap.entrySet()) {
 				newGen.put(entry.getKey(), entry.getValue());
 				num++;
 				if (num == MU)
@@ -151,39 +153,33 @@ public class ReduceCTMSEMSimDifference {
 			}
 
 			while (newGen.size() < POPULATION_SIZE) {
-				Map<List<Double>, Integer> newChild = ga.tournamentSelection();
+				Map<List<Double>, Integer> newChild = pieOptimize.tournamentSelection();
 				for (Entry<List<Double>, Integer> entry : newChild.entrySet())
 					newGen.put(entry.getKey(), entry.getValue());
 			}
 
-			ga.populationFitnessMap = newGen;
+			pieOptimize.populationFitnessMap = newGen;
 			System.out.println("Evaluated generation " + iter);
 
 		}
 
-		for (Entry<List<Double>, Integer> entry : ga.populationFitnessMap.entrySet()) {
-			System.out.println("\n Employing the best merging probabilities\n");
+		for (Entry<List<Double>, Integer> entry : pieOptimize.populationFitnessMap.entrySet()) {
+			System.out.println("\n Employing the best ramp metering strategy\n");
 			System.out.println("fitness:" + entry.getValue() + " config: " + entry.getKey());
-
-			List<Double> mergePriorities = entry.getKey();
-			for (Integer roadId : SimulatorCore.mergePriorities.keySet()) {
-				if (pieList.contains(roadId))
-					SimulatorCore.mergePriorities.put(roadId, mergePriorities.get(1));
-				else
-					SimulatorCore.mergePriorities.put(roadId, mergePriorities.get(1));
+			CellTransmissionModel ctmBestConfig = new CellTransmissionModel(
+					SimulatorCore.pieChangi.values(), false, true, false, true, 1000);
+			List<Double> queuePercentages = entry.getKey();
+			int index = 0;
+			for (RampMeter meter : ctmBestConfig.getMeteredRamps().values()) {
+				meter.setQueuePercentage(queuePercentages.get(index));
+				index++;
 			}
-
-			CellTransmissionModel ctm = new CellTransmissionModel(SimulatorCore.pieChangi.values(),
-					false, false, false, false, 1000);
-
-			Future<Integer> future = ga.executor.submit(ctm);
-			ga.futures.add(future);
-			ga.futuresMap.put(future.hashCode(), entry.getKey());
+			Future<Integer> future = pieOptimize.executor.submit(ctmBestConfig);
+			pieOptimize.futures.add(future);
+			pieOptimize.futuresMap.put(future.hashCode(), entry.getKey());
 
 			break;
 		}
-
-		ga.executor.shutdown();
 
 	}
 
@@ -260,7 +256,7 @@ public class ReduceCTMSEMSimDifference {
 			parents.put(parent, Integer.MAX_VALUE);
 		}
 
-		if (!(parent1.size() == 2 && parent2.size() == 2)) {
+		if (!(parent1.size() == NUM_OF_RAMPS && parent2.size() == NUM_OF_RAMPS)) {
 			throw new IllegalArgumentException("Size of the chromosomes is worng");
 		}
 
@@ -276,22 +272,11 @@ public class ReduceCTMSEMSimDifference {
 		// Mutation of parent 1
 
 		for (int i = 0; i < parent1.size(); i++) {
-			double max = 0.0;
-			double min = 0.0;
-
-			if (i == 0) {
-				max = 0.5;
-				min = 0.05;
-			} else {
-				max = 1.0;
-				min = 0.65;
-			}
-
 			if (SimulatorCore.random.nextDouble() < MUTATE_PROB) {
 				while (true) {
 					double temp = parent1.get(i) + SimulatorCore.random.nextGaussian();
 					temp = Math.round(temp * 100.0) / 100.0;
-					if (temp >= min && temp <= max) {
+					if (temp >= 0 && temp <= 0.8) {
 						parent1.set(i, temp);
 						break;
 					}
@@ -302,23 +287,11 @@ public class ReduceCTMSEMSimDifference {
 
 		// Mutation of parent 2
 		for (int i = 0; i < parent2.size(); i++) {
-
-			double max = 0.0;
-			double min = 0.0;
-
-			if (i == 0) {
-				max = 0.5;
-				min = 0.05;
-			} else {
-				max = 1.0;
-				min = 0.65;
-			}
-
 			if (SimulatorCore.random.nextDouble() < MUTATE_PROB) {
 				while (true) {
 					double temp = parent2.get(i) + SimulatorCore.random.nextGaussian();
 					temp = Math.round(temp * 100.0) / 100.0;
-					if (temp >= min && temp <= max) {
+					if (temp >= 0 && temp <= 0.8) {
 						parent2.set(i, temp);
 						break;
 					}
@@ -328,5 +301,4 @@ public class ReduceCTMSEMSimDifference {
 		}
 
 	}
-
 }

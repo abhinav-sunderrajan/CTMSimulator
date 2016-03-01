@@ -46,10 +46,9 @@ public class MergingCell extends Cell {
 		if (Ek.receivePotential > (this.sendingPotential + othermergingCell.sendingPotential)) {
 			double temp = (mergePriority * Ek.receivePotential)
 					/ (mergePriority + othermergingCell.mergePriority);
-			this.outflow = (int) Math.round(Math.min(temp, sendingPotential));
+			this.outflow = Math.min(temp, sendingPotential);
 		} else {
-			this.outflow = (int) Math.round(Math.min(mergePriority * Ek.receivePotential,
-					sendingPotential));
+			this.outflow = Math.min(mergePriority * Ek.receivePotential, sendingPotential);
 		}
 
 	}

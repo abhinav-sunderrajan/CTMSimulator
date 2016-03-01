@@ -29,13 +29,13 @@ public abstract class Cell {
 	protected double length;
 	// maximum number of vehicles that can be contained in a cell.
 	// Number of vehicles present in the cell at time t
-	protected int nt;
+	protected double nt;
 	// free flow speed
 	protected double freeFlowSpeed;
 	// backward propagation speed.
 
 	// The number of vehicles that leave the cell in a time unit
-	protected int outflow;
+	protected double outflow;
 
 	protected double sendingPotential;
 
@@ -132,7 +132,7 @@ public abstract class Cell {
 	 * 
 	 * @return the outflow
 	 */
-	public int getOutflow() {
+	public double getOutflow() {
 		return outflow;
 	}
 
@@ -140,7 +140,7 @@ public abstract class Cell {
 	 * @param outflow
 	 *            the outflow to set
 	 */
-	public void setOutflow(int outflow) {
+	public void setOutflow(double outflow) {
 		this.outflow = outflow;
 	}
 
@@ -190,10 +190,11 @@ public abstract class Cell {
 		}
 
 		this.ntBefore = nt;
-		nt = (int) Math.round(nt + inflow - outflow);
+		nt = nt + inflow - outflow;
 
 		if (nt < 0) {
-			nt = 0;
+			throw new IllegalStateException(
+					"The number of vehicle in a cell cannot be less than zero..");
 		}
 
 	}
@@ -285,8 +286,8 @@ public abstract class Cell {
 
 			double laneDropTerm = -1.0;
 			if (this instanceof MergingCell && numOfLanes == 2)
-				laneDropTerm = (SimulationConstants.PHI * SimulationConstants.TIME_STEP * density
-						* meanSpeed * meanSpeed)
+				laneDropTerm = (SimulationConstants.PHI * 1.0 * SimulationConstants.TIME_STEP
+						* density * meanSpeed * meanSpeed)
 						/ (length * numOfLanes * criticalDensity);
 
 			this.meanSpeed = beta
@@ -303,15 +304,15 @@ public abstract class Cell {
 							* Math.pow((density / criticalDensity), SimulationConstants.AM))
 					+ SimulatorCore.random.nextGaussian() * 0.5;
 
-			this.meanSpeed = meanSpeed > freeFlowSpeed ? freeFlowSpeed : meanSpeed;
-
 			if (predecessors.size() > 1)
 				this.meanSpeed = this.meanSpeed - rampTerm;
 
-			if (this instanceof MergingCell && numOfLanes == 2)
+			if (this instanceof MergingCell && numOfLanes == 2) {
 				this.meanSpeed = this.meanSpeed - laneDropTerm;
+			}
 
 			this.meanSpeed = meanSpeed < 0 ? 0 : meanSpeed;
+			this.meanSpeed = meanSpeed > freeFlowSpeed ? freeFlowSpeed : meanSpeed;
 
 		}
 
@@ -327,6 +328,7 @@ public abstract class Cell {
 		this.receivePotential = getnMax() + outflow - nt;
 
 		if (receivePotential < 0) {
+			System.out.println(cellId + ":" + receivePotential);
 			receivePotential = outflow;
 		}
 	}
@@ -405,7 +407,7 @@ public abstract class Cell {
 	 * 
 	 * @param nt
 	 */
-	public void setNumberOfvehicles(int nt) {
+	public void setNumberOfvehicles(double nt) {
 		this.nt = nt;
 		this.density = nt / (length * numOfLanes);
 	}
@@ -421,10 +423,10 @@ public abstract class Cell {
 	 * @return the nMax the maximum number of vehicles that can be accommodated
 	 *         in the cell.
 	 */
-	public int getnMax() {
+	public double getnMax() {
 		double maxDesnsityPerlane = length
 				/ (SimulationConstants.TIME_GAP * meanSpeed + SimulationConstants.VEHICLE_LENGTH);
-		return (int) Math.round(maxDesnsityPerlane * numOfLanes);
+		return maxDesnsityPerlane * numOfLanes;
 	}
 
 	/**

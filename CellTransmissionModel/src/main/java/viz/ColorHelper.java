@@ -18,16 +18,17 @@ public class ColorHelper {
 	private final static int LOW = 0;
 	private final static int HIGH = 255;
 	private final static int HALF = (HIGH + 1) / 2;
+	private static final double MAX_VAL = 25.0;
 
 	private final static Map<Integer, Color> map = initNumberToColorMap();
 	private static int factor;
 
 	public static Color numberToColor(final double value) {
-		if (value < 0 || value > 30) {
+		if (value < 0 || value > MAX_VAL) {
 			return null;
 		}
 
-		return numberToColorPercentage(value / 30);
+		return numberToColorPercentage(value / MAX_VAL);
 	}
 
 	public static Color numberToColorPercentage(final double value) {

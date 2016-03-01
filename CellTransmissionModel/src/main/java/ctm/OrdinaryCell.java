@@ -18,10 +18,10 @@ public class OrdinaryCell extends Cell {
 	public void updateOutFlow() {
 		Cell Ek = this.successors.get(0);
 		if (Ek instanceof SinkCell) {
-			this.outflow = (int) Math.round(Math.min(nt, sendingPotential));
+			this.outflow = Math.min(nt, sendingPotential);
 
 		} else {
-			this.outflow = (int) Math.round(Math.min(Ek.receivePotential, sendingPotential));
+			this.outflow = Math.min(Ek.receivePotential, sendingPotential);
 		}
 
 	}
