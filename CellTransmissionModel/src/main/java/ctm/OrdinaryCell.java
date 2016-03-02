@@ -19,7 +19,6 @@ public class OrdinaryCell extends Cell {
 		Cell Ek = this.successors.get(0);
 		if (Ek instanceof SinkCell) {
 			this.outflow = Math.min(nt, sendingPotential);
-
 		} else {
 			this.outflow = Math.min(Ek.receivePotential, sendingPotential);
 		}

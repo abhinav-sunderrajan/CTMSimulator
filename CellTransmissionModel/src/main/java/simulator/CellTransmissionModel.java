@@ -127,7 +127,7 @@ public class CellTransmissionModel implements Callable<Integer> {
 			meteredRamps.put(rampMeter.getMeterCell(), rampMeter);
 		}
 
-		intializeTrafficState(roadCollection);
+		// intializeTrafficState(roadCollection);
 
 		cellColorMap = new ConcurrentHashMap<Cell, Color>();
 		this.haveVisualization = haveViz;
@@ -257,7 +257,7 @@ public class CellTransmissionModel implements Callable<Integer> {
 			}
 		}
 
-		// double leastSquare = 0.0;
+		double leastSquare = 0.0;
 
 		// State at the end of simulation
 		if (PRINT_FINAL_STATE) {

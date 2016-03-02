@@ -64,7 +64,7 @@ public class SimulatorCore {
 
 		try {
 			// Initialization.
-			random = new Random(108);
+			random = new Random(2015);
 			df.setRoundingMode(RoundingMode.CEILING);
 			configProperties = new Properties();
 			configProperties.load(new FileInputStream("src/main/resources/config.properties"));
@@ -217,7 +217,7 @@ public class SimulatorCore {
 
 	public static void main(String args[]) throws InterruptedException, ExecutionException {
 		CellTransmissionModel ctm = new CellTransmissionModel(pieChangi.values(), false, false,
-				true, false, 7200);
+				false, false, 3600);
 
 		ThreadPoolExecutor executor = ThreadPoolExecutorService.getExecutorInstance().getExecutor();
 		Future<Integer> future = executor.submit(ctm);

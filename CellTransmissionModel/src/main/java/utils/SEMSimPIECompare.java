@@ -154,6 +154,6 @@ public class SEMSimPIECompare {
 
 		}
 
-		System.out.println("Finished loading all SEMSim CSV to database.");
+		System.out.println("Finished...");
 	}
 }

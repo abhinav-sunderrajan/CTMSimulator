@@ -31,15 +31,15 @@ public class SimulationConstants {
 
 	// The rate at which vehicles move at the down stream section of a
 	// congested region.
-	public static final double V_OUT_MIN = 7.0;
+	public static final double V_OUT_MIN = 2.0;
 
 	// METANET ramp merging term
-	public static double RAMP_DELTA = 0.14;
+	public static double RAMP_DELTA = 0.36;
 
 	// METANET constant term for on ramp merging term
 	public static final double KAPPA = 0.04;
 
 	// METANET constant term for off ramp lane dropping.
-	public static double PHI = 2.2;
+	public static double PHI = 1.87;
 
 }

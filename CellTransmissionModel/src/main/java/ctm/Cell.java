@@ -182,8 +182,7 @@ public abstract class Cell {
 		} else {
 			Cell predecessor = predecessors.get(0);
 			if (predecessor instanceof DivergingCell) {
-				double turnRatio = SimulatorCore.turnRatios.get(road.getRoadId());
-				inflow = predecessor.outflow * turnRatio;
+				inflow = ((DivergingCell) predecessor).getOutFlowsMap().get(cellId);
 			} else {
 				inflow = predecessor.outflow;
 			}
@@ -302,7 +301,7 @@ public abstract class Cell {
 			this.meanSpeed = freeFlowSpeed
 					* Math.exp((-1 / SimulationConstants.AM)
 							* Math.pow((density / criticalDensity), SimulationConstants.AM))
-					+ SimulatorCore.random.nextGaussian() * 0.5;
+					+ SimulatorCore.random.nextGaussian() * sdSpeed;
 
 			if (predecessors.size() > 1)
 				this.meanSpeed = this.meanSpeed - rampTerm;
@@ -311,7 +310,11 @@ public abstract class Cell {
 				this.meanSpeed = this.meanSpeed - laneDropTerm;
 			}
 
-			this.meanSpeed = meanSpeed < 0 ? 0 : meanSpeed;
+			if (this.meanSpeed <= 0) {
+				this.meanSpeed = SimulationConstants.V_OUT_MIN
+						* (SimulatorCore.random.nextDouble() + 1) / 2.0;
+			}
+
 			this.meanSpeed = meanSpeed > freeFlowSpeed ? freeFlowSpeed : meanSpeed;
 
 		}
@@ -324,12 +327,13 @@ public abstract class Cell {
 	 * @return
 	 */
 	public void determineReceivePotential() {
+		this.receivePotential = getnMax() /* + outflow */- nt;
 
-		this.receivePotential = getnMax() + outflow - nt;
-
-		if (receivePotential < 0) {
-			System.out.println(cellId + ":" + receivePotential);
-			receivePotential = outflow;
+		if (receivePotential < -1.2) {
+			System.out.println(this.getClass().getSimpleName() + ":"
+					+ predecessors.get(0).getClass().getSimpleName() + cellId + "--> nt:" + nt
+					+ " nmax:" + getnMax());
+			receivePotential = 0;
 		}
 	}
 
