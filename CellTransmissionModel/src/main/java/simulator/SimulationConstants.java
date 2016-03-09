@@ -2,10 +2,8 @@ package simulator;
 
 public class SimulationConstants {
 
-	// minimum distance headway (average vehicle length + average minimum gap)
-	public static final double LEFF = 7.5;
 	// Time gap
-	public static final Double TIME_GAP = 1.4;
+	public static Double TIME_GAP = 1.28;
 	// The time in seconds by which the simulation is advanced.
 	public static final int TIME_STEP = 2;
 	// Time in simulation
@@ -31,15 +29,15 @@ public class SimulationConstants {
 
 	// The rate at which vehicles move at the down stream section of a
 	// congested region.
-	public static final double V_OUT_MIN = 2.0;
+	public static double V_OUT_MIN = 4.0;
 
 	// METANET ramp merging term
-	public static double RAMP_DELTA = 0.36;
+	public static double RAMP_DELTA = 0.37;
 
 	// METANET constant term for on ramp merging term
-	public static final double KAPPA = 0.04;
+	public static final double KAPPA = 0.452;
 
-	// METANET constant term for off ramp lane dropping.
-	public static double PHI = 1.87;
+	// METANET constant term for on ramp lane dropping.
+	public static double PHI = 2.7;
 
 }

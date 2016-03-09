@@ -116,9 +116,9 @@ public class SEMSimPIECompare {
 					double lon = Double.parseDouble(split[3]);
 					double lat = Double.parseDouble(split[4]);
 					long time = Long.parseLong(split[0]) / 1000;
-					if (time < 1200)
+					if (time < 1319)
 						continue;
-					if (time > 1320)
+					if (time >= 1320)
 						break;
 					String roadSegment = roadIIDMapping.get(Long.parseLong(split[2]));
 					String[] roadSegmentSplit = roadSegment.split("_");

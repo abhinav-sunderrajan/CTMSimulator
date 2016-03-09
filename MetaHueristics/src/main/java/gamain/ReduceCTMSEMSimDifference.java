@@ -1,8 +1,10 @@
 package gamain;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,30 +19,45 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import main.SimulatorCore;
-
 import simulator.CellTransmissionModel;
 import simulator.SimulationConstants;
 import utils.ThreadPoolExecutorService;
 
+/**
+ * Uses G.A to reduce the difference between SEMSim and CTM by varying the CTM
+ * parameters namely, merge-priorities, lane drop and ramp merging terms.
+ * 
+ * @author abhinav.sunderrajan
+ * 
+ */
 public class ReduceCTMSEMSimDifference {
-	private Queue<Future<Integer>> futures;
+	private Queue<Future<Double>> futures;
 	private Map<Integer, List<Double>> futuresMap;
 	private Map<List<Double>, Integer> populationFitnessMap;
 	private ThreadPoolExecutor executor;
-	private Random random;
+	private static Random random;
 	private double crossOverrate;
 	private static final int POPULATION_SIZE = 25;
-	private static final int MAX_ITERS = 70;
+	private static final int MAX_ITERS = 35;
 	private static final int MU = 3;
 	private static final double MUTATE_PROB = 0.1;
 	private static final int TOURANAMENT_SIZE = 3;
+	private static final double ramp_min = 0.1;
+	private static final double ramp_max = 1.0;
+	private static final double pie_min = 0.7;
+	private static final double pie_max = 1.0;
+	private static final double phi_min = 1.8;
+	private static final double phi_max = 3.6;
+	private static final double delta_min = 0.02;
+	private static final double delta_max = 1.0;
+	private static final DecimalFormat df = new DecimalFormat("#.##");
 
 	private static final int[] roadArr = { 30634, 30635, 30636, 30637, 30638, 30639, 30640, 30641,
 			37981, 30642, 30643, 38539, 30644, 30645, 30646, 30647, 30648, 30649, 30650, 30651,
 			30580, 30581 };
 
 	public ReduceCTMSEMSimDifference() {
-		this.futures = new ConcurrentLinkedQueue<Future<Integer>>();
+		this.futures = new ConcurrentLinkedQueue<Future<Double>>();
 		executor = ThreadPoolExecutorService.getExecutorInstance().getExecutor();
 		random = new Random();
 		futuresMap = new ConcurrentHashMap<Integer, List<Double>>();
@@ -65,9 +82,9 @@ public class ReduceCTMSEMSimDifference {
 						continue;
 					}
 
-					Future<Integer> future = futures.poll();
+					Future<Double> future = futures.poll();
 					List<Double> mergepriorities = futuresMap.get(future.hashCode());
-					Integer tts = future.get();
+					Integer tts = future.get().intValue();
 
 					populationFitnessMap.put(mergepriorities, tts);
 					futuresMap.remove(future.hashCode());
@@ -94,18 +111,31 @@ public class ReduceCTMSEMSimDifference {
 
 		// Initialize the a population
 		for (int i = 0; i < POPULATION_SIZE; i++) {
-			List<Double> mergePriority = new ArrayList<>();
-			for (int j = 0; j < 2; j++) {
+			List<Double> parameters = new ArrayList<>();
+			for (int j = 0; j < 4; j++) {
+				double val = -1;
+				double min = -1;
+				double max = -1;
+
 				if (j == 0) {
-					double val = 1.8 + ga.random.nextDouble() * 1.2;
-					mergePriority.add(Math.round(val * 100.0) / 100.0);
+					min = ramp_min;
+					max = ramp_max;
+				} else if (j == 1) {
+					min = pie_min;
+					max = pie_max;
+				} else if (j == 2) {
+					min = phi_min;
+					max = phi_max;
 				} else {
-					double val = 0.08 + ga.random.nextDouble() * 0.92;
-					mergePriority.add(Math.round(val * 100.0) / 100.0);
+					min = delta_min;
+					max = delta_max;
 				}
 
+				val = min + random.nextDouble() * (max - min);
+				parameters.add(Double.parseDouble(df.format(val)));
+
 			}
-			ga.populationFitnessMap.put(mergePriority, Integer.MAX_VALUE);
+			ga.populationFitnessMap.put(parameters, Integer.MAX_VALUE);
 
 		}
 
@@ -114,23 +144,20 @@ public class ReduceCTMSEMSimDifference {
 			for (Entry<List<Double>, Integer> entry : ga.populationFitnessMap.entrySet()) {
 				if (entry.getValue() == Integer.MAX_VALUE) {
 					List<Double> mergePriorities = entry.getKey();
-					// for (Integer roadId :
-					// SimulatorCore.mergePriorities.keySet()) {
-					// if (pieList.contains(roadId))
-					// SimulatorCore.mergePriorities.put(roadId,
-					// mergePriorities.get(1));
-					// else
-					// SimulatorCore.mergePriorities.put(roadId,
-					// mergePriorities.get(0));
+					for (Integer roadId : SimulatorCore.mergePriorities.keySet()) {
+						if (pieList.contains(roadId))
+							SimulatorCore.mergePriorities.put(roadId, mergePriorities.get(1));
+						else
+							SimulatorCore.mergePriorities.put(roadId, mergePriorities.get(0));
 
-					// }
+					}
 
-					SimulationConstants.PHI = mergePriorities.get(0);
-					SimulationConstants.RAMP_DELTA = mergePriorities.get(1);
+					SimulationConstants.PHI = mergePriorities.get(2);
+					SimulationConstants.RAMP_DELTA = mergePriorities.get(3);
 
 					CellTransmissionModel ctm = new CellTransmissionModel(
-							SimulatorCore.pieChangi.values(), false, false, false, false, 1000);
-					Future<Integer> future = ga.executor.submit(ctm);
+							SimulatorCore.pieChangi.values(), false, false, false, false, 2200);
+					Future<Double> future = ga.executor.submit(ctm);
 					ga.futures.add(future);
 					ga.futuresMap.put(future.hashCode(), entry.getKey());
 
@@ -150,7 +177,7 @@ public class ReduceCTMSEMSimDifference {
 				break;
 			// Create new generation.
 
-			Map<List<Double>, Integer> newGen = new LinkedHashMap<List<Double>, Integer>();
+			Map<List<Double>, Integer> newGen = new HashMap<List<Double>, Integer>();
 			// /Retain the best MU values from the previous generation.
 			int num = 0;
 			for (Entry<List<Double>, Integer> entry : ga.populationFitnessMap.entrySet()) {
@@ -171,31 +198,9 @@ public class ReduceCTMSEMSimDifference {
 
 		}
 
+		System.out.println("\n Last generation\n");
 		for (Entry<List<Double>, Integer> entry : ga.populationFitnessMap.entrySet()) {
-			System.out.println("\n Employing the best merging probabilities\n");
 			System.out.println("fitness:" + entry.getValue() + " config: " + entry.getKey());
-
-			List<Double> mergePriorities = entry.getKey();
-			// for (Integer roadId : SimulatorCore.mergePriorities.keySet()) {
-			// if (pieList.contains(roadId))
-			// SimulatorCore.mergePriorities.put(roadId,
-			// mergePriorities.get(1));
-			// else
-			// SimulatorCore.mergePriorities.put(roadId,
-			// mergePriorities.get(0));
-			// }
-
-			SimulationConstants.PHI = mergePriorities.get(0);
-			SimulationConstants.RAMP_DELTA = mergePriorities.get(1);
-
-			CellTransmissionModel ctm = new CellTransmissionModel(SimulatorCore.pieChangi.values(),
-					false, false, false, false, 1000);
-
-			Future<Integer> future = ga.executor.submit(ctm);
-			ga.futures.add(future);
-			ga.futuresMap.put(future.hashCode(), entry.getKey());
-
-			break;
 		}
 
 		ga.executor.shutdown();
@@ -275,7 +280,7 @@ public class ReduceCTMSEMSimDifference {
 			parents.put(parent, Integer.MAX_VALUE);
 		}
 
-		if (!(parent1.size() == 2 && parent2.size() == 2)) {
+		if (!(parent1.size() == 4 && parent2.size() == 4)) {
 			throw new IllegalArgumentException("Size of the chromosomes is worng");
 		}
 
@@ -288,59 +293,50 @@ public class ReduceCTMSEMSimDifference {
 			}
 		}
 
-		// Mutation of parent 1
+		if (random.nextDouble() < MUTATE_PROB)
+			mutate(parent1);
+		if (random.nextDouble() < MUTATE_PROB)
+			mutate(parent2);
 
-		for (int i = 0; i < parent1.size(); i++) {
+	}
+
+	/**
+	 * Mutate the chromosome
+	 * 
+	 * @param chromosome
+	 *            to be mutated
+	 */
+	private void mutate(List<Double> parent) {
+		for (int i = 0; i < parent.size(); i++) {
 			double max = 0.0;
 			double min = 0.0;
-
 			if (i == 0) {
-				max = 3.0;
-				min = 1.8;
+				min = ramp_min;
+				max = ramp_max;
+
+			} else if (i == 1) {
+				min = pie_min;
+				max = pie_max;
+
+			} else if (i == 2) {
+				min = phi_min;
+				max = phi_max;
+
 			} else {
-				max = 1.0;
-				min = 0.08;
+				min = delta_min;
+				max = delta_max;
 			}
 
-			if (SimulatorCore.random.nextDouble() < MUTATE_PROB) {
-				while (true) {
-					double temp = parent1.get(i) + SimulatorCore.random.nextGaussian();
-					temp = Math.round(temp * 100.0) / 100.0;
-					if (temp >= min && temp <= max) {
-						parent1.set(i, temp);
-						break;
-					}
+			while (true) {
+				double temp = parent.get(i) + random.nextGaussian();
+				temp = Math.round(temp * 100.0) / 100.0;
+				if (temp >= min && temp <= max) {
+					parent.set(i, temp);
+					break;
 				}
 			}
 
 		}
-
-		// Mutation of parent 2
-		for (int i = 0; i < parent2.size(); i++) {
-
-			double max = 0.0;
-			double min = 0.0;
-			if (i == 0) {
-				max = 3.0;
-				min = 1.8;
-			} else {
-				max = 1.0;
-				min = 0.08;
-			}
-
-			if (SimulatorCore.random.nextDouble() < MUTATE_PROB) {
-				while (true) {
-					double temp = parent2.get(i) + SimulatorCore.random.nextGaussian();
-					temp = Math.round(temp * 100.0) / 100.0;
-					if (temp >= min && temp <= max) {
-						parent2.set(i, temp);
-						break;
-					}
-				}
-			}
-
-		}
-
 	}
 
 }
