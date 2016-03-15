@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,6 +12,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -41,21 +44,21 @@ import ctm.SourceCell;
  * 
  */
 
-public class CellTransmissionModel implements Callable<Integer> {
+public class CellTransmissionModel implements Callable<Double> {
 
 	private long simulationTime;
 	private long endTime;
 	private CTMSimViewer viewer;
 	private Map<Cell, Color> cellColorMap;
 	private boolean haveVisualization;
-	private int tts;
 	private CellNetwork cellNetwork;
 	private List<Road> ramps;
 	private Map<Cell, RampMeter> meteredRamps;
 	private boolean applyRampMetering;
 	private static final Logger LOGGER = Logger.getLogger(CellTransmissionModel.class);
 	private boolean determineRampFlows;
-	private static final boolean PRINT_FINAL_STATE = true;
+	private double ntTotal = 0.0;
+	private static final boolean PRINT_FINAL_STATE = false;
 
 	/**
 	 * Initialize the Cell transmission model by creating the cell network from
@@ -168,7 +171,7 @@ public class CellTransmissionModel implements Callable<Integer> {
 	}
 
 	@Override
-	public Integer call() {
+	public Double call() throws IOException {
 		try {
 
 			for (simulationTime = 0; simulationTime <= endTime; simulationTime += SimulationConstants.TIME_STEP) {
@@ -189,7 +192,7 @@ public class CellTransmissionModel implements Callable<Integer> {
 				for (Cell cell : cellNetwork.getCellMap().values()) {
 					if (applyRampMetering) {
 						if (meteredRamps.containsKey(cell)) {
-							meteredRamps.get(cell).regulateOutFlow();
+							meteredRamps.get(cell).regulateOutFlow(simulationTime);
 						} else {
 							cell.updateOutFlow();
 						}
@@ -200,8 +203,18 @@ public class CellTransmissionModel implements Callable<Integer> {
 				}
 
 				// Now update the number of vehicles in each cell.
-				for (Cell cell : cellNetwork.getCellMap().values())
+				for (Cell cell : cellNetwork.getCellMap().values()) {
 					cell.updateNumberOfVehiclesInCell();
+
+					// Reduce the total number of vehicles after warm up time of
+					// 15 minutes.
+					if (simulationTime > 900) {
+						if (!(cell instanceof SinkCell || cell instanceof SourceCell)) {
+							ntTotal += cell.getNumOfVehicles();
+						}
+					}
+
+				}
 
 				// Now update the number of vehicles in each cell.
 				for (Cell cell : cellNetwork.getCellMap().values())
@@ -210,10 +223,6 @@ public class CellTransmissionModel implements Callable<Integer> {
 				// Now update the number of vehicles in each cell.
 				for (Cell cell : cellNetwork.getCellMap().values())
 					cell.updateMeanSpeed();
-
-				// This loop performs two functions.
-				// 1) Computes cell statistics such as density and average speed
-				// used to compute travel time and waiting times.
 
 				if (haveVisualization) {
 					for (Cell cell : cellNetwork.getCellMap().values()) {
@@ -228,19 +237,6 @@ public class CellTransmissionModel implements Callable<Integer> {
 
 				// Thread.sleep(100);
 			}
-
-			// System.out.println("Finished " + ((endTime) / 60.0) +
-			// " minute simulation in :"
-			// + (System.currentTimeMillis() - time) + " ms");
-
-			tts = 0;
-			for (Cell cell : cellNetwork.getCellMap().values()) {
-				if (!(cell instanceof SourceCell || cell instanceof SinkCell)) {
-					tts += cell.getNumOfVehicles();
-				}
-			}
-
-			tts = tts * SimulationConstants.TIME_STEP;
 
 			if (haveVisualization)
 				viewer.getMapFrame().dispose();
@@ -258,88 +254,82 @@ public class CellTransmissionModel implements Callable<Integer> {
 		}
 
 		double leastSquare = 0.0;
+		int mainRoads[] = { 30634, 30635, 30636, 30637, 30638, 30639, 30640, 30641, 37981, 30642,
+				30643, 38539, 30644, 30645, 30646, 30647, 30648, 30649, 30650, 30651, 30580, 30581 };
 
+		double distance = 0.0;
+		Road prev = null;
+		HashMap<Integer, Double> distanceMap = new LinkedHashMap<>();
+		for (Integer roadId : mainRoads) {
+			Road road = SimulatorCore.pieChangi.get(roadId);
+			if (prev != null)
+				distance += prev.getWeight();
+			distanceMap.put(roadId, Math.round(distance * 100.0) / 100.0);
+			prev = road;
+		}
+
+		List<Integer> pieList = new ArrayList<>();
+		for (int roadId : mainRoads)
+			pieList.add(roadId);
+
+		BufferedWriter bw = null;
 		// State at the end of simulation
 		if (PRINT_FINAL_STATE) {
-			try {
+			bw = new BufferedWriter(
+					new FileWriter(
+							new File(
+									"C:\\Users\\abhinav.sunderrajan\\Desktop\\MapMatch\\MapMatchingStats\\ctmop.txt")));
+			bw.write("cell_id\tspeed\tnum_of_vehicles\tdistance\n");
+		}
 
-				int mainRoads[] = { 30634, 30635, 30636, 30637, 30638, 30639, 30640, 30641, 37981,
-						30642, 30643, 38539, 30644, 30645, 30646, 30647, 30648, 30649, 30650,
-						30651, 30580, 30581 };
+		// Minor deletions.
+		Map<Double, Double> speedDistanceMap = new TreeMap<Double, Double>();
+		Map<Double, Cell> cellDistancemap = new HashMap<>();
 
-				double distance = 0.0;
-				Road prev = null;
-				HashMap<Integer, Double> distanceMap = new LinkedHashMap<>();
-				for (Integer roadId : mainRoads) {
-					Road road = SimulatorCore.pieChangi.get(roadId);
-					if (prev != null)
-						distance += prev.getWeight();
-					distanceMap.put(roadId, Math.round(distance * 100.0) / 100.0);
-					prev = road;
-				}
-
-				List<Integer> pieList = new ArrayList<>();
-				for (int roadId : mainRoads)
-					pieList.add(roadId);
-
-				BufferedWriter bw = new BufferedWriter(new FileWriter(new File("ctmop.txt")));
-				bw.write("cell_id\tspeed\tnum_of_vehicles\tdistance\n");
-
-				// Minor deletions.
-				// Map<Double, Double> speedDistanceMap = new TreeMap<Double,
-				// Double>();
-
-				for (Cell cell : cellNetwork.getCellMap().values()) {
-					if (cell.getCellId().contains("source") || cell.getCellId().contains("sink"))
-						continue;
-					if (pieList.contains(cell.getRoad().getRoadId())) {
-						double speed = Math.round(cell.getMeanSpeed() * 100.0) / 100.0;
-						String split[] = cell.getCellId().split("_");
-						Integer roadId = Integer.parseInt(split[0]);
-						Road road = SimulatorCore.pieChangi.get(roadId);
-						Integer segment = Integer.parseInt(split[1]);
-						if (distanceMap.containsKey(roadId)) {
-							double distanceAlongRoad = distanceMap.get(roadId);
-							for (int i = 0; i < segment; i++) {
-								distanceAlongRoad += road.getSegmentsLength()[i];
-							}
-							distanceAlongRoad = Math.round((distanceAlongRoad * 100.0) / 100.0);
-							bw.write(cell.getCellId() + "\t" + speed + "\t"
-									+ cell.getNumOfVehicles() + "\t" + distanceAlongRoad + "\n");
-
-							// delete
-							// speedDistanceMap.put(distanceAlongRoad, speed);
-						}
+		for (Cell cell : cellNetwork.getCellMap().values()) {
+			if (cell.getCellId().contains("source") || cell.getCellId().contains("sink"))
+				continue;
+			if (pieList.contains(cell.getRoad().getRoadId())) {
+				double speed = Math.round(cell.getMeanSpeed() * 100.0) / 100.0;
+				String split[] = cell.getCellId().split("_");
+				Integer roadId = Integer.parseInt(split[0]);
+				Road road = SimulatorCore.pieChangi.get(roadId);
+				Integer segment = Integer.parseInt(split[1]);
+				if (distanceMap.containsKey(roadId)) {
+					double distanceAlongRoad = distanceMap.get(roadId);
+					for (int i = 0; i < segment; i++) {
+						distanceAlongRoad += road.getSegmentsLength()[i];
 					}
-
-					bw.flush();
+					distanceAlongRoad = Math.round((distanceAlongRoad * 100.0) / 100.0);
+					if (PRINT_FINAL_STATE) {
+						bw.write(cell.getCellId() + "\t" + speed + "\t" + cell.getNumOfVehicles()
+								+ "\t" + distanceAlongRoad + "\n");
+					} else {
+						speedDistanceMap.put(distanceAlongRoad, cell.getNumOfVehicles());
+						cellDistancemap.put(distanceAlongRoad, cell);
+					}
 				}
-
-				bw.close();
-
-				// for (Entry<Double, Double> entry :
-				// SimulatorCore.semSIMDistanceMap.entrySet()) {
-				// leastSquare += (entry.getValue() -
-				// speedDistanceMap.get(entry.getKey()))
-				// * (entry.getValue() - speedDistanceMap.get(entry.getKey()));
-				// }
-
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 
 		}
+		if (PRINT_FINAL_STATE) {
+			bw.flush();
+			bw.close();
+			return ntTotal;
+		} else {
+			for (Entry<Double, Double> entry : SimulatorCore.semSIMDistanceMap.entrySet()) {
+				double weight = 1.0;
+				double diff = entry.getValue() - speedDistanceMap.get(entry.getKey());
+				// If difference is greater than 20 percent than penalize more
+				if (Math.abs(diff / entry.getValue()) > 0.25)
+					weight = 1.0 + Math.abs(diff / entry.getValue());
+				leastSquare += diff * weight * diff;
+			}
+			// return
+			// Double.parseDouble(SimulatorCore.df.format(Math.sqrt(leastSquare)));
+			return ntTotal;
+		}
 
-		// return (int) Math.sqrt(leastSquare);
-		return tts;
-
-	}
-
-	/**
-	 * @return the total time spent.
-	 */
-	public int getTts() {
-		return tts;
 	}
 
 	/**

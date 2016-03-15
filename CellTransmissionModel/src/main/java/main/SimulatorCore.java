@@ -37,7 +37,6 @@ import utils.ThreadPoolExecutorService;
 public class SimulatorCore {
 
 	// kept public for now.
-	public static Properties configProperties;
 	public static Properties dbConnectionProperties;
 	public static RoadNetworkModel roadNetwork;
 	public static Map<Integer, Double> turnRatios;
@@ -64,10 +63,8 @@ public class SimulatorCore {
 
 		try {
 			// Initialization.
-			random = new Random(2015);
+			random = new Random();
 			df.setRoundingMode(RoundingMode.CEILING);
-			configProperties = new Properties();
-			configProperties.load(new FileInputStream("src/main/resources/config.properties"));
 			dbConnectionProperties = new Properties();
 			dbConnectionProperties.load(new FileInputStream(
 					"src/main/resources/connectionLocal.properties"));
@@ -82,7 +79,7 @@ public class SimulatorCore {
 			}
 
 			// Delete not needed
-			BufferedReader br = new BufferedReader(new FileReader(new File("dist-speed-map.txt")));
+			BufferedReader br = new BufferedReader(new FileReader(new File("dist-num-map.txt")));
 			if (br.ready()) {
 				while (true) {
 					String line = br.readLine();
@@ -96,7 +93,7 @@ public class SimulatorCore {
 
 			br.close();
 
-			br = new BufferedReader(new FileReader(new File("src/main/resources/Lanecount.txt")));
+			br = new BufferedReader(new FileReader(new File("Lanecount.txt")));
 
 			while (br.ready()) {
 				String line = br.readLine();
@@ -216,13 +213,21 @@ public class SimulatorCore {
 	}
 
 	public static void main(String args[]) throws InterruptedException, ExecutionException {
-		CellTransmissionModel ctm = new CellTransmissionModel(pieChangi.values(), false, false,
-				false, false, 3600);
+		CellTransmissionModel ctm = new CellTransmissionModel(SimulatorCore.pieChangi.values(),
+				false, true, false, false, 2000);
+		// double[] queuePercentages = { 0.33, 0.24, 0.38, 0.47, 0.13, 0.14,
+		// 0.0, 0.35, 0.05, 0.0,
+		// 0.23 };
+		// int index = 0;
+		// for (RampMeter meter : ctm.getMeteredRamps().values()) {
+		// meter.setQueuePercentage(queuePercentages[index]);
+		// index++;
+		// }
 
 		ThreadPoolExecutor executor = ThreadPoolExecutorService.getExecutorInstance().getExecutor();
-		Future<Integer> future = executor.submit(ctm);
-		future.get();
-		System.out.println("Finished simulation..");
+		Future<Double> future = executor.submit(ctm);
+		Double qos = future.get();
+		System.out.println("Finished simulation, QoS:" + qos);
 		executor.shutdown();
 
 	}

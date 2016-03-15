@@ -17,16 +17,14 @@ public class RampMeter {
 	private double nMaxOnRamp;
 	private int meterCellNum;
 	private Cell meterCell;
-	private boolean red;
-	private boolean green;
+	private boolean allow;
 	private CellNetwork cellNetwork;
+	private long phaseTime;
 	private int redCycleTime;
-	private int greenCycleTime;
-	// These values are determined from a web site which seems official.
-	private static final int GREEN_MIN = 10;
-	private static final int RED_MIN = 6;
 	private int totalRedTime;
 	private int totalGreenTime;
+	private static final int RED_MAX = 120;
+	private static final int PHASE_MIN = 10;
 
 	/**
 	 * The ramp to be controlled.
@@ -37,20 +35,23 @@ public class RampMeter {
 	 */
 	public RampMeter(Road ramp, CellNetwork cellNetwork) {
 		this.ramp = ramp;
-		red = false;
-		green = true;
-		redCycleTime = 0;
-		queuePercentage = 0.5;
+		allow = true;
+		queuePercentage = 0.0;
 		this.cellNetwork = cellNetwork;
 		this.meterCellNum = ramp.getRoadNodes().size() - 2;
 		meterCell = cellNetwork.getCellMap().get(ramp.getRoadId() + "_" + meterCellNum);
+		nMaxOnRamp = getNMaxOnRamp();
+	}
+
+	private double getNMaxOnRamp() {
+		nMaxOnRamp = 0;
 		for (int i = 0; i < meterCellNum; i++) {
 			Cell rampCell = cellNetwork.getCellMap().get(ramp.getRoadId() + "_" + i);
-			nMaxOnRamp += (rampCell.getLength() * rampCell.getNumOfLanes())
-					/ SimulationConstants.VEHICLE_LENGTH;
+			nMaxOnRamp += rampCell.getnMax();
 		}
 
-		assert (green ^ red);
+		return nMaxOnRamp;
+
 	}
 
 	private boolean peakDensityReached() {
@@ -63,7 +64,7 @@ public class RampMeter {
 			n += rampCell.getNumOfVehicles();
 		}
 
-		if ((n / nMaxOnRamp) > queuePercentage) {
+		if ((n / getNMaxOnRamp()) > queuePercentage) {
 			peakDensity = true;
 		}
 		return peakDensity;
@@ -71,69 +72,38 @@ public class RampMeter {
 
 	/**
 	 * Update the out-flow for the meter cell.
+	 * 
+	 * @param simulationTime
 	 */
-	public void regulateOutFlow() {
-		if (peakDensityReached()) {
-			if (redCycleTime >= RED_MIN) {
-				red = false;
-				green = true;
+	public void regulateOutFlow(long simulationTime) {
+
+		if (phaseTime <= simulationTime) {
+			if (peakDensityReached()) {
+				allow = true;
 				redCycleTime = 0;
-				greenCycleTime += 2;
-			} else {
-				redCycleTime += 2;
-			}
 
-		} else {
-
-			if (greenCycleTime >= GREEN_MIN) {
-				green = false;
-				red = true;
-				redCycleTime += 2;
-				greenCycleTime = 0;
 			} else {
-				greenCycleTime += 2;
+				if (redCycleTime >= RED_MAX) {
+					allow = true;
+					redCycleTime = 0;
+					phaseTime = simulationTime + PHASE_MIN;
+				} else {
+					allow = false;
+				}
 			}
+			phaseTime = simulationTime + PHASE_MIN;
 
 		}
 
-		if (red && !green) {
+		if (!allow) {
 			meterCell.setOutflow(0);
-			totalRedTime += 2;
+			totalRedTime += SimulationConstants.TIME_STEP;
+			redCycleTime += SimulationConstants.TIME_STEP;
 		} else {
 			meterCell.updateOutFlow();
-			totalGreenTime += 2;
+			totalGreenTime += SimulationConstants.TIME_STEP;
 		}
 
-	}
-
-	/**
-	 * @return the red
-	 */
-	public boolean isRed() {
-		return red;
-	}
-
-	/**
-	 * @param red
-	 *            the red to set
-	 */
-	public void setRed(boolean red) {
-		this.red = red;
-	}
-
-	/**
-	 * @return the green
-	 */
-	public boolean isGreen() {
-		return green;
-	}
-
-	/**
-	 * @param green
-	 *            the green to set
-	 */
-	public void setGreen(boolean green) {
-		this.green = green;
 	}
 
 	/**

@@ -1,0 +1,50 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>001</groupId>
+  <artifactId>PIE-RoadsAndUtils</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>PIE-RoadsAndUtils</name>
+  <description>The road network for PIE and other utilities for evaluating Simulation output common to both CTM and SEMSim </description>
+  <build>
+		<plugins>
+			<plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-compiler-plugin</artifactId>
+		<version>2.3.2</version>
+		<configuration>
+			<source>1.7</source>
+			<target>1.7</target>
+		<compilerVersion>1.7</compilerVersion>
+		</configuration>
+	</plugin>
+		</plugins>
+	</build>
+	
+	 <dependencies>
+			<dependency>
+				<groupId>org.tum.create.rp5</groupId>
+				<artifactId>STC-POC-RoadNetwork</artifactId>
+				<version>0.0.1</version>
+			</dependency>
+			<dependency>
+				  <groupId>joda-time</groupId>
+				  <artifactId>joda-time</artifactId>
+				  <version>2.7</version>
+			</dependency>
+			<dependency>
+		          <groupId>postgresql</groupId>
+		          <artifactId>postgresql</artifactId>
+		          <version>9.1-901.jdbc4</version>
+      		</dependency>
+			<dependency>
+				<groupId>dom4j</groupId>
+				<artifactId>dom4j</artifactId>
+				<version>1.6.1</version>
+			</dependency>
+			 <dependency>
+				<groupId>com.vividsolutions</groupId>
+				<artifactId>jts</artifactId>
+				<version>1.11</version>
+			</dependency>
+      </dependencies>
+</project>

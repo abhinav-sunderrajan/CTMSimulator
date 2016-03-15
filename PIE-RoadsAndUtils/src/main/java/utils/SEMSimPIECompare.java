@@ -13,11 +13,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import pie.PIESEMSimXMLGenerator;
+
 import rnwmodel.Lane;
 import rnwmodel.LaneModel;
 import rnwmodel.QIRoadNetworkModel;
 import rnwmodel.Road;
 import rnwmodel.RoadNetworkModel;
+import rnwmodel.RoadNode;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
@@ -31,16 +34,6 @@ public class SEMSimPIECompare {
 
 	private static long roadIIDLong = 0;
 	private static Map<Long, String> roadIIDMapping = new LinkedHashMap<Long, String>();
-	private static final RoadNetworkModel ROAD_MODEL = new QIRoadNetworkModel(
-			"jdbc:postgresql://172.25.187.111/abhinav", "abhinav", "qwert$$123", "qi_roads",
-			"qi_nodes");
-
-	private static final int PIE_ROADS[] = { 30632, 30633, 30634, 82, 28377, 30635, 28485, 30636,
-			38541, 38260, 29309, 29310, 30637, 28578, 30638, 28946, 28947, 30639, 28516, 30640,
-			30788, 30789, 30790, 30641, 37976, 37981, 37980, 30642, 37982, 30643, 38539, 2355,
-			2356, 28595, 30644, 22009, 29152, 28594, 30645, 28597, 30646, 19116, 19117, 29005,
-			30647, 28387, 30648, 29552, 29553, 30649, 28611, 30650, 28613, 29131, 30651, 31985,
-			31991, 30580, 28500, 30581 };
 
 	public static void main(String[] args) throws IOException {
 
@@ -50,37 +43,16 @@ public class SEMSimPIECompare {
 		Road prev = null;
 		HashMap<Integer, Double> distanceMap = new LinkedHashMap<>();
 		for (Integer roadId : roadArr) {
-			Road road = ROAD_MODEL.getAllRoadsMap().get(roadId);
+			Road road = PIESEMSimXMLGenerator.roadModel.getAllRoadsMap().get(roadId);
 			if (prev != null)
 				distance += prev.getWeight();
 			distanceMap.put(roadId, Math.round(distance * 100.0) / 100.0);
 			prev = road;
 		}
 
-		List<Road> pieChangiOrdered = new ArrayList<>();
-		for (int roadId : PIE_ROADS) {
-			Road road = ROAD_MODEL.getAllRoadsMap().get(roadId);
-			pieChangiOrdered.add(road);
-		}
 
-		// Set lane count for each road along P.I.E some what close to
-		// reality.
-
-		BufferedReader br = new BufferedReader(new FileReader(new File("Lanecount.txt")));
-		while (br.ready()) {
-			String line = br.readLine();
-			String[] split = line.split("\t");
-			Road road = ROAD_MODEL.getAllRoadsMap().get(Integer.parseInt(split[0]));
-			road.setLaneCount(Integer.parseInt(split[2]));
-
-		}
-		br.close();
-
-		LaneModel laneModel = new LaneModel(ROAD_MODEL);
-		Map<String, List<Lane>> linkLaneMapping = laneModel.createLaneModel(pieChangiOrdered);
-
-		for (String roadIID : linkLaneMapping.keySet()) {
-			List<Lane> lanes = linkLaneMapping.get(roadIID);
+		for (String roadIID : PIESEMSimXMLGenerator.linkLaneMapping.keySet()) {
+			List<Lane> lanes = PIESEMSimXMLGenerator.linkLaneMapping.get(roadIID);
 			for (Lane lane : lanes) {
 				if (!roadIIDMapping.containsValue(lane.roadLinkIID)) {
 					roadIIDMapping.put(++roadIIDLong, lane.roadLinkIID);
@@ -97,7 +69,7 @@ public class SEMSimPIECompare {
 
 		BufferedReader reader = null;
 
-		BufferedWriter bw = new BufferedWriter(new FileWriter(new File("semsimop.txt")));
+		BufferedWriter bw = new BufferedWriter(new FileWriter(new File("semsimop2.txt")));
 
 		for (int index = 0; index < files.length; index++) {
 			System.out.println("Started reading " + files[index].getName());
@@ -116,14 +88,14 @@ public class SEMSimPIECompare {
 					double lon = Double.parseDouble(split[3]);
 					double lat = Double.parseDouble(split[4]);
 					long time = Long.parseLong(split[0]) / 1000;
-					if (time < 1319)
+					if (time < 1779)
 						continue;
-					if (time >= 1320)
+					if (time >= 1780)
 						break;
 					String roadSegment = roadIIDMapping.get(Long.parseLong(split[2]));
 					String[] roadSegmentSplit = roadSegment.split("_");
 					Integer roadId = Integer.parseInt(roadSegmentSplit[0]);
-					Road road = ROAD_MODEL.getAllRoadsMap().get(roadId);
+					Road road = PIESEMSimXMLGenerator.roadModel.getAllRoadsMap().get(roadId);
 					Integer segment = Integer.parseInt(roadSegmentSplit[1]);
 					if (distanceMap.containsKey(roadId)) {
 						if (minTime == -1)
