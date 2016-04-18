@@ -32,6 +32,7 @@ import rnwmodel.RoadNode;
 import simulator.CellTransmissionModel;
 import simulator.SimulationConstants;
 import utils.DatabaseAccess;
+import utils.RoadRepairs;
 import utils.ThreadPoolExecutorService;
 
 public class SimulatorCore {
@@ -67,7 +68,7 @@ public class SimulatorCore {
 			df.setRoundingMode(RoundingMode.CEILING);
 			dbConnectionProperties = new Properties();
 			dbConnectionProperties.load(new FileInputStream(
-					"src/main/resources/connectionLocal.properties"));
+					"src/main/resources/connection.properties"));
 			roadNetwork = new QIRoadNetworkModel(SimulatorCore.dbConnectionProperties, "qi_roads",
 					"qi_nodes");
 			dba = new DatabaseAccess(dbConnectionProperties);
@@ -79,21 +80,22 @@ public class SimulatorCore {
 			}
 
 			// Delete not needed
-			BufferedReader br = new BufferedReader(new FileReader(new File("dist-num-map.txt")));
-			if (br.ready()) {
-				while (true) {
-					String line = br.readLine();
-					if (line == null)
-						break;
-					String split[] = line.split("\t");
-					semSIMDistanceMap.put(Double.parseDouble(split[0]),
-							Double.parseDouble(split[1]));
-				}
-			}
+			// BufferedReader br = new BufferedReader(new FileReader(new
+			// File("dist-num-map.txt")));
+			// if (br.ready()) {
+			// while (true) {
+			// String line = br.readLine();
+			// if (line == null)
+			// break;
+			// String split[] = line.split("\t");
+			// semSIMDistanceMap.put(Double.parseDouble(split[0]),
+			// Double.parseDouble(split[1]));
+			// }
+			// }
 
-			br.close();
+			// br.close();
 
-			br = new BufferedReader(new FileReader(new File("Lanecount.txt")));
+			BufferedReader br = new BufferedReader(new FileReader(new File("Lanecount.txt")));
 
 			while (br.ready()) {
 				String line = br.readLine();
@@ -162,72 +164,35 @@ public class SimulatorCore {
 		for (Road road : pieChangi) {
 			double minLength = (road.getSpeedLimit()[1] * (5 / 18.0))
 					* SimulationConstants.TIME_STEP;
-			if (road.getSegmentsLength().length > 2) {
-				while (true) {
-					boolean noSmallSegments = true;
-					int numOfSegments = road.getSegmentsLength().length;
-					if (numOfSegments < 3)
-						break;
-					for (int i = 0; i < numOfSegments; i++) {
-						if (road.getSegmentsLength()[i] < minLength) {
-							if (i == numOfSegments - 1)
-								road.getRoadNodes().remove(i);
-							else
-								road.getRoadNodes().remove(i + 1);
-							noSmallSegments = false;
-							break;
-						}
-					}
-					if (noSmallSegments)
-						break;
-				}
 
-			}
+			int numOfSegments = road.getSegmentsLength().length;
+
+			// If number of segments is equal to two which is usually off and on
+			// ramps
+			if (numOfSegments == 2)
+				RoadRepairs.repairTwoSegmentRoads(road, minLength, pieChangi);
+
+			if (numOfSegments > 2)
+				RoadRepairs.repairMultiSegmentRoads(road, minLength, pieChangi);
 
 		}
 
-		// Do not have long cells break them up. Just to see if this improves
-		// graphs generated in any way.
-		for (Road road : pieChangi) {
-			double minLength = (road.getSpeedLimit()[1] * (5 / 18.0))
-					* SimulationConstants.TIME_STEP;
-			while (true) {
-				boolean noLargeSegments = true;
-				int numOfSegments = road.getSegmentsLength().length;
-				for (int i = 0; i < numOfSegments; i++) {
-					if (road.getSegmentsLength()[i] > (minLength * 2.5)) {
-						double x = (road.getRoadNodes().get(i).getX() + road.getRoadNodes()
-								.get(i + 1).getX()) / 2.0;
-						double y = (road.getRoadNodes().get(i).getY() + road.getRoadNodes()
-								.get(i + 1).getY()) / 2.0;
-						road.getRoadNodes().add(i + 1, new RoadNode(nodeId--, x, y));
-						noLargeSegments = false;
-						break;
-					}
-				}
-				if (noLargeSegments)
-					break;
-			}
-		}
+		// RoadRepairs.breakLongSegments(pieChangi, nodeId);
 
 	}
 
 	public static void main(String args[]) throws InterruptedException, ExecutionException {
-		CellTransmissionModel ctm = new CellTransmissionModel(SimulatorCore.pieChangi.values(),
-				false, true, false, false, 2000);
-		// double[] queuePercentages = { 0.33, 0.24, 0.38, 0.47, 0.13, 0.14,
-		// 0.0, 0.35, 0.05, 0.0,
-		// 0.23 };
-		// int index = 0;
-		// for (RampMeter meter : ctm.getMeteredRamps().values()) {
-		// meter.setQueuePercentage(queuePercentages[index]);
-		// index++;
-		// }
-
 		ThreadPoolExecutor executor = ThreadPoolExecutorService.getExecutorInstance().getExecutor();
-		Future<Double> future = executor.submit(ctm);
-		Double qos = future.get();
-		System.out.println("Finished simulation, QoS:" + qos);
+
+		for (int i = 1; i < 25; i++) {
+			CellTransmissionModel ctm = new CellTransmissionModel(SimulatorCore.pieChangi.values(),
+					false, false, false, false, 1800);
+			random.setSeed(i);
+			Future<Double> future = executor.submit(ctm);
+			Double qos = future.get();
+			System.out.println(qos * SimulationConstants.TIME_STEP);
+		}
+
 		executor.shutdown();
 
 	}

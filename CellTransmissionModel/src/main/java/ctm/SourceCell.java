@@ -78,7 +78,7 @@ public class SourceCell extends Cell {
 		double p = 1;
 		do {
 			k = k + 1;
-			double u = Math.random();
+			double u = SimulatorCore.random.nextDouble();
 			p = p * u;
 		} while (p > L);
 		return k - 1;

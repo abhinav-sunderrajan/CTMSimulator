@@ -45,7 +45,7 @@ public class SEMSimDataToDB {
 
 
 	private static boolean isAccident = false;
-	private static int iterCount = 1;
+	private static int iterCount = 5;
 	private static char CONGESTION = 'M';
 
 	@SuppressWarnings("unchecked")
@@ -143,20 +143,20 @@ public class SEMSimDataToDB {
 					Integer roadId = Integer.parseInt(roadSegmentSplit[0]);
 					Road road = PIESEMSimXMLGenerator.roadModel.getAllRoadsMap().get(roadId);
 					Integer segment = Integer.parseInt(roadSegmentSplit[1]);
-					if (distanceMap.containsKey(roadId)) {
+					//if (distanceMap.containsKey(roadId)) {
 						if (minTime == -1)
 							minTime = time;
 						time = time - minTime;
 
-						double distanceAlongRoad = distanceMap.get(roadId);
-						for (int i = 0; i < segment; i++) {
-							distanceAlongRoad += road.getSegmentsLength()[i];
-						}
-
-						Coordinate node = road.getRoadNodes().get(segment).getPosition();
-						double distanceToRoadNode = EarthFunctions.haversianDistance(node,
-								new Coordinate(lon, lat));
-						distanceAlongRoad = distanceAlongRoad - distanceToRoadNode;
+//						double distanceAlongRoad = distanceMap.get(roadId);
+//						for (int i = 0; i < segment; i++) {
+//							distanceAlongRoad += road.getSegmentsLength()[i];
+//						}
+//
+//						Coordinate node = road.getRoadNodes().get(segment).getPosition();
+//						double distanceToRoadNode = EarthFunctions.haversianDistance(node,
+//								new Coordinate(lon, lat));
+//						distanceAlongRoad = distanceAlongRoad - distanceToRoadNode;
 
 						long sequence = ssd.ringBuffer.next();
 						BSONDataType next = ssd.ringBuffer.get(sequence);
@@ -166,11 +166,11 @@ public class SEMSimDataToDB {
 						next.put("speed", Double.parseDouble(split[5]));
 						next.put("timestamp", time);
 						next.put("distance_along_road",
-								(Math.round(distanceAlongRoad * 100.0) / 100.0));
+								/*(Math.round(distanceAlongRoad * 100.0) / 100.0)*/-1.0);
 						next.put("road_id", roadId);
 						next.put("iteration", iterCount);
 						ssd.ringBuffer.publish(sequence);
-					}
+					//}
 
 				}
 			}

@@ -156,7 +156,6 @@ public class VariableImportance {
 			SimulationConstants.RAMP_DELTA = simParams[3];
 			SimulationConstants.V_OUT_MIN = simParams[4];
 			SimulationConstants.TIME_GAP = simParams[5];
-
 			CellTransmissionModel ctm = new CellTransmissionModel(SimulatorCore.pieChangi.values(),
 					false, false, false, false, 2100);
 			Future<Double> future = pso.executor.submit(ctm);

@@ -41,7 +41,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 public class PIESEMSimXMLGenerator {
 
 	public static RoadNetworkModel roadModel;
-	private static final int PIE_ROADS[] = { 30632, 30633, 30634, 30635, 30636, 38541, 30637,
+	private static final int PIE_ROADS[] = { 30632, 30633, 30634, 30635, 30636, 30637,
 			30638, 30639, 30640, 30641, 37981, 30642, 30643, 38539, 30644, 30645, 30646, 30647,
 			30648, 30649, 30650, 30651, 30580, 30581 };
 
@@ -57,8 +57,7 @@ public class PIESEMSimXMLGenerator {
 	private static int newId = 83281;
 	public static List<Road> pieChangi;
 	private static List<Road> reorderList = new ArrayList<Road>();
-	private static final int[] ramps = { 30790, 29131, 29005, 28947, 28377, 37980, 29553, 28594, 28595,
-		31991, 29310 };
+	private static final int[] ramps = { 30790, 29131, 29005, 28947, 28377, 37980, 29553, 28594, 28595, 31991, 29310};
 	
 	static{
 		roadModel = new QIRoadNetworkModel("jdbc:postgresql://172.25.187.111/abhinav", "abhinav",

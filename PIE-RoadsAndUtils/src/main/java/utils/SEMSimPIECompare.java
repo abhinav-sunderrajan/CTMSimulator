@@ -60,7 +60,7 @@ public class SEMSimPIECompare {
 			}
 		}
 
-		File dir = new File("C:\\Users\\abhinav.sunderrajan\\Desktop\\SEMSim-output\\100percent");
+		File dir = new File("C:\\Users\\abhinav.sunderrajan\\Desktop\\SEMSim-output\\100percent\\resources");
 		File[] files = dir.listFiles(new FilenameFilter() {
 			public boolean accept(File dir, String name) {
 				return name.toLowerCase().endsWith(".csv");
@@ -69,7 +69,7 @@ public class SEMSimPIECompare {
 
 		BufferedReader reader = null;
 
-		BufferedWriter bw = new BufferedWriter(new FileWriter(new File("semsimop2.txt")));
+		BufferedWriter bw = new BufferedWriter(new FileWriter(new File("semsimop.txt")));
 
 		for (int index = 0; index < files.length; index++) {
 			System.out.println("Started reading " + files[index].getName());

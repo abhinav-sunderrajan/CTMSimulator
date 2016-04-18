@@ -6,6 +6,7 @@
 30635	P.I.E (Changi)	4
 28485	EXIT 22 ENG NEO AVENUE	2
 30636	P.I.E (Changi)	3
+38541	P.I.E (Changi)	3
 38260	Eng Neo Avenue	2
 29309	P.I.E Changi Ramp	2
 29310	P.I.E Changi Ramp	2

@@ -51,6 +51,8 @@ public abstract class Cell {
 	protected double criticalDensity;
 	protected double nMax;
 	protected boolean initilalized;
+	private static boolean applyRampMetering;
+	private static List<Road> ramps;
 
 	/**
 	 * The abstract cell class.
@@ -213,7 +215,7 @@ public abstract class Cell {
 
 		// Update anticipated density
 		if (!(this instanceof SourceCell || this instanceof SinkCell)) {
-			densityAntic = SimulationConstants.ALPHA_ANTIC * nt / (length * numOfLanes);
+			densityAntic = SimulationConstants.ALPHA_ANTIC * density;
 			for (Cell successor : successors) {
 				if (successor instanceof SinkCell) {
 					densityAntic = 0.0;
@@ -234,6 +236,9 @@ public abstract class Cell {
 	public void updateMeanSpeed() {
 
 		if (!(this instanceof SourceCell || this instanceof SinkCell)) {
+
+			// update the density in the cell.
+			density = nt / (length * numOfLanes);
 
 			double vinTerm = -1;
 			if (nt > 0) {
@@ -299,14 +304,18 @@ public abstract class Cell {
 					+ (1 - beta)
 					* freeFlowSpeed
 					* Math.exp((-1 / SimulationConstants.AM)
-							* Math.pow(densityRatio, SimulationConstants.AM));
+							* Math.pow(densityRatio, SimulationConstants.AM))
+					+ SimulatorCore.random.nextGaussian() * 3.0;
+
+			// System.out.println(meanSpeed);
 
 			// The noise added has a mean as determined and the standard
 			// deviation as determined while traffic state is input.
-			this.meanSpeed = freeFlowSpeed
-					* Math.exp((-1 / SimulationConstants.AM)
-							* Math.pow((density / criticalDensity), SimulationConstants.AM))
-					- (0.75 + SimulatorCore.random.nextDouble() * 1.3);
+			// this.meanSpeed = freeFlowSpeed
+			// * Math.exp((-1 / SimulationConstants.AM)
+			// * Math.pow((density / criticalDensity), SimulationConstants.AM))
+			// + SimulatorCore.random.nextGaussian() * 3.0;
+			// System.out.println(" <<>> " + meanSpeed);
 
 			if (predecessors.size() > 1)
 				this.meanSpeed = this.meanSpeed - rampTerm;
@@ -315,9 +324,19 @@ public abstract class Cell {
 				this.meanSpeed = this.meanSpeed - laneDropTerm;
 			}
 
-			if (this.meanSpeed <= SimulationConstants.V_OUT_MIN) {
-				this.meanSpeed = SimulationConstants.V_OUT_MIN
-						* (SimulatorCore.random.nextDouble() + 1) / 2.0;
+			if (applyRampMetering) {
+				double minSpeed = SimulationConstants.V_OUT_MIN;
+				if (ramps.contains(road)) {
+					minSpeed = 0.0;
+				}
+				if (this.meanSpeed <= minSpeed) {
+					this.meanSpeed = minSpeed;
+				}
+
+			} else {
+				if (this.meanSpeed <= SimulationConstants.V_OUT_MIN) {
+					this.meanSpeed = SimulationConstants.V_OUT_MIN;
+				}
 			}
 
 			this.meanSpeed = meanSpeed > freeFlowSpeed ? freeFlowSpeed : meanSpeed;
@@ -495,6 +514,36 @@ public abstract class Cell {
 	 */
 	public void setInitilalized(boolean initilalized) {
 		this.initilalized = initilalized;
+	}
+
+	/**
+	 * @return the applyRampMetering
+	 */
+	public static boolean isApplyRampMetering() {
+		return applyRampMetering;
+	}
+
+	/**
+	 * @param applyRampMetering
+	 *            the applyRampMetering to set
+	 */
+	public static void setApplyRampMetering(boolean applyRampMetering) {
+		Cell.applyRampMetering = applyRampMetering;
+	}
+
+	/**
+	 * @return the ramps
+	 */
+	public static List<Road> getRamps() {
+		return ramps;
+	}
+
+	/**
+	 * @param ramps
+	 *            the ramps to set
+	 */
+	public static void setRamps(List<Road> ramps) {
+		Cell.ramps = ramps;
 	}
 
 }

@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -59,6 +58,7 @@ public class CellTransmissionModel implements Callable<Double> {
 	private boolean determineRampFlows;
 	private double ntTotal = 0.0;
 	private static final boolean PRINT_FINAL_STATE = false;
+	private static final String SIMULATION_OP_PATH = "C:/Users/abhinav.sunderrajan/Desktop/MapMatch/MapMatchingStats/ctmop.txt";
 
 	/**
 	 * Initialize the Cell transmission model by creating the cell network from
@@ -124,7 +124,9 @@ public class CellTransmissionModel implements Callable<Double> {
 
 		ramps = new ArrayList<Road>();
 		meteredRamps = new LinkedHashMap<Cell, RampMeter>();
+		Cell.setApplyRampMetering(applyMetering);
 		cellNetwork = new CellNetwork(roadCollection, ramps);
+		Cell.setRamps(ramps);
 		for (Road ramp : ramps) {
 			RampMeter rampMeter = new RampMeter(ramp, cellNetwork);
 			meteredRamps.put(rampMeter.getMeterCell(), rampMeter);
@@ -174,21 +176,19 @@ public class CellTransmissionModel implements Callable<Double> {
 	public Double call() throws IOException {
 		try {
 
+			long tStart = System.currentTimeMillis();
+
 			for (simulationTime = 0; simulationTime <= endTime; simulationTime += SimulationConstants.TIME_STEP) {
 
 				// Update the sending potential of cells
 				for (Cell cell : cellNetwork.getCellMap().values()) {
-					if (!(cell instanceof SourceCell || cell instanceof SinkCell))
+					if (!(cell instanceof SourceCell || cell instanceof SinkCell)) {
 						cell.determineSendingPotential();
-				}
-
-				// Update the receiving potential
-				for (Cell cell : cellNetwork.getCellMap().values()) {
-					if (!(cell instanceof SourceCell || cell instanceof SinkCell))
 						cell.determineReceivePotential();
+					}
 				}
 
-				// Update out flow and the speed of cells.
+				// Update out flow of cells.
 				for (Cell cell : cellNetwork.getCellMap().values()) {
 					if (applyRampMetering) {
 						if (meteredRamps.containsKey(cell)) {
@@ -232,11 +232,13 @@ public class CellTransmissionModel implements Callable<Double> {
 					}
 
 					viewer.getMapFrame().repaint();
-					Thread.sleep(10);
+					Thread.sleep(5);
 				}
 
-				// Thread.sleep(100);
 			}
+
+			// System.out.println("finish:" + (System.currentTimeMillis() -
+			// tStart));
 
 			if (haveVisualization)
 				viewer.getMapFrame().dispose();
@@ -275,10 +277,7 @@ public class CellTransmissionModel implements Callable<Double> {
 		BufferedWriter bw = null;
 		// State at the end of simulation
 		if (PRINT_FINAL_STATE) {
-			bw = new BufferedWriter(
-					new FileWriter(
-							new File(
-									"C:\\Users\\abhinav.sunderrajan\\Desktop\\MapMatch\\MapMatchingStats\\ctmop.txt")));
+			bw = new BufferedWriter(new FileWriter(new File(SIMULATION_OP_PATH)));
 			bw.write("cell_id\tspeed\tnum_of_vehicles\tdistance\n");
 		}
 
@@ -315,16 +314,19 @@ public class CellTransmissionModel implements Callable<Double> {
 		if (PRINT_FINAL_STATE) {
 			bw.flush();
 			bw.close();
+			System.out.println("Printed file to " + SIMULATION_OP_PATH);
 			return ntTotal;
 		} else {
-			for (Entry<Double, Double> entry : SimulatorCore.semSIMDistanceMap.entrySet()) {
-				double weight = 1.0;
-				double diff = entry.getValue() - speedDistanceMap.get(entry.getKey());
-				// If difference is greater than 20 percent than penalize more
-				if (Math.abs(diff / entry.getValue()) > 0.25)
-					weight = 1.0 + Math.abs(diff / entry.getValue());
-				leastSquare += diff * weight * diff;
-			}
+			// for (Entry<Double, Double> entry :
+			// SimulatorCore.semSIMDistanceMap.entrySet()) {
+			// double weight = 1.0;
+			// double diff = entry.getValue() -
+			// speedDistanceMap.get(entry.getKey());
+			// // If difference is greater than 20 percent than penalize more
+			// if (Math.abs(diff / entry.getValue()) > 0.25)
+			// weight = 1.0 + Math.abs(diff / entry.getValue());
+			// leastSquare += diff * weight * diff;
+			// }
 			// return
 			// Double.parseDouble(SimulatorCore.df.format(Math.sqrt(leastSquare)));
 			return ntTotal;

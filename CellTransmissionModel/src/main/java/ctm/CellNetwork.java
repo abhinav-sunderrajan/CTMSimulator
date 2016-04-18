@@ -2,9 +2,9 @@ package ctm;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import rnwmodel.Road;
 import rnwmodel.RoadNetworkModel;
@@ -35,7 +35,7 @@ public class CellNetwork {
 	 */
 	public CellNetwork(Collection<Road> roads, List<Road> ramps) {
 
-		cellMap = new ConcurrentHashMap<String, Cell>();
+		cellMap = new LinkedHashMap<String, Cell>();
 
 		// Create cells and connectors to be used in the CTM model.
 		this.roads = roads;
