@@ -102,6 +102,7 @@ public class VariableImportance {
 	public static void main(String args[]) throws InterruptedException, IOException {
 		random = new Random();
 		df.setRoundingMode(RoundingMode.DOWN);
+		SimulatorCore core = SimulatorCore.getInstance(1);
 
 		VariableImportance pso = new VariableImportance();
 		List<Integer> pieList = new ArrayList<>();
@@ -145,19 +146,19 @@ public class VariableImportance {
 							+ max + " param:" + simParams[j]);
 
 			}
-			for (Integer roadId : SimulatorCore.mergePriorities.keySet()) {
+			for (Integer roadId : core.getMergePriorities().keySet()) {
 				if (pieList.contains(roadId))
-					SimulatorCore.mergePriorities.put(roadId, simParams[1]);
+					core.getMergePriorities().put(roadId, simParams[1]);
 				else
-					SimulatorCore.mergePriorities.put(roadId, simParams[0]);
+					core.getMergePriorities().put(roadId, simParams[0]);
 
 			}
 			SimulationConstants.PHI = simParams[2];
 			SimulationConstants.RAMP_DELTA = simParams[3];
 			SimulationConstants.V_OUT_MIN = simParams[4];
 			SimulationConstants.TIME_GAP = simParams[5];
-			CellTransmissionModel ctm = new CellTransmissionModel(SimulatorCore.pieChangi.values(),
-					false, false, false, false, 2100);
+			CellTransmissionModel ctm = new CellTransmissionModel(core, false, false, false, false,
+					2100);
 			Future<Double> future = pso.executor.submit(ctm);
 			pso.futures.add(future);
 			pso.futuresMap.put(future.hashCode(), simParams);

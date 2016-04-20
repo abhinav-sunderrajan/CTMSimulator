@@ -5,7 +5,7 @@ public class SimulationConstants {
 	// Time gap
 	public static Double TIME_GAP = 1.25;
 	// The time in seconds by which the simulation is advanced.
-	public static final int TIME_STEP = 5;
+	public static final int TIME_STEP = 4;
 	// Time in simulation
 	public static long time;
 

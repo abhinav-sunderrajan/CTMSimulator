@@ -30,20 +30,20 @@ import rnwmodel.Road;
 import rnwmodel.RoadNetworkModel;
 import rnwmodel.RoadNode;
 import simulator.CellTransmissionModel;
+import simulator.RampMeter;
 import simulator.SimulationConstants;
-import utils.DatabaseAccess;
 import utils.RoadRepairs;
 import utils.ThreadPoolExecutorService;
 
 public class SimulatorCore {
 
 	// kept public for now.
-	public static Properties dbConnectionProperties;
-	public static RoadNetworkModel roadNetwork;
-	public static Map<Integer, Double> turnRatios;
-	public static Map<Integer, Double> mergePriorities;
-	public static Map<Integer, Double> flowRates;
-	public static Random random;
+	private Properties dbConnectionProperties;
+	private RoadNetworkModel roadNetwork;
+	private Map<Integer, Double> turnRatios;
+	private Map<Integer, Double> mergePriorities;
+	private Map<Integer, Double> flowRates;
+	private Random random;
 
 	public static final int PIE_ROADS[] = { 30633, 30634, 82, 28377, 30635, 28485, 30636, 29310,
 			30637, 28578, 30638, 28946, 28947, 30639, 28516, 30640, 30790, 30641, 37976, 37981,
@@ -53,25 +53,23 @@ public class SimulatorCore {
 	private static final Logger LOGGER = Logger.getLogger(SimulatorCore.class);
 	public static final DecimalFormat df = new DecimalFormat("#.###");
 	public static final SAXReader SAX_READER = new SAXReader();
-	public static DatabaseAccess dba;
-	public static Map<Integer, Road> pieChangi;
+	private Map<Integer, Road> pieChangi;
+	private static SimulatorCore instance;
 
 	// To be deleted
 
-	public static Map<Double, Double> semSIMDistanceMap = new TreeMap<Double, Double>();
+	private Map<Double, Double> semSIMDistanceMap = new TreeMap<Double, Double>();
 
-	static {
+	private void initialize(long seed) {
 
 		try {
 			// Initialization.
-			random = new Random();
+			random = new Random(seed);
 			df.setRoundingMode(RoundingMode.CEILING);
 			dbConnectionProperties = new Properties();
 			dbConnectionProperties.load(new FileInputStream(
 					"src/main/resources/connection.properties"));
-			roadNetwork = new QIRoadNetworkModel(SimulatorCore.dbConnectionProperties, "qi_roads",
-					"qi_nodes");
-			dba = new DatabaseAccess(dbConnectionProperties);
+			roadNetwork = new QIRoadNetworkModel(dbConnectionProperties, "qi_roads", "qi_nodes");
 
 			pieChangi = new HashMap<Integer, Road>();
 			for (int roadId : PIE_ROADS) {
@@ -135,6 +133,25 @@ public class SimulatorCore {
 
 	}
 
+	private SimulatorCore(long seed) {
+		initialize(seed);
+	}
+
+	/**
+	 * Get instance of the simulator.
+	 * 
+	 * @param seed
+	 * @return
+	 */
+	public static SimulatorCore getInstance(long seed) {
+		if (instance == null) {
+			instance = new SimulatorCore(seed);
+		}
+
+		return instance;
+
+	}
+
 	/**
 	 * This method serves to ensure that none of the road segments which
 	 * ultimately form the cells have a length smaller than the minimum length
@@ -177,20 +194,29 @@ public class SimulatorCore {
 
 		}
 
-		// RoadRepairs.breakLongSegments(pieChangi, nodeId);
+		RoadRepairs.breakLongSegments(pieChangi, --nodeId);
 
 	}
 
 	public static void main(String args[]) throws InterruptedException, ExecutionException {
 		ThreadPoolExecutor executor = ThreadPoolExecutorService.getExecutorInstance().getExecutor();
+		// double queuePercentages[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+		// 0.0, 0.0, 0.0 };
+		double queuePercentages[] = { 0.07, 0.67, 0.2, 0.57, 0.0, 0.04, 0.22, 0.33, 0.44, 0.0, 0.37 };
+		Random randLocal = new Random();
+		SimulatorCore core = SimulatorCore.getInstance(1);
 
-		for (int i = 1; i < 25; i++) {
-			CellTransmissionModel ctm = new CellTransmissionModel(SimulatorCore.pieChangi.values(),
-					false, false, false, false, 1800);
-			random.setSeed(i);
+		for (int i = 0; i < 5; i++) {
+			core.random.setSeed(10);
+			CellTransmissionModel ctm = new CellTransmissionModel(core, false, true, false, false,
+					1900);
+			int index = 0;
+			for (RampMeter meter : ctm.getMeteredRamps().values())
+				meter.setQueuePercentage(queuePercentages[index++]);
+
 			Future<Double> future = executor.submit(ctm);
 			Double qos = future.get();
-			System.out.println(qos * SimulationConstants.TIME_STEP);
+			System.out.println(qos);
 		}
 
 		executor.shutdown();
@@ -203,7 +229,7 @@ public class SimulatorCore {
 	 * 
 	 * @param pieChangi
 	 */
-	private static void mergeTurnAndInterArrivals(Collection<Road> pieChangi) {
+	private void mergeTurnAndInterArrivals(Collection<Road> pieChangi) {
 		try {
 			Document document = SAX_READER.read("road_state.xml");
 
@@ -244,4 +270,61 @@ public class SimulatorCore {
 		}
 
 	}
+
+	/**
+	 * @return the dbConnectionProperties
+	 */
+	public Properties getDbConnectionProperties() {
+		return dbConnectionProperties;
+	}
+
+	/**
+	 * @return the roadNetwork
+	 */
+	public RoadNetworkModel getRoadNetwork() {
+		return roadNetwork;
+	}
+
+	/**
+	 * @return the turnRatios
+	 */
+	public Map<Integer, Double> getTurnRatios() {
+		return turnRatios;
+	}
+
+	/**
+	 * @return the mergePriorities
+	 */
+	public Map<Integer, Double> getMergePriorities() {
+		return mergePriorities;
+	}
+
+	/**
+	 * @return the flowRates
+	 */
+	public Map<Integer, Double> getFlowRates() {
+		return flowRates;
+	}
+
+	/**
+	 * @return the random
+	 */
+	public Random getRandom() {
+		return random;
+	}
+
+	/**
+	 * @return the pieRoads
+	 */
+	public static int[] getPieRoads() {
+		return PIE_ROADS;
+	}
+
+	/**
+	 * @return the pieChangi
+	 */
+	public Map<Integer, Road> getPieChangi() {
+		return pieChangi;
+	}
+
 }

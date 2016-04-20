@@ -102,6 +102,7 @@ public class ReduceCTMSEMSimDifference {
 
 	public static void main(String args[]) throws InterruptedException {
 		ReduceCTMSEMSimDifference ga = new ReduceCTMSEMSimDifference();
+		SimulatorCore core = SimulatorCore.getInstance(1);
 
 		List<Integer> pieList = new ArrayList<>();
 		for (Integer roadId : roadArr)
@@ -144,19 +145,19 @@ public class ReduceCTMSEMSimDifference {
 			for (Entry<List<Double>, Integer> entry : ga.populationFitnessMap.entrySet()) {
 				if (entry.getValue() == Integer.MAX_VALUE) {
 					List<Double> mergePriorities = entry.getKey();
-					for (Integer roadId : SimulatorCore.mergePriorities.keySet()) {
+					for (Integer roadId : core.getMergePriorities().keySet()) {
 						if (pieList.contains(roadId))
-							SimulatorCore.mergePriorities.put(roadId, mergePriorities.get(1));
+							core.getMergePriorities().put(roadId, mergePriorities.get(1));
 						else
-							SimulatorCore.mergePriorities.put(roadId, mergePriorities.get(0));
+							core.getMergePriorities().put(roadId, mergePriorities.get(0));
 
 					}
 
 					SimulationConstants.PHI = mergePriorities.get(2);
 					SimulationConstants.RAMP_DELTA = mergePriorities.get(3);
 
-					CellTransmissionModel ctm = new CellTransmissionModel(
-							SimulatorCore.pieChangi.values(), false, false, false, false, 2200);
+					CellTransmissionModel ctm = new CellTransmissionModel(core, false, false,
+							false, false, 2200);
 					Future<Double> future = ga.executor.submit(ctm);
 					ga.futures.add(future);
 					ga.futuresMap.put(future.hashCode(), entry.getKey());
@@ -188,7 +189,7 @@ public class ReduceCTMSEMSimDifference {
 			}
 
 			while (newGen.size() < POPULATION_SIZE) {
-				Map<List<Double>, Integer> newChild = ga.tournamentSelection();
+				Map<List<Double>, Integer> newChild = ga.tournamentSelection(core.getRandom());
 				for (Entry<List<Double>, Integer> entry : newChild.entrySet())
 					newGen.put(entry.getKey(), entry.getValue());
 			}
@@ -235,7 +236,7 @@ public class ReduceCTMSEMSimDifference {
 	 * 
 	 * @return the cross-overed and mutated children.
 	 */
-	private Map<List<Double>, Integer> tournamentSelection() {
+	private Map<List<Double>, Integer> tournamentSelection(Random rand) {
 		Map<List<Double>, Integer> parents = new LinkedHashMap<List<Double>, Integer>();
 
 		while (parents.size() < 2) {
@@ -243,7 +244,7 @@ public class ReduceCTMSEMSimDifference {
 			int fitness = Integer.MAX_VALUE;
 
 			for (int i = 0; i < TOURANAMENT_SIZE; i++) {
-				int select = SimulatorCore.random.nextInt(POPULATION_SIZE);
+				int select = rand.nextInt(POPULATION_SIZE);
 				int k = 0;
 				for (Entry<List<Double>, Integer> entry : populationFitnessMap.entrySet()) {
 					if (k == select) {
@@ -260,7 +261,7 @@ public class ReduceCTMSEMSimDifference {
 			parents.put(best, fitness);
 		}
 
-		crossOverAndMutate(parents);
+		crossOverAndMutate(parents, rand);
 		return parents;
 	}
 
@@ -269,7 +270,7 @@ public class ReduceCTMSEMSimDifference {
 	 * 
 	 * @param parents
 	 */
-	private void crossOverAndMutate(Map<List<Double>, Integer> parents) {
+	private void crossOverAndMutate(Map<List<Double>, Integer> parents, Random rand) {
 		List<Double> parent1 = null;
 		List<Double> parent2 = null;
 		for (List<Double> parent : parents.keySet()) {
@@ -286,7 +287,7 @@ public class ReduceCTMSEMSimDifference {
 
 		// Uniform crossover
 		for (int i = 0; i < parent1.size(); i++) {
-			if (SimulatorCore.random.nextDouble() < crossOverrate) {
+			if (rand.nextDouble() < crossOverrate) {
 				double temp = parent1.get(i);
 				parent1.set(i, parent2.get(i));
 				parent2.set(i, temp);

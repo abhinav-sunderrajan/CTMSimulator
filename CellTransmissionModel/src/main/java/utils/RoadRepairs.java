@@ -90,7 +90,7 @@ public class RoadRepairs {
 								.get(i + 1).getX()) / 2.0;
 						double y = (road.getRoadNodes().get(i).getY() + road.getRoadNodes()
 								.get(i + 1).getY()) / 2.0;
-						road.getRoadNodes().add(i + 1, new RoadNode(nodeId--, x, y));
+						road.getRoadNodes().add(i + 1, new RoadNode(nodeId, x, y));
 						noLargeSegments = false;
 						break;
 					}
@@ -133,6 +133,7 @@ public class RoadRepairs {
 			if (noSmallSegments)
 				break;
 		}
+
 	}
 
 }

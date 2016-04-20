@@ -24,7 +24,7 @@ public class RampMeter {
 	private int totalRedTime;
 	private int totalGreenTime;
 	private static final int RED_MAX = 120;
-	private static final int PHASE_MIN = 10;
+	private static final int PHASE_MIN = 12;
 
 	/**
 	 * The ramp to be controlled.

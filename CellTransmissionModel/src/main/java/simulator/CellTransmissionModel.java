@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -57,6 +58,7 @@ public class CellTransmissionModel implements Callable<Double> {
 	private static final Logger LOGGER = Logger.getLogger(CellTransmissionModel.class);
 	private boolean determineRampFlows;
 	private double ntTotal = 0.0;
+	private SimulatorCore core;
 	private static final boolean PRINT_FINAL_STATE = false;
 	private static final String SIMULATION_OP_PATH = "C:/Users/abhinav.sunderrajan/Desktop/MapMatch/MapMatchingStats/ctmop.txt";
 
@@ -72,7 +74,7 @@ public class CellTransmissionModel implements Callable<Double> {
 				cell.setInitilalized(false);
 		}
 
-		TrafficStateInitialize.parseXML(cellNetwork);
+		TrafficStateInitialize.parseXML(cellNetwork, core);
 
 		// The XML does not have information regarding the on/off ramps so have
 		// a very bad fix now. Need to resolve this.
@@ -98,7 +100,7 @@ public class CellTransmissionModel implements Callable<Double> {
 
 	/**
 	 * 
-	 * @param roadCollection
+	 * @param core2
 	 *            collection of roads to be simulated
 	 * @param haveAccident
 	 *            simulate an accident?
@@ -112,9 +114,9 @@ public class CellTransmissionModel implements Callable<Double> {
 	 * @param simTime
 	 *            time over which to simulate.
 	 */
-	public CellTransmissionModel(Collection<Road> roadCollection, boolean haveAccident,
-			boolean applyMetering, boolean haveViz, boolean determineRampFlows, long simTime) {
-
+	public CellTransmissionModel(SimulatorCore core, boolean haveAccident, boolean applyMetering,
+			boolean haveViz, boolean determineRampFlows, long simTime) {
+		this.core = core;
 		this.applyRampMetering = applyMetering;
 		this.determineRampFlows = determineRampFlows;
 		if (determineRampFlows && !applyRampMetering) {
@@ -125,7 +127,7 @@ public class CellTransmissionModel implements Callable<Double> {
 		ramps = new ArrayList<Road>();
 		meteredRamps = new LinkedHashMap<Cell, RampMeter>();
 		Cell.setApplyRampMetering(applyMetering);
-		cellNetwork = new CellNetwork(roadCollection, ramps);
+		cellNetwork = new CellNetwork(core.getPieChangi().values(), ramps);
 		Cell.setRamps(ramps);
 		for (Road ramp : ramps) {
 			RampMeter rampMeter = new RampMeter(ramp, cellNetwork);
@@ -139,8 +141,8 @@ public class CellTransmissionModel implements Callable<Double> {
 		SimulatorCore.df.setRoundingMode(RoundingMode.CEILING);
 
 		if (haveVisualization) {
-			viewer = CTMSimViewer.getCTMViewerInstance("CTM Model", SimulatorCore.roadNetwork,
-					cellColorMap, SimulatorCore.dbConnectionProperties);
+			viewer = CTMSimViewer.getCTMViewerInstance("CTM Model", core.getRoadNetwork(),
+					cellColorMap, core.getDbConnectionProperties());
 
 			for (Cell cell : cellNetwork.getCellMap().values()) {
 				if (!(cell instanceof SinkCell || cell instanceof SourceCell)) {
@@ -232,7 +234,7 @@ public class CellTransmissionModel implements Callable<Double> {
 					}
 
 					viewer.getMapFrame().repaint();
-					Thread.sleep(5);
+					Thread.sleep(50);
 				}
 
 			}
@@ -263,7 +265,7 @@ public class CellTransmissionModel implements Callable<Double> {
 		Road prev = null;
 		HashMap<Integer, Double> distanceMap = new LinkedHashMap<>();
 		for (Integer roadId : mainRoads) {
-			Road road = SimulatorCore.pieChangi.get(roadId);
+			Road road = core.getPieChangi().get(roadId);
 			if (prev != null)
 				distance += prev.getWeight();
 			distanceMap.put(roadId, Math.round(distance * 100.0) / 100.0);
@@ -292,7 +294,7 @@ public class CellTransmissionModel implements Callable<Double> {
 				double speed = Math.round(cell.getMeanSpeed() * 100.0) / 100.0;
 				String split[] = cell.getCellId().split("_");
 				Integer roadId = Integer.parseInt(split[0]);
-				Road road = SimulatorCore.pieChangi.get(roadId);
+				Road road = core.getPieChangi().get(roadId);
 				Integer segment = Integer.parseInt(split[1]);
 				if (distanceMap.containsKey(roadId)) {
 					double distanceAlongRoad = distanceMap.get(roadId);
@@ -345,10 +347,10 @@ public class CellTransmissionModel implements Callable<Double> {
 	 * @throws IllegalArgumentException
 	 *             unless <tt>a < b</tt>
 	 */
-	public static double uniform(double a, double b) {
+	public double uniform(double a, double b, Random rand) {
 		if (!(a < b))
 			throw new IllegalArgumentException("Invalid range");
-		return a + SimulatorCore.random.nextDouble() * (b - a);
+		return a + rand.nextDouble() * (b - a);
 	}
 
 	/**

@@ -1,6 +1,5 @@
 package ctm;
 
-import main.SimulatorCore;
 import simulator.SimulationConstants;
 
 /**
@@ -22,7 +21,7 @@ public class SourceCell extends Cell {
 	public SourceCell(String cellId, double length) {
 		super(cellId, length);
 		nt = Integer.MAX_VALUE;
-		meanNoVehiclesEveryTimeStep = SimulatorCore.flowRates.get(road.getRoadId())
+		meanNoVehiclesEveryTimeStep = core.getFlowRates().get(road.getRoadId())
 				* SimulationConstants.TIME_STEP / 3600.0;
 		densityAntic = 0.0;
 
@@ -78,7 +77,7 @@ public class SourceCell extends Cell {
 		double p = 1;
 		do {
 			k = k + 1;
-			double u = SimulatorCore.random.nextDouble();
+			double u = core.getRandom().nextDouble();
 			p = p * u;
 		} while (p > L);
 		return k - 1;

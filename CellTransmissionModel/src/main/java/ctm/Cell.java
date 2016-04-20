@@ -43,7 +43,7 @@ public abstract class Cell {
 	private double ntBefore;
 
 	protected double meanSpeed;
-
+	protected SimulatorCore core;
 	protected double sdSpeed;
 	protected double densityAntic;
 	protected double density;
@@ -64,7 +64,8 @@ public abstract class Cell {
 	public Cell(String cellId, double length) {
 		this.cellId = cellId;
 		String[] split = cellId.split("_");
-		this.road = SimulatorCore.roadNetwork.getAllRoadsMap().get(Integer.parseInt(split[0]));
+		core = SimulatorCore.getInstance(1);
+		this.road = core.getRoadNetwork().getAllRoadsMap().get(Integer.parseInt(split[0]));
 		this.numOfLanes = road.getLaneCount();
 		this.length = length;
 		this.freeFlowSpeed = road.getSpeedLimit()[1] * (5.0 / 18);
@@ -73,7 +74,7 @@ public abstract class Cell {
 		if (length > 0) {
 			this.meanSpeed = freeFlowSpeed;
 			double meanVehicleLength = SimulationConstants.VEHICLE_LENGTH
-					+ SimulatorCore.random.nextGaussian() * 0.1;
+					+ core.getRandom().nextGaussian() * 0.1;
 			double maxDesnsityPerlane = length
 					/ (SimulationConstants.TIME_GAP * meanSpeed + meanVehicleLength);
 			nMax = maxDesnsityPerlane * numOfLanes;
@@ -221,8 +222,8 @@ public abstract class Cell {
 					densityAntic = 0.0;
 					break;
 				}
-				double turnRatio = (SimulatorCore.turnRatios.get(successor.getRoad().getRoadId()) == null) ? 1.0
-						: SimulatorCore.turnRatios.get(successor.getRoad().getRoadId());
+				double turnRatio = (core.getTurnRatios().get(successor.getRoad().getRoadId()) == null) ? 1.0
+						: core.getTurnRatios().get(successor.getRoad().getRoadId());
 				densityAntic += (1 - SimulationConstants.ALPHA_ANTIC)
 						* (successor.nt / (successor.length * successor.numOfLanes)) * turnRatio;
 			}
@@ -265,8 +266,8 @@ public abstract class Cell {
 
 			double successorDensityAntic = 0.0;
 			for (Cell successor : successors) {
-				double turnRatio = (SimulatorCore.turnRatios.get(successor.getRoad().getRoadId()) == null) ? 1.0
-						: SimulatorCore.turnRatios.get(successor.getRoad().getRoadId());
+				double turnRatio = (core.getTurnRatios().get(successor.getRoad().getRoadId()) == null) ? 1.0
+						: core.getTurnRatios().get(successor.getRoad().getRoadId());
 				successorDensityAntic = +turnRatio * successor.densityAntic;
 			}
 
@@ -305,7 +306,7 @@ public abstract class Cell {
 					* freeFlowSpeed
 					* Math.exp((-1 / SimulationConstants.AM)
 							* Math.pow(densityRatio, SimulationConstants.AM))
-					+ SimulatorCore.random.nextGaussian() * 3.0;
+					+ core.getRandom().nextGaussian() * 0.0;
 
 			// System.out.println(meanSpeed);
 
@@ -341,7 +342,7 @@ public abstract class Cell {
 
 			this.meanSpeed = meanSpeed > freeFlowSpeed ? freeFlowSpeed : meanSpeed;
 			double meanVehicleLength = SimulationConstants.VEHICLE_LENGTH
-					+ SimulatorCore.random.nextGaussian() * 0.1;
+					+ core.getRandom().nextGaussian() * 0.1;
 			double maxDesnsityPerlane = length
 					/ (SimulationConstants.TIME_GAP * meanSpeed + meanVehicleLength);
 			nMax = maxDesnsityPerlane * numOfLanes;

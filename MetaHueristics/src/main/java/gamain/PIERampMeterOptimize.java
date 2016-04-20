@@ -37,14 +37,15 @@ public class PIERampMeterOptimize {
 	private Map<List<Double>, Double> populationFitnessMap;
 	private ThreadPoolExecutor executor;
 	private static Random randomGA;
-	private double crossOverrate;
-	private static final int POPULATION_SIZE = 14;
-	private static final int MAX_ITERS = 72;
+	private static final double CROSSOVER_PROB = 0.3;
+	private static final int POPULATION_SIZE = 12;
+	private static final int MAX_ITERS = 50;
 	private static final int NUM_OF_RAMPS = 11;
-	private static final int MU = 3;
-	private static double mutationprobability = 0.25;
+	private static final int MU = 1;
+	private static final double MUTATION_PROB = 0.02;
 	private static final int TOURANAMENT_SIZE = 3;
 	private static final Logger LOGGER = Logger.getLogger(PIERampMeterOptimize.class);
+	private double meanPopulationFitness;
 
 	public PIERampMeterOptimize() {
 		this.futures = new ConcurrentLinkedQueue<List<Future<Double>>>();
@@ -52,8 +53,7 @@ public class PIERampMeterOptimize {
 		randomGA = new Random();
 		futuresMap = new ConcurrentHashMap<Integer, List<Double>>();
 		populationFitnessMap = new LinkedHashMap<List<Double>, Double>();
-		this.crossOverrate = 0.5;
-
+		meanPopulationFitness = 0.0;
 	}
 
 	private class AnalyzeTotalTimeSpent implements Runnable {
@@ -74,7 +74,7 @@ public class PIERampMeterOptimize {
 					for (Future<Double> future : futureSeeds)
 						meanTTS += future.get();
 
-					meanTTS /= futureSeeds.size();
+					meanTTS = meanTTS / futureSeeds.size();
 					boolean noRampMetering = true;
 					for (double percentage : queuepercentages) {
 						if (percentage > 0) {
@@ -104,6 +104,7 @@ public class PIERampMeterOptimize {
 	public static void main(String args[]) throws InterruptedException {
 		PIERampMeterOptimize pieOptimize = new PIERampMeterOptimize();
 		pieOptimize.executor.submit(pieOptimize.new AnalyzeTotalTimeSpent());
+		SimulatorCore core = SimulatorCore.getInstance(1);
 
 		List<Double> bestSolution = null;
 		double bestFitness = Double.MAX_VALUE;
@@ -126,21 +127,20 @@ public class PIERampMeterOptimize {
 			for (Entry<List<Double>, Double> entry : pieOptimize.populationFitnessMap.entrySet()) {
 				if (entry.getValue() == Double.MAX_VALUE) {
 					List<Future<Double>> futureSeeds = new ArrayList<Future<Double>>();
-					for (int seed = 0; seed < 8; seed++) {
-						SimulatorCore.random.setSeed(randomGA.nextLong());
-						CellTransmissionModel ctm = new CellTransmissionModel(
-								SimulatorCore.pieChangi.values(), false, true, false, false, 1900);
+					for (int seed = 0; seed < 1; seed++) {
+						// SimulatorCore.random.setSeed(randomGA.nextLong());
+						core.getRandom().setSeed(1);
+						CellTransmissionModel ctm = new CellTransmissionModel(core, false, true,
+								false, false, 1900);
 						List<Double> queuePercentages = entry.getKey();
 						int index = 0;
-						for (RampMeter meter : ctm.getMeteredRamps().values()) {
-							meter.setQueuePercentage(queuePercentages.get(index));
-							index++;
-						}
+						for (RampMeter meter : ctm.getMeteredRamps().values())
+							meter.setQueuePercentage(queuePercentages.get(index++));
+
 						futureSeeds.add(pieOptimize.executor.submit(ctm));
 					}
 					pieOptimize.futures.add(futureSeeds);
 					pieOptimize.futuresMap.put(futureSeeds.hashCode(), entry.getKey());
-
 				}
 			}
 
@@ -152,11 +152,14 @@ public class PIERampMeterOptimize {
 			}
 
 			pieOptimize.populationFitnessMap = sortByValue(pieOptimize.populationFitnessMap);
+			pieOptimize.meanPopulationFitness = 0.0;
+			for (Double fitness : pieOptimize.populationFitnessMap.values())
+				pieOptimize.meanPopulationFitness += fitness;
+			pieOptimize.meanPopulationFitness /= POPULATION_SIZE;
 
 			if (iter == (MAX_ITERS - 1))
 				break;
 			// Create new generation.
-			System.out.println("Evaluated generation " + iter);
 
 			Map<List<Double>, Double> newGen = new LinkedHashMap<List<Double>, Double>();
 			// /Retain the best MU values from the previous generation. Also
@@ -165,48 +168,38 @@ public class PIERampMeterOptimize {
 			int num = 1;
 			for (Entry<List<Double>, Double> entry : pieOptimize.populationFitnessMap.entrySet()) {
 				if (num == 1) {
-					if (bestFitness > entry.getValue()) {
+					if (entry.getValue() < bestFitness) {
 						bestFitness = entry.getValue();
 						bestSolution = entry.getKey();
 					}
-					if (iter % 10 == 0)
-						System.out.println("fitness:" + bestFitness + " config: " + bestSolution);
 				}
-				newGen.put(entry.getKey(), entry.getValue());
 
 				if (num == MU)
 					break;
+				newGen.put(entry.getKey(), entry.getValue());
 				num++;
 			}
 
+			// if (iter % 10 == 0)
+			// LOGGER.info(iter + " >> " + "fitness:" + bestFitness +
+			// " config: " + bestSolution);
+
 			while (newGen.size() < POPULATION_SIZE) {
-				Map<List<Double>, Double> newChild = pieOptimize.tournamentSelection();
+				Map<List<Double>, Double> newChild = pieOptimize.tournamentSelection(bestFitness);
 				for (Entry<List<Double>, Double> entry : newChild.entrySet()) {
 					if (!newGen.containsKey(entry.getKey()))
-						newGen.put(entry.getKey(), entry.getValue());
+						newGen.put(entry.getKey(), Double.MAX_VALUE);
 				}
 			}
 
+			System.out.println((pieOptimize.meanPopulationFitness - bestFitness) + "\t" + iter);
+			if ((pieOptimize.meanPopulationFitness - bestFitness) < 15000) {
+				// System.out.println(pieOptimize.populationFitnessMap.keySet());
+			}
 			pieOptimize.populationFitnessMap = newGen;
-			mutationprobability = mutationprobability - (0.12) / (MAX_ITERS - 1);
-
 		}
 
 		LOGGER.info("fitness:" + bestFitness + " config: " + bestSolution);
-		// CellTransmissionModel ctmBestConfig = new CellTransmissionModel(
-		// SimulatorCore.pieChangi.values(), false, true, false, true,
-		// 2000);
-		// int index = 0;
-		// for (RampMeter meter : ctmBestConfig.getMeteredRamps().values())
-		// {
-		// meter.setQueuePercentage(pieOptimize.bestSolution.get(index));
-		// index++;
-		// }
-		// Future<Double> future =
-		// pieOptimize.executor.submit(ctmBestConfig);
-		// pieOptimize.futures.add(future);
-		// pieOptimize.futuresMap.put(future.hashCode(),
-		// pieOptimize.bestSolution);
 
 	}
 
@@ -236,9 +229,11 @@ public class PIERampMeterOptimize {
 	/**
 	 * Tournament selection for the new generation parents
 	 * 
+	 * @param bestFitness
+	 * 
 	 * @return the cross-overed and mutated children.
 	 */
-	private Map<List<Double>, Double> tournamentSelection() {
+	private Map<List<Double>, Double> tournamentSelection(double bestFitness) {
 		Map<List<Double>, Double> parents = new LinkedHashMap<List<Double>, Double>();
 
 		while (parents.size() < 2) {
@@ -246,7 +241,7 @@ public class PIERampMeterOptimize {
 			double fitness = Double.MAX_VALUE;
 
 			for (int i = 0; i < TOURANAMENT_SIZE; i++) {
-				int select = SimulatorCore.random.nextInt(POPULATION_SIZE);
+				int select = randomGA.nextInt(POPULATION_SIZE);
 				int k = 0;
 				for (Entry<List<Double>, Double> entry : populationFitnessMap.entrySet()) {
 					if (k == select) {
@@ -263,7 +258,7 @@ public class PIERampMeterOptimize {
 			parents.put(best, fitness);
 		}
 
-		crossOverAndMutate(parents);
+		crossOverAndMutate(parents, bestFitness);
 		return parents;
 	}
 
@@ -271,8 +266,9 @@ public class PIERampMeterOptimize {
 	 * Implement Uniform crossover and mutation using Gaussian convolution.
 	 * 
 	 * @param parents
+	 * @param bestFitness
 	 */
-	private void crossOverAndMutate(Map<List<Double>, Double> parents) {
+	private void crossOverAndMutate(Map<List<Double>, Double> parents, double bestFitness) {
 		List<Double> parent1 = null;
 		List<Double> parent2 = null;
 		for (List<Double> parent : parents.keySet()) {
@@ -280,7 +276,6 @@ public class PIERampMeterOptimize {
 				parent1 = parent;
 			else
 				parent2 = parent;
-			parents.put(parent, Double.MAX_VALUE);
 		}
 
 		if (!(parent1.size() == NUM_OF_RAMPS && parent2.size() == NUM_OF_RAMPS)) {
@@ -288,20 +283,29 @@ public class PIERampMeterOptimize {
 		}
 
 		// Uniform crossover
+		double cop = CROSSOVER_PROB * (parents.get(parent1) - bestFitness)
+				/ (meanPopulationFitness - bestFitness);
+
+		// Mutation probability of parent 2
+		double mup2 = MUTATION_PROB * (parents.get(parent2) - bestFitness)
+				/ (meanPopulationFitness - bestFitness);
+
+		// Mutation of parent 1
+		double mup1 = MUTATION_PROB * (parents.get(parent1) - bestFitness)
+				/ (meanPopulationFitness - bestFitness);
+
 		for (int i = 0; i < parent1.size(); i++) {
-			if (SimulatorCore.random.nextDouble() < crossOverrate) {
+			if (randomGA.nextDouble() < cop) {
 				double temp = parent1.get(i);
 				parent1.set(i, parent2.get(i));
 				parent2.set(i, temp);
 			}
 		}
 
-		// Mutation of parent 1
-
 		for (int i = 0; i < parent1.size(); i++) {
-			if (SimulatorCore.random.nextDouble() < mutationprobability) {
+			if (randomGA.nextDouble() < mup1) {
 				while (true) {
-					double temp = parent1.get(i) + SimulatorCore.random.nextGaussian();
+					double temp = parent1.get(i) + randomGA.nextGaussian();
 					temp = Math.round(temp * 100.0) / 100.0;
 					if (temp >= 0 && temp <= 0.8) {
 						parent1.set(i, temp);
@@ -312,11 +316,10 @@ public class PIERampMeterOptimize {
 
 		}
 
-		// Mutation of parent 2
 		for (int i = 0; i < parent2.size(); i++) {
-			if (SimulatorCore.random.nextDouble() < mutationprobability) {
+			if (randomGA.nextDouble() < mup2) {
 				while (true) {
-					double temp = parent2.get(i) + SimulatorCore.random.nextGaussian();
+					double temp = parent2.get(i) + randomGA.nextGaussian();
 					temp = Math.round(temp * 100.0) / 100.0;
 					if (temp >= 0 && temp <= 0.8) {
 						parent2.set(i, temp);

@@ -21,6 +21,7 @@ import ctm.CellNetwork;
 public class TrafficStateInitialize {
 
 	public static Road[] pieMainRoads;
+	private static SimulatorCore core;
 
 	/**
 	 * Initialize traffic state
@@ -32,14 +33,15 @@ public class TrafficStateInitialize {
 		pieMainRoads = new Road[expresswayRoadList.length];
 		int i = 0;
 		for (int roadId : expresswayRoadList) {
-			pieMainRoads[i] = SimulatorCore.roadNetwork.getAllRoadsMap().get(roadId);
+			pieMainRoads[i] = core.getRoadNetwork().getAllRoadsMap().get(roadId);
 			i++;
 		}
 
 	}
 
-	public static void parseXML(CellNetwork cellNetwork) {
+	public static void parseXML(CellNetwork cellNetwork, SimulatorCore simCore) {
 		try {
+			core = simCore;
 			Document document = SimulatorCore.SAX_READER.read("road_state.xml");
 			Element trafficState = document.getRootElement().element("TrafficState");
 
@@ -74,8 +76,9 @@ public class TrafficStateInitialize {
 									pieMainRoads[roadIndex] + "_" + s);
 							cell.setMeanSpeed(meanSpeed);
 							cell.setSdSpeed(sdSpeed);
-							int density = SimulatorCore.random
-									.nextInt((upperDensity - lowerDensity) + 1) + lowerDensity;
+							int density = core.getRandom().nextInt(
+									(upperDensity - lowerDensity) + 1)
+									+ lowerDensity;
 							cell.setNumberOfvehicles((int) Math.round(density * cell.getLength()
 									* 0.001));
 							cell.setInitilalized(true);

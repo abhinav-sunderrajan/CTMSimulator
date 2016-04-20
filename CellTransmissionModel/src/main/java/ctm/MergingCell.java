@@ -1,6 +1,5 @@
 package ctm;
 
-import main.SimulatorCore;
 
 /**
  * Update method for merging cells.
@@ -21,7 +20,7 @@ public class MergingCell extends Cell {
 	 */
 	public MergingCell(String cellId, double length) {
 		super(cellId, length);
-		mergePriority = SimulatorCore.mergePriorities.get(road.getRoadId());
+		mergePriority = core.getMergePriorities().get(road.getRoadId());
 	}
 
 	/**

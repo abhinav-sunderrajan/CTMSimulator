@@ -109,6 +109,7 @@ public class OptimizeSimulationParametersPSO {
 	}
 
 	public static void main(String args[]) throws InterruptedException {
+		SimulatorCore core = SimulatorCore.getInstance(1);
 		random = new Random();
 		df.setRoundingMode(RoundingMode.DOWN);
 
@@ -153,9 +154,9 @@ public class OptimizeSimulationParametersPSO {
 			// Analyze the fitness the of the population
 			for (SwarmParticle particle : pso.population) {
 				Double[] simParams = particle.getParameters();
-				for (Integer roadId : SimulatorCore.mergePriorities.keySet()) {
+				for (Integer roadId : core.getMergePriorities().keySet()) {
 					if (!pieList.contains(roadId))
-						SimulatorCore.mergePriorities.put(roadId, simParams[0]);
+						core.getMergePriorities().put(roadId, simParams[0]);
 					// else
 					// SimulatorCore.mergePriorities.put(roadId, simParams[0]);
 
@@ -165,8 +166,8 @@ public class OptimizeSimulationParametersPSO {
 				// SimulationConstants.V_OUT_MIN = simParams[4];
 				SimulationConstants.TIME_GAP = simParams[1];
 
-				CellTransmissionModel ctm = new CellTransmissionModel(
-						SimulatorCore.pieChangi.values(), false, false, false, false, 2100);
+				CellTransmissionModel ctm = new CellTransmissionModel(core, false, false, false,
+						false, 2100);
 				Future<Double> future = pso.executor.submit(ctm);
 				pso.futures.add(future);
 				pso.futuresMap.put(future.hashCode(), particle);
