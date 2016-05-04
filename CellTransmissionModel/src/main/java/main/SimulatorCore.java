@@ -68,7 +68,7 @@ public class SimulatorCore {
 			df.setRoundingMode(RoundingMode.CEILING);
 			dbConnectionProperties = new Properties();
 			dbConnectionProperties.load(new FileInputStream(
-					"src/main/resources/connection.properties"));
+					"src/main/resources/connectionLocal.properties"));
 			roadNetwork = new QIRoadNetworkModel(dbConnectionProperties, "qi_roads", "qi_nodes");
 
 			pieChangi = new HashMap<Integer, Road>();
@@ -200,15 +200,16 @@ public class SimulatorCore {
 
 	public static void main(String args[]) throws InterruptedException, ExecutionException {
 		ThreadPoolExecutor executor = ThreadPoolExecutorService.getExecutorInstance().getExecutor();
-		// double queuePercentages[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-		// 0.0, 0.0, 0.0 };
-		double queuePercentages[] = { 0.07, 0.67, 0.2, 0.57, 0.0, 0.04, 0.22, 0.33, 0.44, 0.0, 0.37 };
+		double queuePercentages[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+		// double queuePercentages[] = { 0.61, 0.09, 0.38, 0.29, 0.5, 0.08,
+		// 0.33, 0.64, 0.13, 0.21,
+		// 0.36 };
 		Random randLocal = new Random();
 		SimulatorCore core = SimulatorCore.getInstance(1);
 
-		for (int i = 0; i < 5; i++) {
-			core.random.setSeed(10);
-			CellTransmissionModel ctm = new CellTransmissionModel(core, false, true, false, false,
+		for (int i = 0; i < 20; i++) {
+			core.random.setSeed(randLocal.nextLong());
+			CellTransmissionModel ctm = new CellTransmissionModel(core, false, false, false, false,
 					1900);
 			int index = 0;
 			for (RampMeter meter : ctm.getMeteredRamps().values())

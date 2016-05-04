@@ -192,7 +192,7 @@ public class CellTransmissionModel implements Callable<Double> {
 
 				// Update out flow of cells.
 				for (Cell cell : cellNetwork.getCellMap().values()) {
-					if (applyRampMetering) {
+					if (applyRampMetering && simulationTime >= 900) {
 						if (meteredRamps.containsKey(cell)) {
 							meteredRamps.get(cell).regulateOutFlow(simulationTime);
 						} else {
@@ -230,6 +230,7 @@ public class CellTransmissionModel implements Callable<Double> {
 					for (Cell cell : cellNetwork.getCellMap().values()) {
 						if (!(cell instanceof SinkCell || cell instanceof SourceCell)) {
 							cellColorMap.put(cell, ColorHelper.numberToColor(cell.getMeanSpeed()));
+							System.out.println(cell.getMeanSpeed() + "\t" + cell.getDensity());
 						}
 					}
 
@@ -280,7 +281,7 @@ public class CellTransmissionModel implements Callable<Double> {
 		// State at the end of simulation
 		if (PRINT_FINAL_STATE) {
 			bw = new BufferedWriter(new FileWriter(new File(SIMULATION_OP_PATH)));
-			bw.write("cell_id\tspeed\tnum_of_vehicles\tdistance\n");
+			bw.write("cell_id\tspeed\tnum_of_vehicles\tdistance\tdensity\n");
 		}
 
 		// Minor deletions.
@@ -304,7 +305,7 @@ public class CellTransmissionModel implements Callable<Double> {
 					distanceAlongRoad = Math.round((distanceAlongRoad * 100.0) / 100.0);
 					if (PRINT_FINAL_STATE) {
 						bw.write(cell.getCellId() + "\t" + speed + "\t" + cell.getNumOfVehicles()
-								+ "\t" + distanceAlongRoad + "\n");
+								+ "\t" + distanceAlongRoad + "\t" + cell.getDensity() + "\n");
 					} else {
 						speedDistanceMap.put(distanceAlongRoad, cell.getNumOfVehicles());
 						cellDistancemap.put(distanceAlongRoad, cell);
@@ -313,6 +314,7 @@ public class CellTransmissionModel implements Callable<Double> {
 			}
 
 		}
+
 		if (PRINT_FINAL_STATE) {
 			bw.flush();
 			bw.close();
@@ -331,6 +333,7 @@ public class CellTransmissionModel implements Callable<Double> {
 			// }
 			// return
 			// Double.parseDouble(SimulatorCore.df.format(Math.sqrt(leastSquare)));
+
 			return ntTotal;
 		}
 

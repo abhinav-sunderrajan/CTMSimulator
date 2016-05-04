@@ -128,7 +128,7 @@ public class PIERampMeterOptimize {
 				if (entry.getValue() == Double.MAX_VALUE) {
 					List<Future<Double>> futureSeeds = new ArrayList<Future<Double>>();
 					for (int seed = 0; seed < 1; seed++) {
-						// SimulatorCore.random.setSeed(randomGA.nextLong());
+						// core.getRandom().setSeed(randomGA.nextLong());
 						core.getRandom().setSeed(1);
 						CellTransmissionModel ctm = new CellTransmissionModel(core, false, true,
 								false, false, 1900);

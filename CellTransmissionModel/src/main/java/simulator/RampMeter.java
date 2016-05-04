@@ -96,6 +96,7 @@ public class RampMeter {
 		}
 
 		if (!allow) {
+
 			meterCell.setOutflow(0);
 			totalRedTime += SimulationConstants.TIME_STEP;
 			redCycleTime += SimulationConstants.TIME_STEP;
