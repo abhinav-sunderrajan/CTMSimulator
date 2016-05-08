@@ -84,7 +84,7 @@ public abstract class Cell {
 			// The simulation will take care from here onwards,
 			determineSendingPotential();
 			determineReceivePotential();
-			criticalDensity = getnMax() / (numOfLanes * length);
+			criticalDensity = nMax / (numOfLanes * length);
 		}
 
 	}
@@ -222,8 +222,10 @@ public abstract class Cell {
 					densityAntic = 0.0;
 					break;
 				}
-				double turnRatio = (core.getTurnRatios().get(successor.getRoad().getRoadId()) == null) ? 1.0
-						: core.getTurnRatios().get(successor.getRoad().getRoadId());
+				double turnRatio = 1.0;
+				if (this instanceof DivergingCell)
+					turnRatio = core.getTurnRatios().get(successor.getRoad().getRoadId());
+
 				densityAntic += (1 - SimulationConstants.ALPHA_ANTIC)
 						* (successor.nt / (successor.length * successor.numOfLanes)) * turnRatio;
 			}
@@ -345,7 +347,7 @@ public abstract class Cell {
 					+ core.getRandom().nextGaussian() * 0.1;
 			double maxDesnsityPerlane = length
 					/ (SimulationConstants.TIME_GAP * meanSpeed + meanVehicleLength);
-			nMax = maxDesnsityPerlane * numOfLanes;
+			this.nMax = maxDesnsityPerlane * numOfLanes;
 
 		}
 
@@ -358,6 +360,7 @@ public abstract class Cell {
 	 */
 	public void determineReceivePotential() {
 		this.receivePotential = nMax /* + outflow */- nt;
+
 		if (receivePotential < 0) {
 			receivePotential = 0;
 		}

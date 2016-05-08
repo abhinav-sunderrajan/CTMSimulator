@@ -230,7 +230,8 @@ public class CellTransmissionModel implements Callable<Double> {
 					for (Cell cell : cellNetwork.getCellMap().values()) {
 						if (!(cell instanceof SinkCell || cell instanceof SourceCell)) {
 							cellColorMap.put(cell, ColorHelper.numberToColor(cell.getMeanSpeed()));
-							System.out.println(cell.getMeanSpeed() + "\t" + cell.getDensity());
+							// System.out.println(cell.getMeanSpeed() + "\t" +
+							// cell.getDensity());
 						}
 					}
 

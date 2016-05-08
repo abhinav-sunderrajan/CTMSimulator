@@ -20,51 +20,51 @@
 <MergePriorities>
 		<merge>
 			<road id="28377">0.22</road>
-			<road id="30634">0.95</road>
+			<road id="30634">0.9</road>
 		</merge>
 		<merge>
 			<road id="29310">0.22</road>
-			<road id="30636">0.95</road>
+			<road id="30636">0.9</road>
 		</merge>
 		<merge>
 			<road id="28947">0.22</road>
-			<road id="30638">0.95</road>
+			<road id="30638">0.9</road>
 		</merge>
 		<merge>
 			<road id="30790">0.22</road>
-			<road id="30640">0.95</road>
+			<road id="30640">0.9</road>
 		</merge>
 		<merge>
 			<road id="37980">0.22</road>
-			<road id="37981">0.95</road>
+			<road id="37981">0.9</road>
 		</merge>
 		<merge>
 			<road id="28595">0.13</road>
-			<road id="38539">0.95</road>
+			<road id="38539">0.9</road>
 		</merge>
 		<merge>
 			<road id="31991">0.22</road>
-			<road id="30651">0.95</road>
+			<road id="30651">0.9</road>
 		</merge>
 		<merge>
 			<road id="28594">0.22</road>
-			<road id="30644">0.95</road>
+			<road id="30644">0.9</road>
 		</merge>
 		<merge>
 			<road id="29005">0.22</road>
-			<road id="30646">0.95</road>
+			<road id="30646">0.9</road>
 		</merge>
 		<merge>
 			<road id="28594">0.22</road>
-			<road id="30644">0.95</road>
+			<road id="30644">0.9</road>
 		</merge>
 		<merge>
 			<road id="29553">0.22</road>
-			<road id="30648">0.95</road>
+			<road id="30648">0.9</road>
 		</merge>
 		<merge>
 			<road id="29131">0.22</road>
-			<road id="30650">0.95</road>
+			<road id="30650">0.9</road>
 		</merge>
 
 </MergePriorities>

@@ -1,4 +1,4 @@
-package main;
+package esper;
 
 import com.espertech.esper.client.Configuration;
 import com.espertech.esper.client.EPAdministrator;
@@ -7,7 +7,6 @@ import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPServiceProviderManager;
 import com.espertech.esper.client.EPStatement;
 
-import esper.Subscriber;
 
 /**
  * An esper engine instance factory.

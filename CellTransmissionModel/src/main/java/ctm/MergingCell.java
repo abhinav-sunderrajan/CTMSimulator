@@ -1,6 +1,5 @@
 package ctm;
 
-
 /**
  * Update method for merging cells.
  * 
@@ -42,13 +41,9 @@ public class MergingCell extends Cell {
 	public void updateOutFlow() {
 		Cell Ek = this.successors.get(0);
 
-		if (Ek.receivePotential > (this.sendingPotential + othermergingCell.sendingPotential)) {
-			double temp = (mergePriority * Ek.receivePotential)
-					/ (mergePriority + othermergingCell.mergePriority);
-			this.outflow = Math.min(temp, sendingPotential);
-		} else {
-			this.outflow = Math.min(mergePriority * Ek.receivePotential, sendingPotential);
-		}
+		double temp = (mergePriority * Ek.receivePotential)
+				/ (mergePriority + othermergingCell.mergePriority);
+		this.outflow = Math.min(temp, sendingPotential);
 
 	}
 }

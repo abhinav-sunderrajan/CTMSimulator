@@ -58,13 +58,13 @@ public class RampMeter {
 		// The peak density parameter overrides the controller in case the size
 		// of the queue breaches the queuePercentage parameter.
 		boolean peakDensity = false;
-		double n = 0;
+		double nTotal = 0;
 		for (int i = 0; i <= meterCellNum; i++) {
 			Cell rampCell = cellNetwork.getCellMap().get(ramp.getRoadId() + "_" + i);
-			n += rampCell.getNumOfVehicles();
+			nTotal += rampCell.getNumOfVehicles();
 		}
 
-		if ((n / getNMaxOnRamp()) > queuePercentage) {
+		if ((nTotal / getNMaxOnRamp()) >= queuePercentage) {
 			peakDensity = true;
 		}
 		return peakDensity;
@@ -77,7 +77,7 @@ public class RampMeter {
 	 */
 	public void regulateOutFlow(long simulationTime) {
 
-		if (phaseTime <= simulationTime) {
+		if (queuePercentage > 0.0 && phaseTime <= simulationTime) {
 			if (peakDensityReached()) {
 				allow = true;
 				redCycleTime = 0;
@@ -96,7 +96,6 @@ public class RampMeter {
 		}
 
 		if (!allow) {
-
 			meterCell.setOutflow(0);
 			totalRedTime += SimulationConstants.TIME_STEP;
 			redCycleTime += SimulationConstants.TIME_STEP;

@@ -16,6 +16,7 @@ import com.lmax.disruptor.SingleThreadedClaimStrategy;
 import com.lmax.disruptor.SleepingWaitStrategy;
 import com.lmax.disruptor.dsl.Disruptor;
 
+import esper.EsperOperatorFactory;
 import esper.FileStreamer;
 import esper.Subscriber;
 
