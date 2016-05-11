@@ -20,7 +20,7 @@ public class SimulationConstants {
 	// Number of lanes to be closed in the case of an accident
 	public static final int LANES_CLOSED = 1;
 
-	public static final double VEHICLE_LENGTH = 5.0;
+	public static final double LEFF = 5.0;
 
 	public static final double ALPHA_ANTIC = 0.15;
 
@@ -32,7 +32,7 @@ public class SimulationConstants {
 	public static double V_OUT_MIN = 1.78;
 
 	// METANET ramp merging term
-	public static double RAMP_DELTA = 0.37;
+	public static double RAMP_DELTA = 0.012;
 
 	// METANET constant term for on ramp merging term
 	public static final double KAPPA = 0.452;

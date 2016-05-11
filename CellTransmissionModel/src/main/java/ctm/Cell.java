@@ -71,20 +71,13 @@ public abstract class Cell {
 		this.freeFlowSpeed = road.getSpeedLimit()[1] * (5.0 / 18);
 		predecessors = new ArrayList<Cell>();
 		successors = new ArrayList<Cell>();
+
 		if (length > 0) {
 			this.meanSpeed = freeFlowSpeed;
-			double meanVehicleLength = SimulationConstants.VEHICLE_LENGTH
-					+ core.getRandom().nextGaussian() * 0.1;
-			double maxDesnsityPerlane = length
-					/ (SimulationConstants.TIME_GAP * meanSpeed + meanVehicleLength);
-			nMax = maxDesnsityPerlane * numOfLanes;
+			double meanVehicleLength = SimulationConstants.LEFF;
+			criticalDensity = 1.0 / (SimulationConstants.TIME_GAP * freeFlowSpeed + meanVehicleLength);
+			this.nMax = length * criticalDensity * numOfLanes;
 			this.sdSpeed = 0;
-			// Initialize sending and receiving potentials for the very first
-			// time.
-			// The simulation will take care from here onwards,
-			determineSendingPotential();
-			determineReceivePotential();
-			criticalDensity = nMax / (numOfLanes * length);
 		}
 
 	}
@@ -138,7 +131,7 @@ public abstract class Cell {
 	 * The number of vehicles that moves to the next cell(s) in this current
 	 * time step.
 	 * 
-	 * @return the outflow
+	 * @return the out-flow
 	 */
 	public double getOutflow() {
 		return outflow;
@@ -146,7 +139,7 @@ public abstract class Cell {
 
 	/**
 	 * @param outflow
-	 *            the outflow to set
+	 *            the out-flow to set
 	 */
 	public void setOutflow(double outflow) {
 		this.outflow = outflow;
@@ -211,24 +204,28 @@ public abstract class Cell {
 	 */
 	public void updateAnticipatedDensity() {
 
-		// update the density in the cell.
-		density = nt / (length * numOfLanes);
-
 		// Update anticipated density
 		if (!(this instanceof SourceCell || this instanceof SinkCell)) {
+			// update the density in the cell.
+			density = nt / (length * numOfLanes);
 			densityAntic = SimulationConstants.ALPHA_ANTIC * density;
-			for (Cell successor : successors) {
-				if (successor instanceof SinkCell) {
-					densityAntic = 0.0;
-					break;
-				}
-				double turnRatio = 1.0;
-				if (this instanceof DivergingCell)
-					turnRatio = core.getTurnRatios().get(successor.getRoad().getRoadId());
 
-				densityAntic += (1 - SimulationConstants.ALPHA_ANTIC)
-						* (successor.nt / (successor.length * successor.numOfLanes)) * turnRatio;
+			if (this instanceof DivergingCell) {
+				for (Cell successor : successors) {
+					double turnRatio = core.getTurnRatios().get(successor.getRoad().getRoadId());
+					densityAntic += (1 - SimulationConstants.ALPHA_ANTIC)
+							* (successor.nt / (successor.length * successor.numOfLanes))
+							* turnRatio;
+				}
+			} else {
+				if (successors.get(0) instanceof SinkCell) {
+					densityAntic += (1 - SimulationConstants.ALPHA_ANTIC) * density;
+				} else {
+					densityAntic += (1 - SimulationConstants.ALPHA_ANTIC)
+							* (successors.get(0).nt / (successors.get(0).length * successors.get(0).numOfLanes));
+				}
 			}
+
 		}
 
 	}
@@ -239,9 +236,6 @@ public abstract class Cell {
 	public void updateMeanSpeed() {
 
 		if (!(this instanceof SourceCell || this instanceof SinkCell)) {
-
-			// update the density in the cell.
-			density = nt / (length * numOfLanes);
 
 			double vinTerm = -1;
 			if (nt > 0) {
@@ -267,16 +261,36 @@ public abstract class Cell {
 			vinTerm = Math.max(SimulationConstants.V_OUT_MIN, vinTerm);
 
 			double successorDensityAntic = 0.0;
-			for (Cell successor : successors) {
-				double turnRatio = (core.getTurnRatios().get(successor.getRoad().getRoadId()) == null) ? 1.0
-						: core.getTurnRatios().get(successor.getRoad().getRoadId());
-				successorDensityAntic = +turnRatio * successor.densityAntic;
+
+			if (this instanceof DivergingCell) {
+				for (Cell successor : successors) {
+					double turnRatio = core.getTurnRatios().get(successor.getRoad().getRoadId());
+					successorDensityAntic = +turnRatio * successor.densityAntic;
+				}
+			} else {
+				successorDensityAntic = successors.get(0).densityAntic;
 			}
 
-			// if density difference is large then give more weightage to the
+			// if density difference is large then give more weighting to the
 			// anticipated part of the term below.
-			beta = (Math.abs(densityAntic - successorDensityAntic) >= 1) ? 0.2 : 0.8;
+
+			beta = 0.8;
+
+			if (densityAntic > 0.0 && successorDensityAntic > 0.0) {
+				if (densityAntic / successorDensityAntic >= 1.8
+						|| successorDensityAntic / densityAntic >= 1.8)
+					beta = 0.2;
+			}
+
 			double densityRatio = densityAntic / criticalDensity;
+
+			this.meanSpeed = beta
+					* vinTerm
+					+ (1 - beta)
+					* freeFlowSpeed
+					* Math.exp((-1 / SimulationConstants.AM)
+							* Math.pow(densityRatio, SimulationConstants.AM))
+					+ core.getRandom().nextGaussian() * 2.0;
 
 			// This is the on ramp merging term as suggested by METANET.
 
@@ -302,24 +316,6 @@ public abstract class Cell {
 						* density * meanSpeed * meanSpeed)
 						/ (length * numOfLanes * criticalDensity);
 
-			this.meanSpeed = beta
-					* vinTerm
-					+ (1 - beta)
-					* freeFlowSpeed
-					* Math.exp((-1 / SimulationConstants.AM)
-							* Math.pow(densityRatio, SimulationConstants.AM))
-					+ core.getRandom().nextGaussian() * 0.0;
-
-			// System.out.println(meanSpeed);
-
-			// The noise added has a mean as determined and the standard
-			// deviation as determined while traffic state is input.
-			// this.meanSpeed = freeFlowSpeed
-			// * Math.exp((-1 / SimulationConstants.AM)
-			// * Math.pow((density / criticalDensity), SimulationConstants.AM))
-			// + SimulatorCore.random.nextGaussian() * 3.0;
-			// System.out.println(" <<>> " + meanSpeed);
-
 			if (predecessors.size() > 1)
 				this.meanSpeed = this.meanSpeed - rampTerm;
 
@@ -332,19 +328,19 @@ public abstract class Cell {
 				if (ramps.contains(road)) {
 					minSpeed = 0.0;
 				}
-				if (this.meanSpeed <= minSpeed) {
+				if (this.meanSpeed < minSpeed) {
 					this.meanSpeed = minSpeed;
 				}
 
 			} else {
-				if (this.meanSpeed <= SimulationConstants.V_OUT_MIN) {
+				if (this.meanSpeed < SimulationConstants.V_OUT_MIN) {
 					this.meanSpeed = SimulationConstants.V_OUT_MIN;
 				}
 			}
 
 			this.meanSpeed = meanSpeed > freeFlowSpeed ? freeFlowSpeed : meanSpeed;
-			double meanVehicleLength = SimulationConstants.VEHICLE_LENGTH
-					+ core.getRandom().nextGaussian() * 0.1;
+			double meanVehicleLength = SimulationConstants.LEFF + core.getRandom().nextGaussian()
+					* 0.1;
 			double maxDesnsityPerlane = length
 					/ (SimulationConstants.TIME_GAP * meanSpeed + meanVehicleLength);
 			this.nMax = maxDesnsityPerlane * numOfLanes;
@@ -359,12 +355,9 @@ public abstract class Cell {
 	 * @return
 	 */
 	public void determineReceivePotential() {
-		this.receivePotential = nMax /* + outflow */- nt;
-
-		if (receivePotential < 0) {
+		this.receivePotential = nMax - nt;
+		if (receivePotential < 0)
 			receivePotential = 0;
-		}
-
 	}
 
 	/**
@@ -373,13 +366,10 @@ public abstract class Cell {
 	 * @return
 	 */
 	public void determineSendingPotential() {
-
 		double param1 = (nt * meanSpeed * SimulationConstants.TIME_STEP) / length;
 		double param2 = (nt * SimulationConstants.V_OUT_MIN * SimulationConstants.TIME_STEP)
 				/ length;
 		this.sendingPotential = Math.max(param1, param2);
-		this.sendingPotential = Math.min(nt, sendingPotential);
-
 	}
 
 	@Override
@@ -464,6 +454,14 @@ public abstract class Cell {
 	}
 
 	/**
+	 * @param nMax
+	 *            the nMax to set
+	 */
+	public void setnMax(double nMax) {
+		this.nMax = nMax;
+	}
+
+	/**
 	 * @return the length of the cell.
 	 */
 	public double getLength() {
@@ -475,6 +473,14 @@ public abstract class Cell {
 	 */
 	public int getNumOfLanes() {
 		return numOfLanes;
+	}
+
+	/**
+	 * @param numOfLanes
+	 *            the numOfLanes to set
+	 */
+	public void setNumOfLanes(int numOfLanes) {
+		this.numOfLanes = numOfLanes;
 	}
 
 	/**
@@ -506,7 +512,7 @@ public abstract class Cell {
 	}
 
 	/**
-	 * @return the initilalized
+	 * @return the initialized
 	 */
 	public boolean isInitilalized() {
 		return initilalized;
@@ -514,7 +520,7 @@ public abstract class Cell {
 
 	/**
 	 * @param initilalized
-	 *            the initilalized to set
+	 *            the initialized to set
 	 */
 	public void setInitilalized(boolean initilalized) {
 		this.initilalized = initilalized;

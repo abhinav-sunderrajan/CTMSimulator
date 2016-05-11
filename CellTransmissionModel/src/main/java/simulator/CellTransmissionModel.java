@@ -51,6 +51,7 @@ public class CellTransmissionModel implements Callable<Double> {
 	private CTMSimViewer viewer;
 	private Map<Cell, Color> cellColorMap;
 	private boolean haveVisualization;
+	private boolean haveAccident;
 	private CellNetwork cellNetwork;
 	private List<Road> ramps;
 	private Map<Cell, RampMeter> meteredRamps;
@@ -118,6 +119,7 @@ public class CellTransmissionModel implements Callable<Double> {
 			boolean haveViz, boolean determineRampFlows, long simTime) {
 		this.core = core;
 		this.applyRampMetering = applyMetering;
+		this.haveAccident = haveAccident;
 		this.determineRampFlows = determineRampFlows;
 		if (determineRampFlows && !applyRampMetering) {
 			throw new IllegalStateException(
@@ -179,8 +181,29 @@ public class CellTransmissionModel implements Callable<Double> {
 		try {
 
 			long tStart = System.currentTimeMillis();
+			Cell accidentCell = null;
+			int laneCount = 0;
+			if (haveAccident) {
+				accidentCell = cellNetwork.getCellMap().get(SimulationConstants.ACCIDENT_CELL);
+				laneCount = accidentCell.getNumOfLanes();
+			}
 
 			for (simulationTime = 0; simulationTime <= endTime; simulationTime += SimulationConstants.TIME_STEP) {
+
+				if (haveAccident) {
+					int numAffectedLanes = 3;
+					if (simulationTime == 900) {
+						accidentCell.setNumOfLanes(laneCount - numAffectedLanes);
+						double nMax = accidentCell.getnMax();
+						accidentCell.setnMax(nMax * (laneCount - numAffectedLanes) / laneCount);
+					}
+
+					if (simulationTime == 1800) {
+						accidentCell.setNumOfLanes(laneCount);
+						double nMax = accidentCell.getnMax();
+						accidentCell.setnMax(nMax * laneCount / (laneCount - numAffectedLanes));
+					}
+				}
 
 				// Update the sending potential of cells
 				for (Cell cell : cellNetwork.getCellMap().values()) {
@@ -230,8 +253,6 @@ public class CellTransmissionModel implements Callable<Double> {
 					for (Cell cell : cellNetwork.getCellMap().values()) {
 						if (!(cell instanceof SinkCell || cell instanceof SourceCell)) {
 							cellColorMap.put(cell, ColorHelper.numberToColor(cell.getMeanSpeed()));
-							// System.out.println(cell.getMeanSpeed() + "\t" +
-							// cell.getDensity());
 						}
 					}
 

@@ -200,9 +200,11 @@ public class SimulatorCore {
 
 	public static void main(String args[]) throws InterruptedException, ExecutionException {
 		ThreadPoolExecutor executor = ThreadPoolExecutorService.getExecutorInstance().getExecutor();
-		double queuePercentages[] = { 0.0, 0.0, 0.0, 0.0, 0.49, 0.0, 0.0, 0.46, 0.45, 0.0, 0.0 };
-		// /double queuePercentages[] = { 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9,
-		// 0.9, 0.9, 0.9, 0.9 };
+		// double queuePercentages[] = { 0.22, 0.74, 0.61, 0.62, 0.0, 0.43,
+		// 0.69, 0.1, 0.39, 0.34,
+		// 0.47 };
+		double queuePercentages[] = { 0.26, 0.73, 0.48, 0.37, 0.27, 0.1, 0.27, 0.22, 0.28, 0.29,
+				0.39 };
 		Random randLocal = new Random();
 		SimulatorCore core = SimulatorCore.getInstance(1);
 
@@ -210,8 +212,8 @@ public class SimulatorCore {
 		int trials = 1;
 		for (int i = 0; i < trials; i++) {
 			core.random.setSeed(randLocal.nextLong());
-			CellTransmissionModel ctm = new CellTransmissionModel(core, false, true, false, false,
-					1900);
+			CellTransmissionModel ctm = new CellTransmissionModel(core, true, false, true, false,
+					7200);
 			int index = 0;
 			for (RampMeter meter : ctm.getMeteredRamps().values())
 				meter.setQueuePercentage(queuePercentages[index++]);
@@ -219,6 +221,7 @@ public class SimulatorCore {
 			Future<Double> future = executor.submit(ctm);
 			Double qos = future.get();
 			meanQos += Math.round(qos);
+			System.out.print(Math.round(qos) + ",");
 		}
 
 		System.out.println((meanQos / trials));

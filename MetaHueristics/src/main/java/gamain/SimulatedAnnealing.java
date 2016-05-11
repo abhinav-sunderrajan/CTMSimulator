@@ -24,7 +24,7 @@ public class SimulatedAnnealing {
 	private static SimulatorCore core;
 	private static final int TEMP_MAX = 17000;
 	private static final int ITER_MAX = 100;
-	private static final double ALPHA = 400.0;
+	private static final double PENALTY = 200.0;
 	private static List<Double> mutateProbList;
 
 	public static void main(String args[]) throws InterruptedException, ExecutionException {
@@ -39,9 +39,7 @@ public class SimulatedAnnealing {
 		List<Double> queuePercentage = new ArrayList<>();
 
 		for (int i = 0; i < NUM_OF_RAMPS; i++) {
-			double temp = randomGA.nextDouble() * 0.0;
-			temp = Math.round(temp * 100.0) / 100.0;
-			queuePercentage.add(temp);
+			queuePercentage.add(0.0);
 			mutateProbList.add(MUTATION_PROB);
 		}
 
@@ -69,9 +67,8 @@ public class SimulatedAnnealing {
 
 			if (fitness < bestFitness && !bestSolution.equals(queuePercentage)) {
 				double totalWeight = 0.0;
-				for (int index = 0; index < bestSolution.size(); index++) {
+				for (int index = 0; index < bestSolution.size(); index++)
 					totalWeight += Math.abs(bestSolution.get(index) - queuePercentage.get(index));
-				}
 
 				for (int index = 0; index < bestSolution.size(); index++) {
 					double weight = bestSolution.get(index) - queuePercentage.get(index);
@@ -99,18 +96,18 @@ public class SimulatedAnnealing {
 
 		for (int i = 0; i < NSEEDS; i++) {
 			core.getRandom().setSeed(randomGA.nextLong());
-			CellTransmissionModel ctm = new CellTransmissionModel(core, false, true, false, false,
-					2700);
+			CellTransmissionModel ctm = new CellTransmissionModel(core, true, true, false, false,
+					2200);
 			int index = 0;
 			for (RampMeter meter : ctm.getMeteredRamps().values())
 				meter.setQueuePercentage(queuePercentage.get(index++));
 			Future<Double> future = executor.submit(ctm);
-			meanFitness += future.get();
+			meanFitness += Math.round(future.get());
 		}
 
 		meanFitness = meanFitness / NSEEDS;
 		for (double qp : queuePercentage)
-			meanFitness += qp * ALPHA;
+			meanFitness += qp * PENALTY;
 
 		return meanFitness;
 
