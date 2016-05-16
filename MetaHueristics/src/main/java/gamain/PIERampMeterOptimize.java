@@ -131,7 +131,7 @@ public class PIERampMeterOptimize {
 						// core.getRandom().setSeed(randomGA.nextLong());
 						core.getRandom().setSeed(1);
 						CellTransmissionModel ctm = new CellTransmissionModel(core, false, true,
-								false, false, 1900);
+								false, false, 2100);
 						List<Double> queuePercentages = entry.getKey();
 						int index = 0;
 						for (RampMeter meter : ctm.getMeteredRamps().values())

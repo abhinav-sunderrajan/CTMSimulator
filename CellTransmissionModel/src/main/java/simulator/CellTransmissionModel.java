@@ -191,7 +191,7 @@ public class CellTransmissionModel implements Callable<Double> {
 			for (simulationTime = 0; simulationTime <= endTime; simulationTime += SimulationConstants.TIME_STEP) {
 
 				if (haveAccident) {
-					int numAffectedLanes = 3;
+					int numAffectedLanes = 2;
 					if (simulationTime == 900) {
 						accidentCell.setNumOfLanes(laneCount - numAffectedLanes);
 						double nMax = accidentCell.getnMax();

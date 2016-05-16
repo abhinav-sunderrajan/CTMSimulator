@@ -15,7 +15,7 @@ import utils.ThreadPoolExecutorService;
 public class SimulatedAnnealing {
 
 	private static ThreadPoolExecutor executor;
-	private static Random randomGA;
+	private static Random randomLocal;
 	private static double temperature;
 	private static final double MUTATION_PROB = 0.3;
 	private static final int NUM_OF_RAMPS = 11;
@@ -29,7 +29,7 @@ public class SimulatedAnnealing {
 
 	public static void main(String args[]) throws InterruptedException, ExecutionException {
 		executor = ThreadPoolExecutorService.getExecutorInstance().getExecutor();
-		randomGA = new Random();
+		randomLocal = new Random();
 		tweakedCopy = new ArrayList<>();
 		temperature = TEMP_MAX;
 
@@ -58,7 +58,7 @@ public class SimulatedAnnealing {
 				fitness = tweakFitness;
 			} else {
 				double prob = Math.exp((fitness - tweakFitness) / temperature);
-				if (randomGA.nextDouble() < prob) {
+				if (randomLocal.nextDouble() < prob) {
 					queuePercentage = new ArrayList<>(tweakedCopy);
 					fitness = tweakFitness;
 				}
@@ -95,7 +95,7 @@ public class SimulatedAnnealing {
 		double meanFitness = 0.0;
 
 		for (int i = 0; i < NSEEDS; i++) {
-			core.getRandom().setSeed(randomGA.nextLong());
+			core.getRandom().setSeed(randomLocal.nextLong());
 			CellTransmissionModel ctm = new CellTransmissionModel(core, true, true, false, false,
 					2200);
 			int index = 0;
@@ -117,9 +117,9 @@ public class SimulatedAnnealing {
 		List<Double> tempList = new ArrayList<>(queuePercentage);
 
 		for (int i = 0; i < queuePercentage.size(); i++) {
-			if (randomGA.nextDouble() < mutateProbList.get(i)) {
+			if (randomLocal.nextDouble() < mutateProbList.get(i)) {
 				while (true) {
-					double temp = queuePercentage.get(i) + randomGA.nextGaussian();
+					double temp = queuePercentage.get(i) + randomLocal.nextGaussian();
 					temp = Math.round(temp * 100.0) / 100.0;
 					if (temp >= 0 && temp <= 0.8) {
 						tempList.set(i, temp);

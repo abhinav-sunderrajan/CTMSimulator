@@ -7,9 +7,9 @@
 	<source id="82">1800</source>
 	<source id="29310">1100</source>
 	<source id="28946">1100</source>
-	<source id="30790">1800</source>
-	<source id="37980">1800</source>
-	<source id="28595">1100</source>
+	<source id="30790">1100</source>
+	<source id="37980">1100</source>
+	<source id="28595">1800</source>
 	<source id="29152">1100</source>
 	<source id="29005">1100</source>
 	<source id="29553">1800</source>
@@ -153,4 +153,3 @@
 </TrafficState>
 
 </RoadParameters>
-

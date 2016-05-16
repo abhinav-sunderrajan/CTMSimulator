@@ -1,5 +1,13 @@
 package psomain;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import org.la4j.Vector;
+import org.la4j.vector.DenseVector;
+import org.la4j.vector.functor.VectorFunction;
+
 /**
  * A particle in the swarm for PSO.
  * 
@@ -10,38 +18,50 @@ public class SwarmParticle implements Comparable<SwarmParticle> {
 
 	private double bestFitness;
 	private double fitness;
-	private Double[] parameters;
-	private Double[] bestParameters;
-	private double velocity[];
-	private int neighboursIndex[];
+	private Vector parameters;
+	private Vector bestParameters;
+	private Vector velocity;
+	private List<Integer> neighboursIndex;
 	private double localBest;
+	private Vector localBestParameters;
 	private static final int NUM_OF_NEIGHBOURS = 3;
+	private static Random random = new Random();
+	private int id;
 
 	/**
-	 * 
+	 * @param id
+	 *            the id of the swarm particle.
 	 * @param fitness
-	 *            fitness of this generation.
 	 * @param bestFitNess
-	 *            the best fitness over generations.
 	 * @param parameters
-	 *            the parameters belonging to this generation.
+	 * @param populationSize
+	 * @param paramRange
+	 *            Range of the parameters.
 	 */
-	public SwarmParticle(double fitness, double bestFitNess, Double[] parameters) {
+	public SwarmParticle(int id, double fitness, double bestFitNess, Vector parameters,
+			int populationSize, final double paramRange) {
 		this.bestFitness = bestFitNess;
 		this.parameters = parameters;
+		this.bestParameters = DenseVector.constant(parameters.length(), 0.0);
+		this.localBestParameters = DenseVector.constant(parameters.length(), 0.0);
 		this.fitness = fitness;
-		this.velocity = new double[parameters.length];
-		this.neighboursIndex = new int[NUM_OF_NEIGHBOURS];
-		int index = 0;
-		while (true) {
-			int neighbour = OptimizeSimulationParametersPSO.random
-					.nextInt(OptimizeSimulationParametersPSO.POPULATION_SIZE);
+		this.velocity = DenseVector.random(parameters.length(), random);
+		this.velocity = velocity.transform(new VectorFunction() {
 
-			if (index > 0 && neighboursIndex[index - 1] == neighbour)
+			@Override
+			public double evaluate(int i, double value) {
+				return value * paramRange;
+			}
+		});
+		this.id = id;
+		this.neighboursIndex = new ArrayList<Integer>();
+
+		while (true) {
+			int neighbour = (int) Math.floor(Math.random() * populationSize);
+			if (neighbour == id || neighboursIndex.contains(neighbour))
 				continue;
-			neighboursIndex[index] = neighbour;
-			index++;
-			if (index == NUM_OF_NEIGHBOURS)
+			neighboursIndex.add(neighbour);
+			if (neighboursIndex.size() == NUM_OF_NEIGHBOURS)
 				break;
 		}
 
@@ -67,7 +87,7 @@ public class SwarmParticle implements Comparable<SwarmParticle> {
 	/**
 	 * @return the parameters
 	 */
-	public Double[] getParameters() {
+	public Vector getParameters() {
 		return parameters;
 	}
 
@@ -75,7 +95,7 @@ public class SwarmParticle implements Comparable<SwarmParticle> {
 	 * @param parameters
 	 *            the parameters to set
 	 */
-	public void setParameters(Double[] parameters) {
+	public void setParameters(Vector parameters) {
 		this.parameters = parameters;
 	}
 
@@ -85,7 +105,6 @@ public class SwarmParticle implements Comparable<SwarmParticle> {
 		StringBuffer buffer = new StringBuffer("");
 		for (double param : parameters)
 			buffer.append(param + ", ");
-
 		return buffer.toString() + " fitness:" + fitness;
 	}
 
@@ -99,8 +118,16 @@ public class SwarmParticle implements Comparable<SwarmParticle> {
 	/**
 	 * @return the velocity
 	 */
-	public double[] getVelocity() {
+	public Vector getVelocity() {
 		return velocity;
+	}
+
+	/**
+	 * @param velocity
+	 *            the velocity to set
+	 */
+	public void setVelocity(Vector velocity) {
+		this.velocity = velocity;
 	}
 
 	/**
@@ -121,7 +148,7 @@ public class SwarmParticle implements Comparable<SwarmParticle> {
 	/**
 	 * @return the bestParameters
 	 */
-	public Double[] getBestParameters() {
+	public Vector getBestParameters() {
 		return bestParameters;
 	}
 
@@ -129,14 +156,29 @@ public class SwarmParticle implements Comparable<SwarmParticle> {
 	 * @param bestParameters
 	 *            the bestParameters to set
 	 */
-	public void setBestParameters(Double[] bestParameters) {
+	public void setBestParameters(Vector bestParameters) {
 		this.bestParameters = bestParameters;
+	}
+
+	/**
+	 * @return the localBestParameters
+	 */
+	public Vector getLocalBestParameters() {
+		return localBestParameters;
+	}
+
+	/**
+	 * @param localBestParameters
+	 *            the localBestParameters to set
+	 */
+	public void setLocalBestParameters(Vector localBestParameters) {
+		this.localBestParameters = localBestParameters;
 	}
 
 	/**
 	 * @return the neighboursIndex
 	 */
-	public int[] getNeighboursIndex() {
+	public List<Integer> getNeighboursIndex() {
 		return neighboursIndex;
 	}
 
@@ -155,4 +197,35 @@ public class SwarmParticle implements Comparable<SwarmParticle> {
 		this.localBest = localBest;
 	}
 
+	/**
+	 * @return the id
+	 */
+	public int getId() {
+		return id;
+	}
+
+	/**
+	 * @param id
+	 *            the id to set
+	 */
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	@Override
+	public int hashCode() {
+		return this.id;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof SwarmParticle) {
+			if (this.id == ((SwarmParticle) o).id)
+				return true;
+			else
+				return false;
+		} else {
+			return false;
+		}
+	}
 }
