@@ -1,10 +1,19 @@
 package psomain;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.Future;
 
 import main.SimulatorCore;
 
+import org.la4j.Vector;
 import org.la4j.vector.DenseVector;
+
+import simulator.CellTransmissionModel;
+import strategy.RampMeter;
 
 /**
  * Particle Swarm optimization for variable speed limits.
@@ -22,11 +31,13 @@ public class PSOVSL {
 			30640, 30641, 37981, 30642, 30643, 38539, 30644, 30645, 30646, 30647, 30648, 30649,
 			30650, 30651, 30580, 30581 };
 	private static Resolve resolve;
+	private static Map<Integer, Double> speedLimitMap;
 
-	public static void main(String args[]) {
+	public static void main(String args[]) throws InterruptedException {
 		ParticleSwarmOptimization pso = new ParticleSwarmOptimization(resolve);
 		core = SimulatorCore.getInstance(1);
 		pso.setnSeeds(NSEEDS);
+		speedLimitMap = new HashMap<Integer, Double>();
 
 		Random random = pso.getRandom();
 
@@ -62,9 +73,70 @@ public class PSOVSL {
 			}
 
 			SwarmParticle particle = new SwarmParticle(id, Integer.MAX_VALUE, Integer.MAX_VALUE,
-					DenseVector.fromArray(speedLimit), POPULATION_SIZE, 30.0, 80.0);
+					DenseVector.fromArray(speedLimit), POPULATION_SIZE, (30.0 * 5.0 / 18.0),
+					(80 * 5.0 / 18.0));
 			pso.getPopulation().put(id, particle);
 		}
+
+		System.out.println("Generation\tbest fitness\tmean fitness");
+		long tStart = System.currentTimeMillis();
+		int iter = 1;
+		do {
+			// Analyze the fitness the of the population
+			for (SwarmParticle particle : pso.getPopulation().values()) {
+				Vector queueThreshold = particle.getParameters();
+
+				List<Future<Double>> futureSeeds = new ArrayList<Future<Double>>();
+				for (int seed = 0; seed < NSEEDS; seed++) {
+					// core.getRandom().setSeed(randomGA.nextLong());
+					core.getRandom().setSeed(1);
+					CellTransmissionModel ctm = new CellTransmissionModel(core, false, false,
+							false, 2100);
+					int index = 0;
+					for (RampMeter meter : ctm.getMeteredRamps().values())
+						meter.setQueuePercentage(queueThreshold.get(index++));
+
+					futureSeeds.add(pso.getExecutor().submit(ctm));
+				}
+				pso.getFutures().add(futureSeeds);
+				pso.getFuturesMap().put(futureSeeds.hashCode(), particle);
+
+			}
+
+			while (true) {
+				if (pso.getFuturesMap().size() == 0)
+					break;
+				else
+					Thread.sleep(10);
+			}
+
+			pso.computeSwarmFitness();
+
+			System.out
+					.println(iter + "\t" + pso.getgBest() + "\t" + pso.getMeanPopulationFitness());
+
+			// Updating particle velocities and positions and neighbors
+			pso.tweakParticles();
+
+			iter++;
+
+		} while (iter < MAX_ITERS);
+
+		System.out.println("Execution time:" + (System.currentTimeMillis() - tStart));
+
+		System.out.println("\n");
+		for (SwarmParticle particle : pso.getPopulation().values()) {
+			for (double qp : particle.getParameters())
+				System.out.print(qp + "\t");
+			System.out.println("");
+		}
+
+		StringBuffer buffer = new StringBuffer("");
+		for (double param : pso.getgBestParameters())
+			buffer.append(param + ", ");
+
+		System.out.println(buffer.toString() + " fitness:" + pso.getgBest());
+		pso.getExecutor().shutdown();
 
 	}
 }

@@ -25,7 +25,8 @@ public class VariableSpeedLimit extends ControlStrategy {
 	public void setSpeedLimits(Map<Integer, Double> speedLimits) {
 		this.speedLimits = speedLimits;
 		if (speedLimits.size() != PIE.length)
-			throw new IllegalArgumentException("");
+			throw new IllegalArgumentException("You need to set the speed limits for all of the "
+					+ PIE.length + " roads.");
 
 	}
 

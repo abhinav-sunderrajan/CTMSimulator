@@ -2,6 +2,8 @@ package psomain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import main.SimulatorCore;
@@ -12,6 +14,7 @@ import org.la4j.vector.functor.VectorFunction;
 
 import simulator.CellTransmissionModel;
 import strategy.RampMeter;
+import strategy.WarmupCTM;
 
 /**
  * A particle swarm optimization for optimal ramp metering.
@@ -27,7 +30,7 @@ public class PSORampMetering {
 	private static final int MAX_ITERS = 25;
 	private static final int POPULATION_SIZE = 15;
 
-	public static void main(String args[]) throws InterruptedException {
+	public static void main(String args[]) throws InterruptedException, ExecutionException {
 
 		ParticleSwarmOptimization pso = new ParticleSwarmOptimization(new Resolve() {
 
@@ -69,6 +72,7 @@ public class PSORampMetering {
 
 		System.out.println("Generation\tbest fitness\tmean fitness");
 		long tStart = System.currentTimeMillis();
+		Set<String> cellState = WarmupCTM.initializeCellState(core);
 		int iter = 1;
 		do {
 			// Analyze the fitness the of the population
@@ -80,7 +84,8 @@ public class PSORampMetering {
 					// core.getRandom().setSeed(randomGA.nextLong());
 					core.getRandom().setSeed(1);
 					CellTransmissionModel ctm = new CellTransmissionModel(core, false, true, false,
-							2100);
+							1800);
+					ctm.intializeTrafficState(cellState);
 					int index = 0;
 					for (RampMeter meter : ctm.getMeteredRamps().values())
 						meter.setQueuePercentage(queueThreshold.get(index++));
@@ -111,7 +116,7 @@ public class PSORampMetering {
 
 		} while (iter < MAX_ITERS);
 
-		System.out.println("Execution time:" + (tStart - System.currentTimeMillis()));
+		System.out.println("Execution time:" + (System.currentTimeMillis() - tStart));
 
 		System.out.println("\n");
 		for (SwarmParticle particle : pso.getPopulation().values()) {

@@ -7,7 +7,7 @@ import ctm.CellNetwork;
 
 public enum Control {
 
-	VSL, RAMP_METERING;
+	VSL, RAMP_METERING, NONE;
 
 	/**
 	 * 
@@ -20,8 +20,12 @@ public enum Control {
 		switch (control) {
 		case VSL:
 			strategy = new RampMeter(cellNetwork);
-		default:
+			break;
+		case RAMP_METERING:
 			strategy = new VariableSpeedLimit(cellNetwork);
+			break;
+		default:
+			strategy = null;
 			break;
 
 		}

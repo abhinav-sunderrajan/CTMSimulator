@@ -33,13 +33,13 @@ public class CellNetwork {
 	 * 
 	 * @param model
 	 */
-	public CellNetwork(Collection<Road> roads, List<Road> ramps) {
+	public CellNetwork(Collection<Road> roads) {
 
 		cellMap = new LinkedHashMap<String, Cell>();
 
 		// Create cells and connectors to be used in the CTM model.
 		this.roads = roads;
-		this.ramps = ramps;
+		this.ramps = new ArrayList<>();
 		createCells();
 		generatePredecessorsAndSuccessors();
 
@@ -215,6 +215,21 @@ public class CellNetwork {
 	 */
 	public Map<String, Cell> getCellMap() {
 		return cellMap;
+	}
+
+	/**
+	 * @return the ramps
+	 */
+	public List<Road> getRamps() {
+		return ramps;
+	}
+
+	/**
+	 * @param ramps
+	 *            the ramps to set
+	 */
+	public void setRamps(List<Road> ramps) {
+		this.ramps = ramps;
 	}
 
 }

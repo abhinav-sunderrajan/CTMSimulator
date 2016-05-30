@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
-import java.util.TreeMap;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -32,6 +32,7 @@ import rnwmodel.RoadNode;
 import simulator.CellTransmissionModel;
 import simulator.SimulationConstants;
 import strategy.RampMeter;
+import strategy.WarmupCTM;
 import utils.RoadRepairs;
 import utils.ThreadPoolExecutorService;
 
@@ -44,6 +45,7 @@ public class SimulatorCore {
 	private Map<Integer, Double> mergePriorities;
 	private Map<Integer, Double> flowRates;
 	private Random random;
+	private ThreadPoolExecutor executor;
 
 	public static final int PIE_ROADS[] = { 30633, 30634, 82, 28377, 30635, 28485, 30636, 29310,
 			30637, 28578, 30638, 28946, 28947, 30639, 28516, 30640, 30790, 30641, 37976, 37981,
@@ -56,16 +58,13 @@ public class SimulatorCore {
 	private Map<Integer, Road> pieChangi;
 	private static SimulatorCore instance;
 
-	// To be deleted
-
-	private Map<Double, Double> semSIMDistanceMap = new TreeMap<Double, Double>();
-
 	private void initialize(long seed) {
 
 		try {
 			// Initialization.
 			random = new Random(seed);
 			df.setRoundingMode(RoundingMode.CEILING);
+			executor = ThreadPoolExecutorService.getExecutorInstance().getExecutor();
 			dbConnectionProperties = new Properties();
 			dbConnectionProperties.load(new FileInputStream(
 					"src/main/resources/connectionLocal.properties"));
@@ -76,22 +75,6 @@ public class SimulatorCore {
 				Road road = roadNetwork.getAllRoadsMap().get(roadId);
 				pieChangi.put(roadId, road);
 			}
-
-			// Delete not needed
-			// BufferedReader br = new BufferedReader(new FileReader(new
-			// File("dist-num-map.txt")));
-			// if (br.ready()) {
-			// while (true) {
-			// String line = br.readLine();
-			// if (line == null)
-			// break;
-			// String split[] = line.split("\t");
-			// semSIMDistanceMap.put(Double.parseDouble(split[0]),
-			// Double.parseDouble(split[1]));
-			// }
-			// }
-
-			// br.close();
 
 			BufferedReader br = new BufferedReader(new FileReader(new File("Lanecount.txt")));
 
@@ -199,24 +182,27 @@ public class SimulatorCore {
 	}
 
 	public static void main(String args[]) throws InterruptedException, ExecutionException {
-		ThreadPoolExecutor executor = ThreadPoolExecutorService.getExecutorInstance().getExecutor();
 
 		double queuePercentages[] = { 0.03, 0.0, 0.0, 0.0, 0.11, 0.0, 0.8, 0.0, 0.0, 0.0, 0.0 };
 		Random randLocal = new Random();
 		SimulatorCore core = SimulatorCore.getInstance(1);
+		core.random.setSeed(randLocal.nextLong());
+
+		Set<String> cellState = WarmupCTM.initializeCellState(core);
 
 		double meanQos = 0.0;
-		int trials = 1;
+		int trials = 11;
 		for (int i = 0; i < trials; i++) {
-			core.random.setSeed(randLocal.nextLong());
+
 			CellTransmissionModel ctm = new CellTransmissionModel(core,
-					SimOptions.getOption(SimOptions.NO_ACC), false,
-					SimOptions.getOption(SimOptions.HAVE_VIZ), 7100);
+					SimOptions.getOption(SimOptions.NO_ACC), true,
+					SimOptions.getOption(SimOptions.NO_VIZ), 900);
+			ctm.intializeTrafficState(cellState);
 			int index = 0;
 			for (RampMeter meter : ctm.getMeteredRamps().values())
 				meter.setQueuePercentage(queuePercentages[index++]);
 
-			Future<Double> future = executor.submit(ctm);
+			Future<Double> future = core.executor.submit(ctm);
 			Double qos = future.get();
 			meanQos += Math.round(qos);
 			System.out.print(Math.round(qos) + ",");
@@ -224,7 +210,7 @@ public class SimulatorCore {
 
 		System.out.println((meanQos / trials));
 
-		executor.shutdown();
+		core.executor.shutdown();
 
 	}
 
@@ -330,6 +316,13 @@ public class SimulatorCore {
 	 */
 	public Map<Integer, Road> getPieChangi() {
 		return pieChangi;
+	}
+
+	/**
+	 * @return the executor
+	 */
+	public ThreadPoolExecutor getExecutor() {
+		return executor;
 	}
 
 }
