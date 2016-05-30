@@ -30,8 +30,8 @@ import rnwmodel.Road;
 import rnwmodel.RoadNetworkModel;
 import rnwmodel.RoadNode;
 import simulator.CellTransmissionModel;
-import simulator.RampMeter;
 import simulator.SimulationConstants;
+import strategy.RampMeter;
 import utils.RoadRepairs;
 import utils.ThreadPoolExecutorService;
 
@@ -201,17 +201,17 @@ public class SimulatorCore {
 	public static void main(String args[]) throws InterruptedException, ExecutionException {
 		ThreadPoolExecutor executor = ThreadPoolExecutorService.getExecutorInstance().getExecutor();
 
-		double queuePercentages[] = { 0.25, 0.47, 0.38, 0.22, 0.07, 0.17, 0.4, 0.17, 0.01, 0.16,
-				0.15 };
+		double queuePercentages[] = { 0.03, 0.0, 0.0, 0.0, 0.11, 0.0, 0.8, 0.0, 0.0, 0.0, 0.0 };
 		Random randLocal = new Random();
 		SimulatorCore core = SimulatorCore.getInstance(1);
 
 		double meanQos = 0.0;
-		int trials = 100;
+		int trials = 1;
 		for (int i = 0; i < trials; i++) {
 			core.random.setSeed(randLocal.nextLong());
-			CellTransmissionModel ctm = new CellTransmissionModel(core, false, true, false, false,
-					2100);
+			CellTransmissionModel ctm = new CellTransmissionModel(core,
+					SimOptions.getOption(SimOptions.NO_ACC), false,
+					SimOptions.getOption(SimOptions.HAVE_VIZ), 7100);
 			int index = 0;
 			for (RampMeter meter : ctm.getMeteredRamps().values())
 				meter.setQueuePercentage(queuePercentages[index++]);

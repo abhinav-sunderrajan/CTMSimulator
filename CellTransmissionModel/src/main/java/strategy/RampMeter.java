@@ -1,6 +1,7 @@
-package simulator;
+package strategy;
 
 import rnwmodel.Road;
+import simulator.SimulationConstants;
 import ctm.Cell;
 import ctm.CellNetwork;
 
@@ -10,7 +11,7 @@ import ctm.CellNetwork;
  * @author abhinav.sunderrajan
  * 
  */
-public class RampMeter {
+public class RampMeter extends ControlStrategy {
 
 	private Road ramp;
 	private double queuePercentage;
@@ -18,7 +19,6 @@ public class RampMeter {
 	private int meterCellNum;
 	private Cell meterCell;
 	private boolean allow;
-	private CellNetwork cellNetwork;
 	private long phaseTime;
 	private int redCycleTime;
 	private int totalRedTime;
@@ -33,14 +33,10 @@ public class RampMeter {
 	 *            Road.
 	 * @param determineRampFlows
 	 */
-	public RampMeter(Road ramp, CellNetwork cellNetwork) {
-		this.ramp = ramp;
+	public RampMeter(CellNetwork cellNetwork) {
+		super(cellNetwork);
 		allow = true;
 		queuePercentage = 0.0;
-		this.cellNetwork = cellNetwork;
-		this.meterCellNum = ramp.getRoadNodes().size() - 2;
-		meterCell = cellNetwork.getCellMap().get(ramp.getRoadId() + "_" + meterCellNum);
-		nMaxOnRamp = getNMaxOnRamp();
 	}
 
 	private double getNMaxOnRamp() {
@@ -51,7 +47,24 @@ public class RampMeter {
 		}
 
 		return nMaxOnRamp;
+	}
 
+	/**
+	 * @return the ramp
+	 */
+	public Road getRamp() {
+		return ramp;
+	}
+
+	/**
+	 * @param ramp
+	 *            the ramp to set
+	 */
+	public void setRamp(Road ramp) {
+		this.ramp = ramp;
+		this.meterCellNum = ramp.getRoadNodes().size() - 2;
+		meterCell = cellNetwork.getCellMap().get(ramp.getRoadId() + "_" + meterCellNum);
+		nMaxOnRamp = getNMaxOnRamp();
 	}
 
 	private boolean peakDensityReached() {
@@ -70,12 +83,8 @@ public class RampMeter {
 		return peakDensity;
 	}
 
-	/**
-	 * Update the out-flow for the meter cell.
-	 * 
-	 * @param simulationTime
-	 */
-	public void regulateOutFlow(long simulationTime) {
+	@Override
+	public void controlAction(long simulationTime) {
 
 		if (queuePercentage > 0.0 && phaseTime <= simulationTime) {
 			if (peakDensityReached()) {

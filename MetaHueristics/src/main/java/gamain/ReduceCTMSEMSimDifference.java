@@ -157,7 +157,7 @@ public class ReduceCTMSEMSimDifference {
 					SimulationConstants.RAMP_DELTA = mergePriorities.get(3);
 
 					CellTransmissionModel ctm = new CellTransmissionModel(core, false, false,
-							false, false, 2200);
+							false, 2200);
 					Future<Double> future = ga.executor.submit(ctm);
 					ga.futures.add(future);
 					ga.futuresMap.put(future.hashCode(), entry.getKey());

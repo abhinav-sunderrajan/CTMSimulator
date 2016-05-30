@@ -283,14 +283,15 @@ public abstract class Cell {
 			}
 
 			double densityRatio = densityAntic / criticalDensity;
+			double noise = core.getRandom().nextGaussian() * 2.0;
+			noise = Math.abs(noise) > 2.5 ? (2.5 * noise / (Math.abs(noise))) : noise;
 
 			this.meanSpeed = beta
 					* vinTerm
 					+ (1 - beta)
 					* freeFlowSpeed
 					* Math.exp((-1 / SimulationConstants.AM)
-							* Math.pow(densityRatio, SimulationConstants.AM))
-					+ core.getRandom().nextGaussian() * 2.0;
+							* Math.pow(densityRatio, SimulationConstants.AM)) + noise;
 
 			// This is the on ramp merging term as suggested by METANET.
 
@@ -488,6 +489,15 @@ public abstract class Cell {
 	 */
 	public double getFreeFlowSpeed() {
 		return freeFlowSpeed;
+	}
+
+	/**
+	 * @param freeFlowSpeed
+	 *            the freeFlowSpeed to set
+	 */
+	public void setFreeFlowSpeed(double freeFlowSpeed) {
+		this.freeFlowSpeed = freeFlowSpeed;
+		criticalDensity = 1.0 / (SimulationConstants.TIME_GAP * freeFlowSpeed + SimulationConstants.LEFF);
 	}
 
 	/**

@@ -22,6 +22,7 @@ import main.SimulatorCore;
 import org.apache.log4j.Logger;
 
 import rnwmodel.Road;
+import strategy.RampMeter;
 import utils.TrafficStateInitialize;
 import viz.CTMSimViewer;
 import viz.ColorHelper;
@@ -57,8 +58,8 @@ public class CellTransmissionModel implements Callable<Double> {
 	private Map<Cell, RampMeter> meteredRamps;
 	private boolean applyRampMetering;
 	private static final Logger LOGGER = Logger.getLogger(CellTransmissionModel.class);
-	private boolean determineRampFlows;
 	private double ntTotal = 0.0;
+	private double netFlow = 0.0;
 	private SimulatorCore core;
 	private static final boolean PRINT_FINAL_STATE = false;
 	private static final String SIMULATION_OP_PATH = "C:/Users/abhinav.sunderrajan/Desktop/MapMatch/MapMatchingStats/ctmop.txt";
@@ -109,22 +110,14 @@ public class CellTransmissionModel implements Callable<Double> {
 	 *            apply ramp metering?
 	 * @param haveViz
 	 *            enable visualization?
-	 * @param determineRampFlows
-	 *            determine ramp flows once the correct queue percentage values
-	 *            for all on ramps are determined;
 	 * @param simTime
 	 *            time over which to simulate.
 	 */
 	public CellTransmissionModel(SimulatorCore core, boolean haveAccident, boolean applyMetering,
-			boolean haveViz, boolean determineRampFlows, long simTime) {
+			boolean haveViz, long simTime) {
 		this.core = core;
 		this.applyRampMetering = applyMetering;
 		this.haveAccident = haveAccident;
-		this.determineRampFlows = determineRampFlows;
-		if (determineRampFlows && !applyRampMetering) {
-			throw new IllegalStateException(
-					"To determine the ramp flows, ramp metering must be enabled");
-		}
 
 		ramps = new ArrayList<Road>();
 		meteredRamps = new LinkedHashMap<Cell, RampMeter>();
@@ -132,7 +125,8 @@ public class CellTransmissionModel implements Callable<Double> {
 		cellNetwork = new CellNetwork(core.getPieChangi().values(), ramps);
 		Cell.setRamps(ramps);
 		for (Road ramp : ramps) {
-			RampMeter rampMeter = new RampMeter(ramp, cellNetwork);
+			RampMeter rampMeter = new RampMeter(cellNetwork);
+			rampMeter.setRamp(ramp);
 			meteredRamps.put(rampMeter.getMeterCell(), rampMeter);
 		}
 
@@ -217,7 +211,7 @@ public class CellTransmissionModel implements Callable<Double> {
 				for (Cell cell : cellNetwork.getCellMap().values()) {
 					if (applyRampMetering && simulationTime >= 900) {
 						if (meteredRamps.containsKey(cell)) {
-							meteredRamps.get(cell).regulateOutFlow(simulationTime);
+							meteredRamps.get(cell).controlAction(simulationTime);
 						} else {
 							cell.updateOutFlow();
 						}
@@ -228,26 +222,24 @@ public class CellTransmissionModel implements Callable<Double> {
 				}
 
 				// Now update the number of vehicles in each cell.
-				for (Cell cell : cellNetwork.getCellMap().values()) {
+				for (Cell cell : cellNetwork.getCellMap().values())
 					cell.updateNumberOfVehiclesInCell();
-
-					// Reduce the total number of vehicles after warm up time of
-					// 15 minutes.
-					if (simulationTime > 900) {
-						if (!(cell instanceof SinkCell || cell instanceof SourceCell)) {
-							ntTotal += cell.getNumOfVehicles();
-						}
-					}
-
-				}
 
 				// Now update the number of vehicles in each cell.
 				for (Cell cell : cellNetwork.getCellMap().values())
 					cell.updateAnticipatedDensity();
 
 				// Now update the number of vehicles in each cell.
-				for (Cell cell : cellNetwork.getCellMap().values())
-					cell.updateMeanSpeed();
+				for (Cell cell : cellNetwork.getCellMap().values()) {
+					if (!(cell instanceof SinkCell || cell instanceof SourceCell)) {
+						cell.updateMeanSpeed();
+						if (simulationTime > 900) {
+							ntTotal += cell.getNumOfVehicles();
+							netFlow += cell.getMeanSpeed() * cell.getDensity() * cell.getLength()
+									* cell.getNumOfLanes();
+						}
+					}
+				}
 
 				if (haveVisualization) {
 					for (Cell cell : cellNetwork.getCellMap().values()) {
@@ -270,14 +262,6 @@ public class CellTransmissionModel implements Callable<Double> {
 
 		} catch (InterruptedException e) {
 			LOGGER.error("Error waiting  for simulation time to advance.", e);
-		}
-
-		if (determineRampFlows) {
-			for (RampMeter meter : meteredRamps.values()) {
-				System.out.println(meter.getMeterCell().getRoad() + "--> queue:"
-						+ meter.getQueuePercentage() + " total red-time:" + meter.getTotalRedTime()
-						+ " total green-time:" + meter.getTotalGreenTime());
-			}
 		}
 
 		double leastSquare = 0.0;
@@ -341,7 +325,7 @@ public class CellTransmissionModel implements Callable<Double> {
 			bw.flush();
 			bw.close();
 			System.out.println("Printed file to " + SIMULATION_OP_PATH);
-			return ntTotal;
+			return 0.95 * ntTotal - 0.05 * netFlow;
 		} else {
 			// for (Entry<Double, Double> entry :
 			// SimulatorCore.semSIMDistanceMap.entrySet()) {
@@ -356,7 +340,7 @@ public class CellTransmissionModel implements Callable<Double> {
 			// return
 			// Double.parseDouble(SimulatorCore.df.format(Math.sqrt(leastSquare)));
 
-			return ntTotal;
+			return 0.95 * ntTotal - 0.05 * netFlow;
 		}
 
 	}

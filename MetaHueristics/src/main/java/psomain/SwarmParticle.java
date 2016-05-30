@@ -27,6 +27,9 @@ public class SwarmParticle implements Comparable<SwarmParticle> {
 	private static final int NUM_OF_NEIGHBOURS = 3;
 	private static Random random = new Random();
 	private int id;
+	private int populationSize;
+	private double paramMin;
+	private double paramMax;
 
 	/**
 	 * @param id
@@ -35,11 +38,13 @@ public class SwarmParticle implements Comparable<SwarmParticle> {
 	 * @param bestFitNess
 	 * @param parameters
 	 * @param populationSize
-	 * @param paramRange
-	 *            Range of the parameters.
+	 * @param paramMin
+	 *            Minimum value of the parameters.
+	 * @param paramMax
+	 *            Maximum value of the parameters.
 	 */
 	public SwarmParticle(int id, double fitness, double bestFitNess, Vector parameters,
-			int populationSize, final double paramRange) {
+			int populationSize, final double paramMin, final double paramMax) {
 		this.bestFitness = bestFitNess;
 		this.parameters = parameters;
 		this.bestParameters = DenseVector.constant(parameters.length(), 0.0);
@@ -47,15 +52,26 @@ public class SwarmParticle implements Comparable<SwarmParticle> {
 		this.fitness = fitness;
 		this.velocity = DenseVector.random(parameters.length(), random);
 		this.velocity = velocity.transform(new VectorFunction() {
-
 			@Override
 			public double evaluate(int i, double value) {
-				return value * paramRange;
+				return value * (paramMax - paramMin);
 			}
 		});
 		this.id = id;
+		this.paramMin = paramMin;
+		this.paramMax = paramMax;
 		this.neighboursIndex = new ArrayList<Integer>();
+		this.populationSize = populationSize;
+		updateNeighbours();
+		localBest = bestFitNess;
 
+	}
+
+	/**
+	 * Update informant particles each iteration.
+	 */
+	public void updateNeighbours() {
+		neighboursIndex.clear();
 		while (true) {
 			int neighbour = (int) Math.floor(Math.random() * populationSize);
 			if (neighbour == id || neighboursIndex.contains(neighbour))
@@ -64,9 +80,6 @@ public class SwarmParticle implements Comparable<SwarmParticle> {
 			if (neighboursIndex.size() == NUM_OF_NEIGHBOURS)
 				break;
 		}
-
-		localBest = bestFitNess;
-
 	}
 
 	/**
@@ -215,6 +228,36 @@ public class SwarmParticle implements Comparable<SwarmParticle> {
 	@Override
 	public int hashCode() {
 		return this.id;
+	}
+
+	/**
+	 * @return the paramMin
+	 */
+	public double getParamMin() {
+		return paramMin;
+	}
+
+	/**
+	 * @param paramMin
+	 *            the paramMin to set
+	 */
+	public void setParamMin(int paramMin) {
+		this.paramMin = paramMin;
+	}
+
+	/**
+	 * @return the paramMax
+	 */
+	public double getParamMax() {
+		return paramMax;
+	}
+
+	/**
+	 * @param paramMax
+	 *            the paramMax to set
+	 */
+	public void setParamMax(int paramMax) {
+		this.paramMax = paramMax;
 	}
 
 	@Override
