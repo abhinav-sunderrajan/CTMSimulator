@@ -37,7 +37,7 @@ public class ParticleSwarmOptimization {
 	private static final double BETA = 2.0945;
 	private static final double GAMMA = 2.0945;
 	private static final double THETA = 2.0945;
-	private static final double ALPHA = 0.9;
+	private static final double ALPHA = 1.0;
 	private int nSeeds;
 	private Vector gBestParameters;
 	private double gBest = Double.MAX_VALUE;

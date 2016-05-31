@@ -26,6 +26,16 @@ import ctm.SourceCell;
 public class WarmupCTM {
 	private static Set<String> state = new HashSet<>();
 
+	/**
+	 * Returns a string representing cell id, mean speed and number of vehicles
+	 * afetr running and averaging over five simulations.
+	 * 
+	 * 
+	 * @param core
+	 * @return
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
 	public static Set<String> initializeCellState(SimulatorCore core) throws InterruptedException,
 			ExecutionException {
 		Map<Cell, Double> cellSpeed = new HashMap<Cell, Double>();

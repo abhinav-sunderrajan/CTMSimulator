@@ -65,6 +65,7 @@ public class CellTransmissionModel implements Callable<Double> {
 			Cell cell = cellNetwork.getCellMap().get(split[0]);
 			cell.setMeanSpeed(Double.parseDouble(split[1]));
 			cell.setNumberOfvehicles(Double.parseDouble(split[2]));
+			cell.setInitilalized(true);
 		}
 	}
 
