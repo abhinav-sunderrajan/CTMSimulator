@@ -139,24 +139,24 @@ public class CellTransmissionModel implements Callable<Double> {
 		try {
 
 			// long tStart = System.currentTimeMillis();
-			Cell accidentCell = null;
-			int laneCount = 0;
-			if (haveAccident) {
-				accidentCell = cellNetwork.getCellMap().get(SimulationConstants.ACCIDENT_CELL);
-				laneCount = accidentCell.getNumOfLanes();
-			}
 
 			for (simulationTime = 0; simulationTime <= endTime; simulationTime += SimulationConstants.TIME_STEP) {
 
 				if (haveAccident) {
+					Cell accidentCell = cellNetwork.getCellMap().get(
+							SimulationConstants.ACCIDENT_CELL);
+					int laneCount = accidentCell.getNumOfLanes();
 					int numAffectedLanes = 2;
-					if (simulationTime == 900) {
+					if (simulationTime == 0) {
+						// System.out.println("Accident starts!! Number of lanes affected:"
+						// + numAffectedLanes);
 						accidentCell.setNumOfLanes(laneCount - numAffectedLanes);
 						double nMax = accidentCell.getnMax();
 						accidentCell.setnMax(nMax * (laneCount - numAffectedLanes) / laneCount);
 					}
 
-					if (simulationTime == 1800) {
+					if (simulationTime == 900) {
+						// System.out.println("Accident clears!!");
 						accidentCell.setNumOfLanes(laneCount);
 						double nMax = accidentCell.getnMax();
 						accidentCell.setnMax(nMax * laneCount / (laneCount - numAffectedLanes));

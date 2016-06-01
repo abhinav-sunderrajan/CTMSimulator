@@ -3,18 +3,18 @@
 
 <RoadParameters>
 <Flow>
-	<source id="30633">4000</source>
+	<source id="30633">3600</source>
 	<source id="82">1800</source>
-	<source id="29310">1100</source>
-	<source id="28946">1100</source>
-	<source id="30790">1100</source>
-	<source id="37980">1100</source>
+	<source id="29310">1800</source>
+	<source id="28946">1800</source>
+	<source id="30790">1800</source>
+	<source id="37980">1800</source>
 	<source id="28595">1800</source>
 	<source id="29152">1800</source>
-	<source id="29005">1100</source>
+	<source id="29005">1800</source>
 	<source id="29553">1800</source>
 	<source id="28613">1800</source>
-	<source id="31991">1100</source>
+	<source id="31991">1800</source>
 </Flow>
 
 <MergePriorities>

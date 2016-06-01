@@ -109,7 +109,7 @@ public class PSORampMetering {
 					.println(iter + "\t" + pso.getgBest() + "\t" + pso.getMeanPopulationFitness());
 
 			// Updating particle velocities and positions and neighbors
-			pso.tweakParticles();
+			pso.updateParticles();
 
 			iter++;
 

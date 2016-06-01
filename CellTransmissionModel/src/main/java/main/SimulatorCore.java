@@ -35,6 +35,7 @@ import strategy.RampMeter;
 import strategy.WarmupCTM;
 import utils.RoadRepairs;
 import utils.ThreadPoolExecutorService;
+import ctm.Cell;
 
 public class SimulatorCore {
 
@@ -47,11 +48,15 @@ public class SimulatorCore {
 	private Random random;
 	private ThreadPoolExecutor executor;
 
-	public static final int PIE_ROADS[] = { 30633, 30634, 82, 28377, 30635, 28485, 30636, 29310,
-			30637, 28578, 30638, 28946, 28947, 30639, 28516, 30640, 30790, 30641, 37976, 37981,
-			37980, 30642, 37982, 30643, 38539, 28595, 30644, 29152, 28594, 30645, 28597, 30646,
-			29005, 30647, 28387, 30648, 29553, 30649, 28611, 30650, 28613, 29131, 30651, 31991,
-			30580, 28500, 30581 };
+	public static final int PIE_MAIN_ROADS[] = { 30633, 30634, 30635, 30636, 30637, 30638, 30639,
+			30640, 30641, 37981, 30642, 30643, 38539, 30644, 30645, 30646, 30647, 30648, 30649,
+			30650, 30651, 30580, 30581 };
+
+	public static final int PIE_ALL_ROADS[] = { 30633, 30634, 82, 28377, 30635, 28485, 30636,
+			29310, 30637, 28578, 30638, 28946, 28947, 30639, 28516, 30640, 30790, 30641, 37976,
+			37981, 37980, 30642, 37982, 30643, 38539, 28595, 30644, 29152, 28594, 30645, 28597,
+			30646, 29005, 30647, 28387, 30648, 29553, 30649, 28611, 30650, 28613, 29131, 30651,
+			31991, 30580, 28500, 30581 };
 	private static final Logger LOGGER = Logger.getLogger(SimulatorCore.class);
 	public static final DecimalFormat df = new DecimalFormat("#.###");
 	public static final SAXReader SAX_READER = new SAXReader();
@@ -71,7 +76,7 @@ public class SimulatorCore {
 			roadNetwork = new QIRoadNetworkModel(dbConnectionProperties, "qi_roads", "qi_nodes");
 
 			pieChangi = new HashMap<Integer, Road>();
-			for (int roadId : PIE_ROADS) {
+			for (int roadId : PIE_ALL_ROADS) {
 				Road road = roadNetwork.getAllRoadsMap().get(roadId);
 				pieChangi.put(roadId, road);
 			}
@@ -189,15 +194,30 @@ public class SimulatorCore {
 		core.random.setSeed(randLocal.nextLong());
 
 		Set<String> cellState = WarmupCTM.initializeCellState(core);
+		double sl[] = { 22.222, 22.222, 22.222, 22.222, 22.222, 19.444, 22.222, 22.222, 22.222,
+				22.222, 22.222, 19.444, 22.222, 22.222, 22.222, 19.444, 22.222, 19.444, 22.222,
+				22.222, 16.667, 22.222, 22.222 };
 
 		double meanQos = 0.0;
-		int trials = 11;
+		int trials = 20;
 		for (int i = 0; i < trials; i++) {
-
 			CellTransmissionModel ctm = new CellTransmissionModel(core,
-					SimOptions.getOption(SimOptions.NO_ACC), true,
-					SimOptions.getOption(SimOptions.NO_VIZ), 900);
+					SimOptions.getOption(SimOptions.NO_ACC), false,
+					SimOptions.getOption(SimOptions.NO_VIZ), 1500);
 			ctm.intializeTrafficState(cellState);
+			int limit = 0;
+			for (int roadId : PIE_MAIN_ROADS) {
+				int segment = 0;
+				while (true) {
+					Cell cell = ctm.getCellNetwork().getCellMap().get(roadId + "_" + segment);
+					if (cell == null)
+						break;
+					cell.setFreeFlowSpeed(sl[limit]);
+					segment++;
+				}
+				limit++;
+			}
+
 			int index = 0;
 			for (RampMeter meter : ctm.getMeteredRamps().values())
 				meter.setQueuePercentage(queuePercentages[index++]);
@@ -307,8 +327,8 @@ public class SimulatorCore {
 	/**
 	 * @return the pieRoads
 	 */
-	public static int[] getPieRoads() {
-		return PIE_ROADS;
+	public static int[] getPieAllRoads() {
+		return PIE_ALL_ROADS;
 	}
 
 	/**
@@ -323,6 +343,13 @@ public class SimulatorCore {
 	 */
 	public ThreadPoolExecutor getExecutor() {
 		return executor;
+	}
+
+	/**
+	 * @return the pieMainRoads
+	 */
+	public static int[] getPieMainRoads() {
+		return PIE_MAIN_ROADS;
 	}
 
 }

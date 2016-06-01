@@ -27,8 +27,8 @@ public class PSOVSL {
 
 	private static SimulatorCore core;
 	private static final int NSEEDS = 3;
-	private static final int MAX_ITERS = 25;
-	private static final int POPULATION_SIZE = 15;
+	private static final int MAX_ITERS = 10;
+	private static final int POPULATION_SIZE = 10;
 	private static final int PIE[] = { 30633, 30634, 30635, 30636, 30637, 30638, 30639, 30640,
 			30641, 37981, 30642, 30643, 38539, 30644, 30645, 30646, 30647, 30648, 30649, 30650,
 			30651, 30580, 30581 };
@@ -69,15 +69,15 @@ public class PSOVSL {
 			} else {
 				int prev = -1;
 				for (int sl = 0; sl < speedLimit.length; sl++) {
-					Double freeFlowSpeed = core.getRoadNetwork().getAllRoadsMap().get(PIE[sl])
-							.getSpeedLimit()[1];
+					Double freeFlowSpeed = FREE_FLOW;
 					int max = freeFlowSpeed.intValue() / 10;
+					int min = 3;
 					int temp = -1;
 					if (sl == 0) {
-						temp = 3 + random.nextInt(max - 2);
+						temp = min + random.nextInt(max - min + 1);
 					} else {
 						temp = random.nextDouble() < 0.5 ? (prev - 1) : (prev + 1);
-						if (temp < 3)
+						if (temp < min)
 							temp = temp + 2;
 						if (temp > max)
 							temp = temp - 2;
@@ -90,7 +90,7 @@ public class PSOVSL {
 
 			SwarmParticle particle = new SwarmParticle(id, Integer.MAX_VALUE, Integer.MAX_VALUE,
 					DenseVector.fromArray(speedLimit), POPULATION_SIZE, (30.0 * 5.0 / 18.0),
-					(FREE_FLOW * 5.0 / 18.0));
+					(80 * 5.0 / 18.0));
 			pso.getPopulation().put(id, particle);
 		}
 
@@ -108,9 +108,10 @@ public class PSOVSL {
 					core.getRandom().setSeed(random.nextLong());
 					CellTransmissionModel ctm = new CellTransmissionModel(core, false, false,
 							false, 1500);
-					for (int roadId : PIE) {
+					ctm.intializeTrafficState(cellState);
+					int limit = 0;
+					for (int roadId : SimulatorCore.PIE_MAIN_ROADS) {
 						int segment = 0;
-						int limit = 0;
 						while (true) {
 							Cell cell = ctm.getCellNetwork().getCellMap()
 									.get(roadId + "_" + segment);
@@ -121,7 +122,7 @@ public class PSOVSL {
 						}
 						limit++;
 					}
-					ctm.intializeTrafficState(cellState);
+
 					futureSeeds.add(pso.getExecutor().submit(ctm));
 				}
 				pso.getFutures().add(futureSeeds);
@@ -142,7 +143,10 @@ public class PSOVSL {
 					.println(iter + "\t" + pso.getgBest() + "\t" + pso.getMeanPopulationFitness());
 
 			// Updating particle velocities and positions and neighbors
-			pso.tweakParticles();
+			pso.updateParticles();
+			for (SwarmParticle particle : pso.getPopulation().values()) {
+				System.out.println(particle.getParameters());
+			}
 
 			iter++;
 
@@ -152,8 +156,8 @@ public class PSOVSL {
 
 		System.out.println("\n");
 		for (SwarmParticle particle : pso.getPopulation().values()) {
-			for (double qp : particle.getParameters())
-				System.out.print(Math.round(qp * 18.0 / 5.0) + "\t");
+			for (double speedLimit : particle.getParameters())
+				System.out.print(Math.round(speedLimit * 18.0 / 5.0) + "\t");
 			System.out.println("");
 		}
 

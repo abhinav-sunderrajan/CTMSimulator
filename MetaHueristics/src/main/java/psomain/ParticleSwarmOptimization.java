@@ -16,6 +16,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.la4j.Vector;
+import org.la4j.vector.functor.VectorFunction;
 
 import utils.ThreadPoolExecutorService;
 
@@ -128,7 +129,7 @@ public class ParticleSwarmOptimization {
 	 * @param particle
 	 *            to be mutated
 	 */
-	private void tweak(SwarmParticle particle) {
+	private void update(SwarmParticle particle) {
 		Vector velocityArr = particle.getVelocity();
 		Vector parameters = particle.getParameters();
 		resolve.setMax(particle.getParamMax());
@@ -144,9 +145,29 @@ public class ParticleSwarmOptimization {
 		Vector v4 = particle.getLocalBestParameters().subtract(parameters).multiply(l);
 
 		Vector newVelocity = v1.add(v2).add(v3).add(v4);
-		parameters = parameters.add(newVelocity);
-		particle.setParameters(parameters.transform(resolve));
+		newVelocity = newVelocity.transform(new VectorFunction() {
+			@Override
+			public double evaluate(int i, double value) {
+				if (value < SwarmParticle.getVmin())
+					value = SwarmParticle.getVmin();
+				if (value > SwarmParticle.getVmax())
+					value = SwarmParticle.getVmax();
+				return value;
+			}
+		});
+		Vector sigma = newVelocity.transform(new VectorFunction() {
 
+			@Override
+			public double evaluate(int i, double value) {
+				double prob = 1.0 / (1.0 + Math.exp(-value));
+				if (prob < 0.5)
+					return -50.0 / 18;
+				else
+					return 50.0 / 18;
+			}
+		});
+		parameters = parameters.add(sigma);
+		particle.setParameters(parameters.transform(resolve));
 		particle.setVelocity(newVelocity);
 	}
 
@@ -176,9 +197,9 @@ public class ParticleSwarmOptimization {
 	}
 
 	/**
-	 * Tweak particles at the end of the iteration.
+	 * Update particles at the end of the iteration.
 	 */
-	public void tweakParticles() {
+	public void updateParticles() {
 		for (SwarmParticle particle : population.values()) {
 			particle.setLocalBest(particle.getBestFitness());
 			particle.setLocalBestParameters(particle.getParameters());
@@ -190,7 +211,7 @@ public class ParticleSwarmOptimization {
 							.getBestParameters());
 				}
 			}
-			tweak(particle);
+			update(particle);
 			particle.updateNeighbours();
 		}
 	}

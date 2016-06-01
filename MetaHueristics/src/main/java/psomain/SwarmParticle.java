@@ -6,6 +6,7 @@ import java.util.Random;
 
 import org.la4j.Vector;
 import org.la4j.vector.DenseVector;
+import org.la4j.vector.functor.VectorFunction;
 
 /**
  * A particle in the swarm for PSO.
@@ -29,6 +30,8 @@ public class SwarmParticle implements Comparable<SwarmParticle> {
 	private int populationSize;
 	private double paramMin;
 	private double paramMax;
+	private static final double VMAX = 50 / 18.0;
+	private static final double VMIN = -50.0 / 18.0;
 
 	/**
 	 * @param id
@@ -50,12 +53,15 @@ public class SwarmParticle implements Comparable<SwarmParticle> {
 		this.localBestParameters = DenseVector.constant(parameters.length(), 0.0);
 		this.fitness = fitness;
 		this.velocity = DenseVector.random(parameters.length(), random);
-		// this.velocity = velocity.transform(new VectorFunction() {
-		// @Override
-		// public double evaluate(int i, double value) {
-		// return (value * (paramMax - paramMin) + paramMin);
-		// }
-		// });
+		this.velocity = velocity.transform(new VectorFunction() {
+			@Override
+			public double evaluate(int i, double value) {
+				if (value < 0.5)
+					return VMIN;
+				else
+					return VMAX;
+			}
+		});
 		this.id = id;
 		this.paramMin = paramMin;
 		this.paramMax = paramMax;
@@ -270,4 +276,19 @@ public class SwarmParticle implements Comparable<SwarmParticle> {
 			return false;
 		}
 	}
+
+	/**
+	 * @return the vmax
+	 */
+	public static double getVmax() {
+		return VMAX;
+	}
+
+	/**
+	 * @return the vmin
+	 */
+	public static double getVmin() {
+		return VMIN;
+	}
+
 }
