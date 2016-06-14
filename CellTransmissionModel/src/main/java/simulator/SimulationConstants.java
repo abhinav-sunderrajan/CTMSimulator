@@ -15,7 +15,7 @@ public class SimulationConstants {
 	public static final int SEED = 12;
 
 	// The accident cell ID>
-	public static final String ACCIDENT_CELL = "30651_1";
+	public static final String ACCIDENT_CELL = "30640_4";
 
 	// Number of lanes to be closed in the case of an accident
 	public static final int LANES_CLOSED = 1;

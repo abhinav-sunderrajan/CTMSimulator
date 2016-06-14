@@ -137,29 +137,16 @@ public class CellTransmissionModel implements Callable<Double> {
 	@Override
 	public Double call() throws IOException {
 		try {
-
-			// long tStart = System.currentTimeMillis();
-
+			Cell accidentCell = cellNetwork.getCellMap().get(SimulationConstants.ACCIDENT_CELL);
+			int blockedLanes = 1;
 			for (simulationTime = 0; simulationTime <= endTime; simulationTime += SimulationConstants.TIME_STEP) {
 
 				if (haveAccident) {
-					Cell accidentCell = cellNetwork.getCellMap().get(
-							SimulationConstants.ACCIDENT_CELL);
-					int laneCount = accidentCell.getNumOfLanes();
-					int numAffectedLanes = 2;
 					if (simulationTime == 0) {
-						// System.out.println("Accident starts!! Number of lanes affected:"
-						// + numAffectedLanes);
-						accidentCell.setNumOfLanes(laneCount - numAffectedLanes);
-						double nMax = accidentCell.getnMax();
-						accidentCell.setnMax(nMax * (laneCount - numAffectedLanes) / laneCount);
+						createAccident(accidentCell, blockedLanes);
 					}
-
 					if (simulationTime == 900) {
-						// System.out.println("Accident clears!!");
-						accidentCell.setNumOfLanes(laneCount);
-						double nMax = accidentCell.getnMax();
-						accidentCell.setnMax(nMax * laneCount / (laneCount - numAffectedLanes));
+						recoverAccident(accidentCell, blockedLanes);
 					}
 				}
 
@@ -200,8 +187,8 @@ public class CellTransmissionModel implements Callable<Double> {
 						ntTotal += cell.getNumOfVehicles();
 						netFlow += cell.getMeanSpeed() * cell.getDensity() * cell.getLength()
 								* cell.getNumOfLanes();
-
 					}
+
 				}
 
 				if (haveVisualization) {
@@ -216,60 +203,12 @@ public class CellTransmissionModel implements Callable<Double> {
 				}
 
 			}
-
-			// System.out.println("finish:" + (System.currentTimeMillis() -
-			// tStart));
-
 			if (haveVisualization)
 				viewer.getMapFrame().dispose();
 
 		} catch (InterruptedException e) {
 			LOGGER.error("Error waiting  for simulation time to advance.", e);
 		}
-
-		/*
-		 * double leastSquare = 0.0; int mainRoads[] = { 30634, 30635, 30636,
-		 * 30637, 30638, 30639, 30640, 30641, 37981, 30642, 30643, 38539, 30644,
-		 * 30645, 30646, 30647, 30648, 30649, 30650, 30651, 30580, 30581 };
-		 * 
-		 * double distance = 0.0; Road prev = null; HashMap<Integer, Double>
-		 * distanceMap = new LinkedHashMap<>(); for (Integer roadId : mainRoads)
-		 * { Road road = core.getPieChangi().get(roadId); if (prev != null)
-		 * distance += prev.getWeight(); distanceMap.put(roadId,
-		 * Math.round(distance * 100.0) / 100.0); prev = road; }
-		 * 
-		 * List<Integer> pieList = new ArrayList<>(); for (int roadId :
-		 * mainRoads) pieList.add(roadId);
-		 * 
-		 * BufferedWriter bw = null; // State at the end of simulation if
-		 * (PRINT_FINAL_STATE) { bw = new BufferedWriter(new FileWriter(new
-		 * File(SIMULATION_OP_PATH)));
-		 * bw.write("cell_id\tspeed\tnum_of_vehicles\tdistance\tdensity\n"); }
-		 * 
-		 * // Minor deletions. Map<Double, Double> speedDistanceMap = new
-		 * TreeMap<Double, Double>(); Map<Double, Cell> cellDistancemap = new
-		 * HashMap<>();
-		 * 
-		 * for (Cell cell : cellNetwork.getCellMap().values()) { if
-		 * (cell.getCellId().contains("source") ||
-		 * cell.getCellId().contains("sink")) continue; if
-		 * (pieList.contains(cell.getRoad().getRoadId())) { double speed =
-		 * Math.round(cell.getMeanSpeed() * 100.0) / 100.0; String split[] =
-		 * cell.getCellId().split("_"); Integer roadId =
-		 * Integer.parseInt(split[0]); Road road =
-		 * core.getPieChangi().get(roadId); Integer segment =
-		 * Integer.parseInt(split[1]); if (distanceMap.containsKey(roadId)) {
-		 * double distanceAlongRoad = distanceMap.get(roadId); for (int i = 0; i
-		 * < segment; i++) { distanceAlongRoad += road.getSegmentsLength()[i]; }
-		 * distanceAlongRoad = Math.round((distanceAlongRoad * 100.0) / 100.0);
-		 * if (PRINT_FINAL_STATE) { bw.write(cell.getCellId() + "\t" + speed +
-		 * "\t" + cell.getNumOfVehicles() + "\t" + distanceAlongRoad + "\t" +
-		 * cell.getDensity() + "\n"); } else {
-		 * speedDistanceMap.put(distanceAlongRoad, cell.getNumOfVehicles());
-		 * cellDistancemap.put(distanceAlongRoad, cell); } } }
-		 * 
-		 * }
-		 */
 
 		if (PRINT_FINAL_STATE) {
 			/*
@@ -278,19 +217,6 @@ public class CellTransmissionModel implements Callable<Double> {
 			 */
 			return 0.95 * ntTotal - 0.05 * netFlow;
 		} else {
-			// for (Entry<Double, Double> entry :
-			// SimulatorCore.semSIMDistanceMap.entrySet()) {
-			// double weight = 1.0;
-			// double diff = entry.getValue() -
-			// speedDistanceMap.get(entry.getKey());
-			// // If difference is greater than 20 percent than penalize more
-			// if (Math.abs(diff / entry.getValue()) > 0.25)
-			// weight = 1.0 + Math.abs(diff / entry.getValue());
-			// leastSquare += diff * weight * diff;
-			// }
-			// return
-			// Double.parseDouble(SimulatorCore.df.format(Math.sqrt(leastSquare)));
-
 			return 0.95 * ntTotal - 0.05 * netFlow;
 		}
 
@@ -328,4 +254,22 @@ public class CellTransmissionModel implements Callable<Double> {
 		this.meteredRamps = meteredRamps;
 	}
 
+	private void createAccident(Cell accidentCell, int blockLanes) {
+		int laneCount = accidentCell.getNumOfLanes();
+		accidentCell.setNumOfLanes(laneCount - blockLanes);
+		accidentCell.updateAnticipatedDensity();
+		accidentCell.updateMeanSpeed();
+		accidentCell.determineSendingPotential();
+		accidentCell.determineReceivePotential();
+
+	}
+
+	private void recoverAccident(Cell accidentCell, int blockLanes) {
+		int laneCount = accidentCell.getNumOfLanes();
+		accidentCell.setNumOfLanes(laneCount + blockLanes);
+		accidentCell.updateAnticipatedDensity();
+		accidentCell.updateMeanSpeed();
+		accidentCell.determineSendingPotential();
+		accidentCell.determineReceivePotential();
+	}
 }

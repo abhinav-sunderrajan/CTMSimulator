@@ -29,7 +29,7 @@ import utils.ThreadPoolExecutorService;
 import ctm.Cell;
 
 /**
- * A genetic algorithm implementation top get the VSL for our expressway
+ * A genetic algorithm implementation top get the VSL for the expressway
  * section.
  * 
  * @author abhinav.sunderrajan
@@ -44,42 +44,65 @@ public class GAVSL {
 	private double meanPopulationFitness;
 	private static SimulatorCore core;
 
-	private static final Random RANDOM = new Random();
+	private static final Random RANDOM = new Random(1);
 	private static final double CROSSOVER_PROB = 0.3;
 	private static final int POPULATION_SIZE = 12;
-	private static final int MAX_ITERS = 20;
+	private static final int EPOCHS = 20;
 	private static final int MU = 1;
 	private static final double MUTATION_PROB = 0.1;
 	private static final int TOURANAMENT_SIZE = 3;
-	private static final double FREE_FLOW = 80.0;
-	private static final double SPEED_MAX = 80 * 5.0 / 18;
-	private static final double SPEED_MIN = 40 * 5.0 / 18;
-	private static final int NSEEDS = 4;
+	private static final int FREE_FLOW = 80;
+	private static final int SPEED_MAX = 80;
+	private static final int SPEED_MIN = 40;
+	private static final int CHANGE = 10;
+	private static final int NSEEDS = 3;
 
 	private class MutateGA implements VectorFunction {
 		double mutateProb;
+		int prev;
+		int[] changes = { CHANGE, -CHANGE };
 
 		MutateGA(double mutateProb) {
 			this.mutateProb = mutateProb;
+			prev = -1;
 		}
 
 		@Override
 		public double evaluate(int i, double value) {
+			int ret = (int) value;
+			boolean mutate = RANDOM.nextDouble() < mutateProb;
+			boolean prevImpact = false;
+			if (prev != -1)
+				prevImpact = ((int) Math.abs((int) value - prev)) > CHANGE;
 
-			double ret = value;
-			if (RANDOM.nextDouble() < mutateProb) {
-				double change = 50.0 / 18.0;
-				if (RANDOM.nextDouble() < 0.5)
-					change = change * -1.0;
-				ret += change;
-				if (ret > SPEED_MAX)
-					ret = ret - 2.0 * change;
-				if (ret < SPEED_MIN)
-					ret = ret + 2.0 * change;
+			if (prevImpact) {
+				// int index = RANDOM.nextInt(2);
+				// int temp = prev + changes[index];
+				// if (temp > SPEED_MAX || temp < SPEED_MIN)
+				// ret = prev + changes[1 - index];
+				// else
+				// ret = temp;
+				ret = prev;
+				prev = ret;
+				return ret;
+			} else if (mutate) {
+				int index = RANDOM.nextInt(2);
+				int temp = (int) value + changes[index];
 
+				if (temp > SPEED_MAX || temp < SPEED_MIN)
+					ret = (int) value + changes[1 - index];
+				else if (prev != -1 && ((int) Math.abs(temp - prev)) > CHANGE)
+					ret = (int) value + changes[1 - index];
+				else
+					ret = temp;
+
+				prev = ret;
+				return ret;
+			} else {
+				prev = ret;
+				return ret;
 			}
 
-			return ret;
 		}
 	};
 
@@ -135,38 +158,33 @@ public class GAVSL {
 		gavsl.populationFitnessMap.clear();
 		for (int i = 0; i < POPULATION_SIZE; i++) {
 			double[] speedLimit = new double[SimulatorCore.getPieMainRoads().length];
-			if (i == 0) {
-				for (int sl = 0; sl < speedLimit.length; sl++) {
-					speedLimit[sl] = FREE_FLOW * 5.0 / 18.0;
+			int prev = -1;
+			for (int sl = 0; sl < speedLimit.length; sl++) {
+				int freeFlowSpeed = FREE_FLOW;
+				int max = freeFlowSpeed / 10;
+				int min = 4;
+				int temp = -1;
+				if (sl == 0) {
+					temp = min + RANDOM.nextInt(max - min + 1);
+				} else {
+					temp = RANDOM.nextDouble() < 0.5 ? (prev - 1) : (prev + 1);
+					if (temp < min)
+						temp = temp + 2;
+					if (temp > max)
+						temp = temp - 2;
 				}
-			} else {
-				int prev = -1;
-				for (int sl = 0; sl < speedLimit.length; sl++) {
-					Double freeFlowSpeed = FREE_FLOW;
-					int max = freeFlowSpeed.intValue() / 10;
-					int min = 4;
-					int temp = -1;
-					if (sl == 0) {
-						temp = min + RANDOM.nextInt(max - min + 1);
-					} else {
-						temp = RANDOM.nextDouble() < 0.5 ? (prev - 1) : (prev + 1);
-						if (temp < min)
-							temp = temp + 2;
-						if (temp > max)
-							temp = temp - 2;
-					}
-					prev = temp;
-					speedLimit[sl] = temp * 10 * 5.0 / 18.0;
-				}
+				prev = temp;
+				speedLimit[sl] = temp * 10;
 
 			}
 
 			gavsl.populationFitnessMap.put(DenseVector.fromArray(speedLimit), Double.MAX_VALUE);
 		}
 		System.out.println("Mean-Fitness\titeration");
-		for (int iter = 0; iter < MAX_ITERS; iter++) {
-			// Achieve the initial warm up state.
-			Set<String> cellState = WarmupCTM.initializeCellState(core);
+		// Achieve the initial warm up state.
+		Set<String> cellState = WarmupCTM.initializeCellState(core);
+
+		for (int epoch = 0; epoch < EPOCHS; epoch++) {
 			// Analyze the fitness the of the population
 			for (Entry<Vector, Double> entry : gavsl.populationFitnessMap.entrySet()) {
 				if (entry.getValue() == Double.MAX_VALUE) {
@@ -174,8 +192,8 @@ public class GAVSL {
 					for (int seed = 0; seed < NSEEDS; seed++) {
 						core.getRandom().setSeed(RANDOM.nextLong());
 						Vector speedLimits = entry.getKey();
-						CellTransmissionModel ctm = new CellTransmissionModel(core, false, false,
-								false, 1500);
+						CellTransmissionModel ctm = new CellTransmissionModel(core, true, false,
+								false, 1000);
 						ctm.intializeTrafficState(cellState);
 						int limit = 0;
 						for (int roadId : SimulatorCore.PIE_MAIN_ROADS) {
@@ -185,7 +203,7 @@ public class GAVSL {
 										.get(roadId + "_" + segment);
 								if (cell == null)
 									break;
-								cell.setFreeFlowSpeed(speedLimits.get(limit));
+								cell.setFreeFlowSpeed(speedLimits.get(limit) * 5.0 / 18.0);
 								segment++;
 							}
 							limit++;
@@ -211,8 +229,6 @@ public class GAVSL {
 				gavsl.meanPopulationFitness += fitness;
 			gavsl.meanPopulationFitness /= POPULATION_SIZE;
 
-			if (iter == (MAX_ITERS - 1))
-				break;
 			// Create new generation.
 
 			Map<Vector, Double> newGen = new LinkedHashMap<Vector, Double>();
@@ -235,15 +251,18 @@ public class GAVSL {
 			}
 
 			while (newGen.size() < POPULATION_SIZE) {
-				Map<Vector, Double> newChild = gavsl.tournamentSelection(bestFitness);
-				for (Entry<Vector, Double> entry : newChild.entrySet()) {
-					if (!newGen.containsKey(entry.getKey()))
-						newGen.put(entry.getKey(), Double.MAX_VALUE);
+				Vector[] newChildren = gavsl.tournamentSelection(bestFitness);
+				for (Vector newChild : newChildren) {
+					if (!newGen.containsKey(newChild)) {
+						gavsl.checkVector(newChild);
+						newGen.put(newChild, Double.MAX_VALUE);
+					}
 				}
 			}
 
-			System.out.println(gavsl.meanPopulationFitness + "\t" + iter);
+			System.out.println(gavsl.meanPopulationFitness + "\t" + epoch);
 			gavsl.populationFitnessMap = newGen;
+
 		}
 
 		System.out.println("fitness:" + bestFitness + " config: " + bestSolution.toCSV());
@@ -279,10 +298,10 @@ public class GAVSL {
 	 * 
 	 * @return the cross-overed and mutated children.
 	 */
-	private Map<Vector, Double> tournamentSelection(double bestFitness) {
-		Map<Vector, Double> parents = new LinkedHashMap<Vector, Double>();
+	private Vector[] tournamentSelection(double bestFitness) {
+		Vector[] parents = new Vector[2];
 
-		while (parents.size() < 2) {
+		for (int index = 0; index < 2; index++) {
 			Vector best = null;
 			double fitness = Double.MAX_VALUE;
 
@@ -301,10 +320,10 @@ public class GAVSL {
 					k++;
 				}
 			}
-			parents.put(best, fitness);
+			parents[index] = best;
 		}
 
-		crossOverAndMutate(parents, bestFitness);
+		crossOverAndMutate(parents);
 		return parents;
 	}
 
@@ -314,31 +333,22 @@ public class GAVSL {
 	 * @param parents
 	 * @param bestFitness
 	 */
-	private void crossOverAndMutate(Map<Vector, Double> parents, double bestFitness) {
-		Vector parent1 = null;
-		Vector parent2 = null;
-		for (Vector parent : parents.keySet()) {
-			if (parent1 == null)
-				parent1 = parent;
-			else
-				parent2 = parent;
-		}
+	private void crossOverAndMutate(Vector[] parents) {
+		Vector parent1 = parents[0];
+		Vector parent2 = parents[1];
 
 		if (parent1.length() != parent2.length()) {
 			throw new IllegalArgumentException("Size of the chromosomes is worng");
 		}
 
 		// crossover probability
-		double cop = CROSSOVER_PROB * (parents.get(parent1) - bestFitness)
-				/ (meanPopulationFitness - bestFitness);
+		double cop = CROSSOVER_PROB;
 
 		// Mutation probability of parent 2
-		final double mup2 = MUTATION_PROB * (parents.get(parent2) - bestFitness)
-				/ (meanPopulationFitness - bestFitness);
+		final double mup2 = MUTATION_PROB;
 
 		// Mutation probability of parent 1
-		final double mup1 = MUTATION_PROB * (parents.get(parent1) - bestFitness)
-				/ (meanPopulationFitness - bestFitness);
+		final double mup1 = MUTATION_PROB;
 
 		// cross over
 		for (int i = 0; i < parent1.length(); i++) {
@@ -350,10 +360,22 @@ public class GAVSL {
 		}
 
 		// Actual mutation
-
-		parent1 = parent1.transform(new MutateGA(mup1));
-		parent2 = parent2.transform(new MutateGA(mup2));
+		parents[0] = parent1.transform(new MutateGA(mup1));
+		parents[1] = parent2.transform(new MutateGA(mup2));
 
 	}
 
+	private void checkVector(Vector vector) {
+		for (int i = 1; i < vector.length(); i++) {
+			if ((int) (vector.get(i) - vector.get(i - 1)) > CHANGE) {
+				throw new IllegalArgumentException("vector " + vector.toCSV() + " at " + i
+						+ " does not confrom to the requirements");
+			}
+			if (vector.get(i) > SPEED_MAX || vector.get(i) < SPEED_MIN) {
+				throw new IllegalArgumentException("vector " + vector.get(i)
+						+ " exceeds speed limits");
+			}
+
+		}
+	}
 }

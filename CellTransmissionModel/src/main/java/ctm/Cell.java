@@ -566,4 +566,18 @@ public abstract class Cell {
 		Cell.ramps = ramps;
 	}
 
+	/**
+	 * @return the sendingPotential
+	 */
+	public double getSendingPotential() {
+		return sendingPotential;
+	}
+
+	/**
+	 * @return the receivePotential
+	 */
+	public double getReceivePotential() {
+		return receivePotential;
+	}
+
 }

@@ -194,16 +194,14 @@ public class SimulatorCore {
 		core.random.setSeed(randLocal.nextLong());
 
 		Set<String> cellState = WarmupCTM.initializeCellState(core);
-		double sl[] = { 22.222, 22.222, 22.222, 22.222, 22.222, 19.444, 22.222, 22.222, 22.222,
-				22.222, 22.222, 19.444, 22.222, 22.222, 22.222, 19.444, 22.222, 19.444, 22.222,
-				22.222, 16.667, 22.222, 22.222 };
+		double sl[] = { 22.222, 19.444, 22.222, 19.444, 19.444, 19.444, 22.222, 19.444, 16.667,
+				13.889, 11.111, 19.444, 16.667, 19.444, 22.222, 22.222, 22.222, 19.444, 16.667,
+				13.889, 11.111, 22.222, 13.889 };
 
 		double meanQos = 0.0;
-		int trials = 20;
+		int trials = 25;
 		for (int i = 0; i < trials; i++) {
-			CellTransmissionModel ctm = new CellTransmissionModel(core,
-					SimOptions.getOption(SimOptions.NO_ACC), false,
-					SimOptions.getOption(SimOptions.NO_VIZ), 1500);
+			CellTransmissionModel ctm = new CellTransmissionModel(core, true, false, true, 3500);
 			ctm.intializeTrafficState(cellState);
 			int limit = 0;
 			for (int roadId : PIE_MAIN_ROADS) {
@@ -212,7 +210,7 @@ public class SimulatorCore {
 					Cell cell = ctm.getCellNetwork().getCellMap().get(roadId + "_" + segment);
 					if (cell == null)
 						break;
-					cell.setFreeFlowSpeed(sl[limit]);
+					cell.setFreeFlowSpeed(22.222);
 					segment++;
 				}
 				limit++;
