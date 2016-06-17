@@ -44,10 +44,10 @@ public class GAVSL {
 	private double meanPopulationFitness;
 	private static SimulatorCore core;
 
-	private static final Random RANDOM = new Random(1);
+	private static final Random RANDOM = new Random();
 	private static final double CROSSOVER_PROB = 0.3;
 	private static final int POPULATION_SIZE = 12;
-	private static final int EPOCHS = 20;
+	private static final int EPOCHS = 30;
 	private static final int MU = 1;
 	private static final double MUTATION_PROB = 0.1;
 	private static final int TOURANAMENT_SIZE = 3;
@@ -55,7 +55,7 @@ public class GAVSL {
 	private static final int SPEED_MAX = 80;
 	private static final int SPEED_MIN = 40;
 	private static final int CHANGE = 10;
-	private static final int NSEEDS = 3;
+	private static final int NSEEDS = 4;
 
 	private class MutateGA implements VectorFunction {
 		double mutateProb;
@@ -157,25 +157,31 @@ public class GAVSL {
 		double bestFitness = Double.MAX_VALUE;
 		gavsl.populationFitnessMap.clear();
 		for (int i = 0; i < POPULATION_SIZE; i++) {
+
 			double[] speedLimit = new double[SimulatorCore.getPieMainRoads().length];
 			int prev = -1;
-			for (int sl = 0; sl < speedLimit.length; sl++) {
-				int freeFlowSpeed = FREE_FLOW;
-				int max = freeFlowSpeed / 10;
-				int min = 4;
-				int temp = -1;
-				if (sl == 0) {
-					temp = min + RANDOM.nextInt(max - min + 1);
-				} else {
-					temp = RANDOM.nextDouble() < 0.5 ? (prev - 1) : (prev + 1);
-					if (temp < min)
-						temp = temp + 2;
-					if (temp > max)
-						temp = temp - 2;
-				}
-				prev = temp;
-				speedLimit[sl] = temp * 10;
+			if (i == 0) {
+				for (int sl = 0; sl < speedLimit.length; sl++)
+					speedLimit[sl] = FREE_FLOW;
+			} else {
+				for (int sl = 0; sl < speedLimit.length; sl++) {
+					int freeFlowSpeed = FREE_FLOW;
+					int max = freeFlowSpeed / 10;
+					int min = 4;
+					int temp = -1;
+					if (sl == 0) {
+						temp = min + RANDOM.nextInt(max - min + 1);
+					} else {
+						temp = RANDOM.nextDouble() < 0.5 ? (prev - 1) : (prev + 1);
+						if (temp < min)
+							temp = temp + 2;
+						if (temp > max)
+							temp = temp - 2;
+					}
+					prev = temp;
+					speedLimit[sl] = temp * 10;
 
+				}
 			}
 
 			gavsl.populationFitnessMap.put(DenseVector.fromArray(speedLimit), Double.MAX_VALUE);
@@ -192,8 +198,8 @@ public class GAVSL {
 					for (int seed = 0; seed < NSEEDS; seed++) {
 						core.getRandom().setSeed(RANDOM.nextLong());
 						Vector speedLimits = entry.getKey();
-						CellTransmissionModel ctm = new CellTransmissionModel(core, true, false,
-								false, 1000);
+						CellTransmissionModel ctm = new CellTransmissionModel(core, false, false,
+								false, 1200);
 						ctm.intializeTrafficState(cellState);
 						int limit = 0;
 						for (int roadId : SimulatorCore.PIE_MAIN_ROADS) {
@@ -265,7 +271,7 @@ public class GAVSL {
 
 		}
 
-		System.out.println("fitness:" + bestFitness + " config: " + bestSolution.toCSV());
+		System.out.println("\n\nfitness:\t" + bestFitness + "\tconfig:\t" + bestSolution.toCSV());
 	}
 
 	/**

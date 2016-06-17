@@ -48,11 +48,11 @@ public class CellTransmissionModel implements Callable<Double> {
 	private CellNetwork cellNetwork;
 	private Map<Cell, RampMeter> meteredRamps;
 	private boolean applyRampMetering;
-	private static final Logger LOGGER = Logger.getLogger(CellTransmissionModel.class);
 	private double ntTotal = 0.0;
 	private double netFlow = 0.0;
 	private static final boolean PRINT_FINAL_STATE = false;
 	private static final String SIMULATION_OP_PATH = "C:/Users/abhinav.sunderrajan/Desktop/MapMatch/MapMatchingStats/ctmop.txt";
+	private static final Logger LOGGER = Logger.getLogger(CellTransmissionModel.class);
 
 	/**
 	 * Initialize cell state.
@@ -145,7 +145,7 @@ public class CellTransmissionModel implements Callable<Double> {
 					if (simulationTime == 0) {
 						createAccident(accidentCell, blockedLanes);
 					}
-					if (simulationTime == 900) {
+					if (simulationTime == 1100) {
 						recoverAccident(accidentCell, blockedLanes);
 					}
 				}
@@ -184,7 +184,7 @@ public class CellTransmissionModel implements Callable<Double> {
 				for (Cell cell : cellNetwork.getCellMap().values()) {
 					if (!(cell instanceof SinkCell || cell instanceof SourceCell)) {
 						cell.updateMeanSpeed();
-						ntTotal += cell.getNumOfVehicles();
+						ntTotal += cell.getDensity() * cell.getLength() * cell.getNumOfLanes();
 						netFlow += cell.getMeanSpeed() * cell.getDensity() * cell.getLength()
 								* cell.getNumOfLanes();
 					}
@@ -215,9 +215,9 @@ public class CellTransmissionModel implements Callable<Double> {
 			 * bw.flush(); bw.close(); System.out.println("Printed file to " +
 			 * SIMULATION_OP_PATH);
 			 */
-			return 0.95 * ntTotal - 0.05 * netFlow;
+			return 20 * ntTotal - 1 * netFlow;
 		} else {
-			return 0.95 * ntTotal - 0.05 * netFlow;
+			return 20 * ntTotal - 1 * netFlow;
 		}
 
 	}

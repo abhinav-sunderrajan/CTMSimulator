@@ -218,11 +218,12 @@ public abstract class Cell {
 							* turnRatio;
 				}
 			} else {
-				if (successors.get(0) instanceof SinkCell) {
+				Cell successor = successors.get(0);
+				if (successor instanceof SinkCell) {
 					densityAntic += (1 - SimulationConstants.ALPHA_ANTIC) * density;
 				} else {
 					densityAntic += (1 - SimulationConstants.ALPHA_ANTIC)
-							* (successors.get(0).nt / (successors.get(0).length * successors.get(0).numOfLanes));
+							* (successor.nt / (successor.length * successor.numOfLanes));
 				}
 			}
 
@@ -283,15 +284,14 @@ public abstract class Cell {
 			}
 
 			double densityRatio = densityAntic / criticalDensity;
-			double noise = core.getRandom().nextGaussian() * 2.0;
-			noise = Math.abs(noise) > 2.5 ? (2.5 * noise / (Math.abs(noise))) : noise;
+			double noise = -1.25 + core.getRandom().nextDouble() * 2.5;
 
 			this.meanSpeed = beta
 					* vinTerm
 					+ (1 - beta)
 					* freeFlowSpeed
 					* Math.exp((-1 / SimulationConstants.AM)
-							* Math.pow(densityRatio, SimulationConstants.AM)) + noise;
+							* Math.pow(densityRatio, SimulationConstants.AM)) + 0.0;
 
 			// This is the on ramp merging term as suggested by METANET.
 

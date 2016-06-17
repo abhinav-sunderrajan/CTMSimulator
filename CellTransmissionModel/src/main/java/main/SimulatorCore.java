@@ -31,7 +31,6 @@ import rnwmodel.RoadNetworkModel;
 import rnwmodel.RoadNode;
 import simulator.CellTransmissionModel;
 import simulator.SimulationConstants;
-import strategy.RampMeter;
 import strategy.WarmupCTM;
 import utils.RoadRepairs;
 import utils.ThreadPoolExecutorService;
@@ -47,11 +46,12 @@ public class SimulatorCore {
 	private Map<Integer, Double> flowRates;
 	private Random random;
 	private ThreadPoolExecutor executor;
+	private Map<Integer, Road> pieChangi;
+	private static SimulatorCore instance;
 
 	public static final int PIE_MAIN_ROADS[] = { 30633, 30634, 30635, 30636, 30637, 30638, 30639,
 			30640, 30641, 37981, 30642, 30643, 38539, 30644, 30645, 30646, 30647, 30648, 30649,
 			30650, 30651, 30580, 30581 };
-
 	public static final int PIE_ALL_ROADS[] = { 30633, 30634, 82, 28377, 30635, 28485, 30636,
 			29310, 30637, 28578, 30638, 28946, 28947, 30639, 28516, 30640, 30790, 30641, 37976,
 			37981, 37980, 30642, 37982, 30643, 38539, 28595, 30644, 29152, 28594, 30645, 28597,
@@ -60,8 +60,6 @@ public class SimulatorCore {
 	private static final Logger LOGGER = Logger.getLogger(SimulatorCore.class);
 	public static final DecimalFormat df = new DecimalFormat("#.###");
 	public static final SAXReader SAX_READER = new SAXReader();
-	private Map<Integer, Road> pieChangi;
-	private static SimulatorCore instance;
 
 	private void initialize(long seed) {
 
@@ -188,20 +186,19 @@ public class SimulatorCore {
 
 	public static void main(String args[]) throws InterruptedException, ExecutionException {
 
-		double queuePercentages[] = { 0.03, 0.0, 0.0, 0.0, 0.11, 0.0, 0.8, 0.0, 0.0, 0.0, 0.0 };
 		Random randLocal = new Random();
 		SimulatorCore core = SimulatorCore.getInstance(1);
 		core.random.setSeed(randLocal.nextLong());
 
 		Set<String> cellState = WarmupCTM.initializeCellState(core);
-		double sl[] = { 22.222, 19.444, 22.222, 19.444, 19.444, 19.444, 22.222, 19.444, 16.667,
-				13.889, 11.111, 19.444, 16.667, 19.444, 22.222, 22.222, 22.222, 19.444, 16.667,
-				13.889, 11.111, 22.222, 13.889 };
+		double sl[] = { 80.000, 80.000, 70.000, 80.000, 70.000, 80.000, 80.000, 80.000, 80.000,
+				80.000, 80.000, 80.000, 80.000, 70.000, 80.000, 80.000, 80.000, 80.000, 80.000,
+				80.000, 80.000, 80.000, 80.000 };
 
 		double meanQos = 0.0;
-		int trials = 25;
+		int trials = 1;
 		for (int i = 0; i < trials; i++) {
-			CellTransmissionModel ctm = new CellTransmissionModel(core, true, false, true, 3500);
+			CellTransmissionModel ctm = new CellTransmissionModel(core, true, false, true, 3200);
 			ctm.intializeTrafficState(cellState);
 			int limit = 0;
 			for (int roadId : PIE_MAIN_ROADS) {
@@ -210,20 +207,16 @@ public class SimulatorCore {
 					Cell cell = ctm.getCellNetwork().getCellMap().get(roadId + "_" + segment);
 					if (cell == null)
 						break;
-					cell.setFreeFlowSpeed(22.222);
+					cell.setFreeFlowSpeed(80.0 * 5.0 / 18.0);
 					segment++;
 				}
 				limit++;
 			}
 
-			int index = 0;
-			for (RampMeter meter : ctm.getMeteredRamps().values())
-				meter.setQueuePercentage(queuePercentages[index++]);
-
 			Future<Double> future = core.executor.submit(ctm);
 			Double qos = future.get();
 			meanQos += Math.round(qos);
-			System.out.print(Math.round(qos) + ",");
+			System.out.print(Math.round(qos) + "\n");
 		}
 
 		System.out.println((meanQos / trials));

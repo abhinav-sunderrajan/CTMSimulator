@@ -1,4 +1,4 @@
-package pie;
+package roadsection;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -41,25 +41,26 @@ import com.vividsolutions.jts.geom.Coordinate;
 public class PIESEMSimXMLGenerator {
 
 	public static RoadNetworkModel roadModel;
-	private static final int PIE_ROADS[] = { 30632, 30633, 30634, 30635, 30636, 30637,
-			30638, 30639, 30640, 30641, 37981, 30642, 30643, 38539, 30644, 30645, 30646, 30647,
-			30648, 30649, 30650, 30651, 30580, 30581 };
+	private static final int PIE_MAIN_ROADS[] = { 30632, 30633, 30634, 30635, 30636, 30637, 30638,
+			30639, 30640, 30641, 37981, 30642, 30643, 38539, 30644, 30645, 30646, 30647, 30648,
+			30649, 30650, 30651, 30580, 30581 };
 
 	private static int reorder[] = { 28500, 31985, 31991, 28613, 29131, 28611, 29552, 29553, 28387,
 			19116, 19117, 29005, 28597, 22009, 29152, 28594, 2355, 2356, 28595, 37982, 37980,
 			37976, 30788, 30789, 30790, 28516, 28946, 28947, 28578, 38260, 29309, 29310, 28485, 82,
 			28377 };
 
-	private static Map<String, Long> laneRoadMapping = new LinkedHashMap<String, Long>();
+	static Map<String, Long> laneRoadMapping = new LinkedHashMap<String, Long>();
 	private static long roadIIDLong = 0;
-	public static Map<String, List<Lane>> linkLaneMapping ;
-	public static LaneModel laneModel;
+	public static Map<String, List<Lane>> linkLaneMapping;
+	private static LaneModel laneModel;
 	private static int newId = 83281;
 	public static List<Road> pieChangi;
 	private static List<Road> reorderList = new ArrayList<Road>();
-	private static final int[] ramps = { 30790, 29131, 29005, 28947, 28377, 37980, 29553, 28594, 28595, 31991, 29310};
-	
-	static{
+	private static final int[] ramps = { 30790, 29131, 29005, 28947, 28377, 37980, 29553, 28594,
+			28595, 31991, 29310 };
+
+	private static void initialize() {
 		roadModel = new QIRoadNetworkModel("jdbc:postgresql://172.25.187.111/abhinav", "abhinav",
 				"qwert$$123", "qi_roads", "qi_nodes");
 
@@ -73,7 +74,7 @@ public class PIESEMSimXMLGenerator {
 				+ "\n Number of roads with postal codes:" + count);
 
 		pieChangi = new ArrayList<>();
-		for (int roadId : PIE_ROADS) {
+		for (int roadId : PIE_MAIN_ROADS) {
 			Road road = roadModel.getAllRoadsMap().get(roadId);
 			pieChangi.add(road);
 		}
@@ -118,7 +119,7 @@ public class PIESEMSimXMLGenerator {
 		// Set lane count for each road along P.I.E some what close to reality.
 
 		try {
-			BufferedReader	br = new BufferedReader(new FileReader(new File("Lanecount.txt")));
+			BufferedReader br = new BufferedReader(new FileReader(new File("Lanecount.txt")));
 			while (br.ready()) {
 				String line = br.readLine();
 				String[] split = line.split("\t");
@@ -133,17 +134,16 @@ public class PIESEMSimXMLGenerator {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
 
-		 laneModel = new LaneModel(roadModel);
-		linkLaneMapping= laneModel.createLaneModel(pieChangi);
-		
+		laneModel = new LaneModel(roadModel);
+		linkLaneMapping = laneModel.createLaneModel(pieChangi, LaneModel.RoadTypes.EXPRESSWAY);
+
 	}
-	
 
 	public static void main(String[] args) throws IOException {
 
-		
+		initialize();
+
 		// Create XML documents
 		OutputFormat format = OutputFormat.createPrettyPrint();
 		Document roadNetworkDOM = exportAsXMLDomRoadNetwork(linkLaneMapping);
@@ -179,7 +179,7 @@ public class PIESEMSimXMLGenerator {
 
 	}
 
-	private static Document exportAsXMLDOMIntersectionProbability(List<Road> pieChangiOrdered) {
+	public static Document exportAsXMLDOMIntersectionProbability(List<Road> pieChangiOrdered) {
 		Document document = DocumentHelper.createDocument();
 		Element root = document.addElement("TrafficGenerator");
 		Element intersection = root.addElement("intersection");
@@ -239,7 +239,7 @@ public class PIESEMSimXMLGenerator {
 		return document;
 	}
 
-	private static Document exportAsXMLDOMRouting(List<Road> pieChangiOrdered) {
+	public static Document exportAsXMLDOMRouting(List<Road> pieChangiOrdered) {
 		Document document = DocumentHelper.createDocument();
 		Element root = document.addElement("RoutingNetwork");
 		Set<RoadNode> roadNodes = new HashSet<>();
@@ -309,7 +309,6 @@ public class PIESEMSimXMLGenerator {
 					}
 
 					for (Road outRoad : outs) {
-
 						outgoing.addElement("edgeIID").addText(
 								String.valueOf(laneRoadMapping.get(outRoad.getRoadId() + "_" + 1)));
 					}
@@ -365,6 +364,7 @@ public class PIESEMSimXMLGenerator {
 	}
 
 	public static Document exportAsXMLDomRoadNetwork(Map<String, List<Lane>> linkLaneMapping) {
+
 		Document document = DocumentHelper.createDocument();
 		Element root = document.addElement("RoadNetwork");
 		root.addAttribute("version", "1.0");

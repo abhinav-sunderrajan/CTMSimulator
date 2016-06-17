@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Intersections xmlns:xenon="http://xenon.tum-create.edu.sg" version="1.0" xsi:schemaLocation="http://xenon.tum-create.edu.sg SEMSim_Intersections.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Intersections type="SStaticIntersection" id="0">
+    <Phase duration="40000" order="0">
+      <link>15</link>
+      <link>17</link>
+    </Phase>
+    <Phase duration="40000" order="1">
+      <link>16</link>
+      <link>125</link>
+    </Phase>
+  </Intersections>
+  <Intersections type="SStaticIntersection" id="1">
+    <Phase duration="40000" order="0">
+      <link>57</link>
+      <link>121</link>
+    </Phase>
+    <Phase duration="40000" order="1">
+      <link>70</link>
+      <link>58</link>
+    </Phase>
+  </Intersections>
+  <Intersections type="SStaticIntersection" id="2">
+    <Phase duration="40000" order="0">
+      <link>84</link>
+      <link>85</link>
+    </Phase>
+    <Phase duration="40000" order="1">
+      <link>82</link>
+      <link>83</link>
+    </Phase>
+  </Intersections>
+</Intersections>

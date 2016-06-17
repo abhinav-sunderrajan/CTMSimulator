@@ -13,7 +13,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import pie.PIESEMSimXMLGenerator;
 
 import rnwmodel.Lane;
 import rnwmodel.LaneModel;
@@ -21,6 +20,7 @@ import rnwmodel.QIRoadNetworkModel;
 import rnwmodel.Road;
 import rnwmodel.RoadNetworkModel;
 import rnwmodel.RoadNode;
+import roadsection.PIESEMSimXMLGenerator;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
