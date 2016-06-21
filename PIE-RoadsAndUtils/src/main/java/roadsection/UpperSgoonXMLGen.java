@@ -31,9 +31,9 @@ public class UpperSgoonXMLGen {
 	private static RoadNetworkModel roadModel;
 	private static Map<String, List<Lane>> linkLaneMapping;
 	private static LaneModel laneModel;
-
-	private static final int INTERSECTIONS[] = { 33354, 33409, 28922, 28914, 33361, 33403, 3406,
-			16790, 33367, 33399, 17978, 15752 };
+	private static int newNodeId = 83281;
+	private static final int INTERSECTIONS[][] = { { 33354, 33409, 28922, 28914 },
+			{ 33361, 33403, 3406, 16790 }, { 33367, 33399, 17978, 15752 } };
 
 	private static final int UPPER_SGOON[] = { 33353, 43262, 28916, 28919, 28920, 28921, 33354,
 			28922, 33409, 33410, 33411, 28913, 28912, 28923, 28924, 28925, 33356, 33408, 33407,
@@ -50,17 +50,14 @@ public class UpperSgoonXMLGen {
 
 	public static void main(String args[]) throws IOException {
 		List<Road> upperSgoon = new ArrayList<Road>();
-		List<Road> intersections = new ArrayList<Road>();
 
 		for (int roadId : UPPER_SGOON) {
 			Road road = roadModel.getAllRoadsMap().get(roadId);
 			road.setLaneCount(2);
 			upperSgoon.add(road);
 		}
-		for (int roadId : INTERSECTIONS) {
-			Road road = roadModel.getAllRoadsMap().get(roadId);
-			intersections.add(road);
-		}
+
+		repairIntersections();
 
 		laneModel = new LaneModel(roadModel);
 		linkLaneMapping = laneModel.createLaneModel(upperSgoon, LaneModel.RoadTypes.URBAN);
@@ -95,6 +92,52 @@ public class UpperSgoonXMLGen {
 
 	}
 
+	private static void repairIntersections() {
+		for (int i = 0; i < INTERSECTIONS.length; i++) {
+			int[] intersection = INTERSECTIONS[i];
+			for (int iid : intersection) {
+				Road junction = roadModel.getAllRoadsMap().get(iid);
+				RoadNode beginNode = junction.getBeginNode();
+				RoadNode newBeginNode = new RoadNode(newNodeId, beginNode.getX(), beginNode.getY());
+
+				Road otherJunction = null;
+
+				for (Road in : beginNode.getInRoads()) {
+					if (in.getKind().equalsIgnoreCase("JUNCTION"))
+						otherJunction = in;
+				}
+
+				beginNode.getInRoads().remove(otherJunction);
+				newBeginNode.getInRoads().add(otherJunction);
+				otherJunction.setEndNode(newBeginNode);
+				otherJunction.getRoadNodes().set(1, newBeginNode);
+
+				Road otherOut = null;
+				for (Road out : beginNode.getOutRoads()) {
+					if (!out.getKind().equalsIgnoreCase("JUNCTION"))
+						otherOut = out;
+				}
+
+				beginNode.getOutRoads().remove(otherOut);
+				otherOut.setBeginNode(newBeginNode);
+				otherOut.getRoadNodes().set(0, newBeginNode);
+				newBeginNode.getOutRoads().add(otherOut);
+				if (roadModel.getAllNodes().containsKey(newNodeId))
+					System.out.println("crap");
+
+				roadModel.getAllNodes().put(newNodeId, newBeginNode);
+				roadModel.getAllNodes().put(beginNode.getNodeId(), beginNode);
+				newNodeId++;
+				System.out.println(beginNode + "\t" + beginNode.getInRoads() + "\t"
+						+ beginNode.getOutRoads());
+				System.out.println(newBeginNode + "\t" + newBeginNode.getInRoads() + "\t"
+						+ newBeginNode.getOutRoads());
+
+			}
+		}
+
+	}
+
 	private static Document exportAsXMLDOMIntersections(List<Road> upperSgoon) {
 
 		Document document = DocumentHelper.createDocument();
@@ -104,23 +147,24 @@ public class UpperSgoonXMLGen {
 				"http://xenon.tum-create.edu.sg SEMSim_Intersections.xsd");
 		root.add(new Namespace("xenon", "http://xenon.tum-create.edu.sg"));
 		root.addAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-		int linkId = 0;
-		for (int intersection = 0; intersection < 3; intersection++) {
+
+		for (int i = 0; i < INTERSECTIONS.length; i++) {
 
 			Element intersectionElem = root.addElement("Intersections");
 			intersectionElem.addAttribute("type", "SStaticIntersection");
-			intersectionElem.addAttribute("id", String.valueOf(intersection));
-
+			intersectionElem.addAttribute("id", String.valueOf(i));
+			int[] intersection = INTERSECTIONS[i];
+			int j = 0;
 			for (int phase = 0; phase < 2; phase++) {
 				Element phaseElement = intersectionElem.addElement("Phase");
 				phaseElement.addAttribute("duration", String.valueOf(40000));
 				phaseElement.addAttribute("order", String.valueOf(phase));
-				do {
+				for (int linkId = 0; linkId < 2; linkId++) {
 					Element link = phaseElement.addElement("link");
 					link.addText(String.valueOf(PIESEMSimXMLGenerator.laneRoadMapping
-							.get(INTERSECTIONS[linkId] + "_1")));
-					linkId++;
-				} while (linkId % 2 != 0);
+							.get(intersection[j] + "_1")));
+					j++;
+				}
 			}
 
 		}
