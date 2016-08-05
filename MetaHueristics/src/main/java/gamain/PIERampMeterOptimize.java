@@ -21,7 +21,7 @@ import main.SimulatorCore;
 import org.apache.log4j.Logger;
 
 import simulator.CellTransmissionModel;
-import strategy.RampMeter;
+import strategy.RampMeterQueueThreshhold;
 import utils.ThreadPoolExecutorService;
 
 /**
@@ -134,7 +134,7 @@ public class PIERampMeterOptimize {
 								false, 2100);
 						List<Double> queuePercentages = entry.getKey();
 						int index = 0;
-						for (RampMeter meter : ctm.getMeteredRamps().values())
+						for (RampMeterQueueThreshhold meter : ctm.getMeteredRamps().values())
 							meter.setQueuePercentage(queuePercentages.get(index++));
 
 						futureSeeds.add(pieOptimize.executor.submit(ctm));

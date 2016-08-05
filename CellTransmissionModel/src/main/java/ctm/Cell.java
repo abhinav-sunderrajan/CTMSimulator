@@ -284,14 +284,20 @@ public abstract class Cell {
 			}
 
 			double densityRatio = densityAntic / criticalDensity;
-			double noise = -1.25 + core.getRandom().nextDouble() * 2.5;
-
-			this.meanSpeed = beta
+			meanSpeed = beta
 					* vinTerm
 					+ (1 - beta)
 					* freeFlowSpeed
 					* Math.exp((-1 / SimulationConstants.AM)
-							* Math.pow(densityRatio, SimulationConstants.AM)) + 0.0;
+							* Math.pow(densityRatio, SimulationConstants.AM));
+
+			// logic for adding noise
+			double noise = 0.0;
+			double denratio = density / criticalDensity;
+
+			if (meanSpeed >= SimulationConstants.V_OUT_MIN * 1.05 && denratio > 0.5)
+				noise = -1.25 * core.getRandom().nextDouble();
+			meanSpeed += noise;
 
 			// This is the on ramp merging term as suggested by METANET.
 

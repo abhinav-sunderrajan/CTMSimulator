@@ -9,7 +9,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import main.SimulatorCore;
 import simulator.CellTransmissionModel;
-import strategy.RampMeter;
+import strategy.RampMeterQueueThreshhold;
 import utils.ThreadPoolExecutorService;
 
 public class SimulatedAnnealing {
@@ -98,7 +98,7 @@ public class SimulatedAnnealing {
 			core.getRandom().setSeed(randomLocal.nextLong());
 			CellTransmissionModel ctm = new CellTransmissionModel(core, true, true, false, 2200);
 			int index = 0;
-			for (RampMeter meter : ctm.getMeteredRamps().values())
+			for (RampMeterQueueThreshhold meter : ctm.getMeteredRamps().values())
 				meter.setQueuePercentage(queuePercentage.get(index++));
 			Future<Double> future = executor.submit(ctm);
 			meanFitness += Math.round(future.get());

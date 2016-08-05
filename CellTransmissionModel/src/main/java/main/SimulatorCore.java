@@ -20,6 +20,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import network.NeuralNetwork;
+
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -34,7 +36,6 @@ import simulator.SimulationConstants;
 import strategy.WarmupCTM;
 import utils.RoadRepairs;
 import utils.ThreadPoolExecutorService;
-import ctm.Cell;
 
 public class SimulatorCore {
 
@@ -60,6 +61,7 @@ public class SimulatorCore {
 	private static final Logger LOGGER = Logger.getLogger(SimulatorCore.class);
 	public static final DecimalFormat df = new DecimalFormat("#.###");
 	public static final SAXReader SAX_READER = new SAXReader();
+	private static NeuralNetwork neuralNet;
 
 	private void initialize(long seed) {
 
@@ -191,32 +193,24 @@ public class SimulatorCore {
 		core.random.setSeed(randLocal.nextLong());
 
 		Set<String> cellState = WarmupCTM.initializeCellState(core);
-		double sl[] = { 80.000, 80.000, 70.000, 80.000, 70.000, 80.000, 80.000, 80.000, 80.000,
-				80.000, 80.000, 80.000, 80.000, 70.000, 80.000, 80.000, 80.000, 80.000, 80.000,
-				80.000, 80.000, 80.000, 80.000 };
+		double queueThreshold[] = { 0.377, 0.552, 0.470, 0.465, 0.594, 0.546, 0.595, 0.609, 0.444,
+				0.447, 0.480 };
+
+		int layers[] = { cellState.size(), 50, queueThreshold.length };
+		neuralNet = NeuralNetwork.getNNInstance(core.random.nextLong(), layers);
+		CellTransmissionModel.setNeuralNet(neuralNet);
 
 		double meanQos = 0.0;
-		int trials = 1;
+		int trials = 5;
 		for (int i = 0; i < trials; i++) {
-			CellTransmissionModel ctm = new CellTransmissionModel(core, true, false, true, 3200);
+			CellTransmissionModel ctm = new CellTransmissionModel(core, false, true, false, 1800);
 			ctm.intializeTrafficState(cellState);
-			int limit = 0;
-			for (int roadId : PIE_MAIN_ROADS) {
-				int segment = 0;
-				while (true) {
-					Cell cell = ctm.getCellNetwork().getCellMap().get(roadId + "_" + segment);
-					if (cell == null)
-						break;
-					cell.setFreeFlowSpeed(80.0 * 5.0 / 18.0);
-					segment++;
-				}
-				limit++;
-			}
-
+			System.out.println("Warm up finish..");
 			Future<Double> future = core.executor.submit(ctm);
 			Double qos = future.get();
 			meanQos += Math.round(qos);
-			System.out.print(Math.round(qos) + "\n");
+			System.out.print("___________________End of trial " + i
+					+ "________________________________");
 		}
 
 		System.out.println((meanQos / trials));

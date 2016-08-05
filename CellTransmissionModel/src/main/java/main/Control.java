@@ -1,7 +1,7 @@
 package main;
 
 import strategy.ControlStrategy;
-import strategy.RampMeter;
+import strategy.RampMeterQueueThreshhold;
 import strategy.VariableSpeedLimit;
 import ctm.CellNetwork;
 
@@ -19,7 +19,7 @@ public enum Control {
 		ControlStrategy strategy = null;
 		switch (control) {
 		case VSL:
-			strategy = new RampMeter(cellNetwork);
+			strategy = new RampMeterQueueThreshhold(cellNetwork);
 			break;
 		case RAMP_METERING:
 			strategy = new VariableSpeedLimit(cellNetwork);

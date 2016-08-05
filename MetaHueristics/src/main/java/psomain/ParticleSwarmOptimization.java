@@ -51,7 +51,7 @@ public class ParticleSwarmOptimization {
 		futuresMap = new HashMap<Integer, SwarmParticle>();
 		random = new Random();
 		executor.submit(new ComputeMeanFitness());
-		this.nSeeds = 1;
+		this.nSeeds = 5;
 		this.resolve = resolve;
 
 	}

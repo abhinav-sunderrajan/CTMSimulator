@@ -13,7 +13,7 @@ import org.la4j.vector.DenseVector;
 import org.la4j.vector.functor.VectorFunction;
 
 import simulator.CellTransmissionModel;
-import strategy.RampMeter;
+import strategy.RampMeterQueueThreshhold;
 import strategy.WarmupCTM;
 
 /**
@@ -86,7 +86,7 @@ public class PSORampMetering {
 							1800);
 					ctm.intializeTrafficState(cellState);
 					int index = 0;
-					for (RampMeter meter : ctm.getMeteredRamps().values())
+					for (RampMeterQueueThreshhold meter : ctm.getMeteredRamps().values())
 						meter.setQueuePercentage(queueThreshold.get(index++));
 
 					futureSeeds.add(pso.getExecutor().submit(ctm));
