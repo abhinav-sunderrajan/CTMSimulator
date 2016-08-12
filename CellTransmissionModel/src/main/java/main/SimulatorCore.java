@@ -20,13 +20,22 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import network.NeuralNetwork;
-
 import org.apache.log4j.Logger;
+import org.deeplearning4j.nn.api.OptimizationAlgorithm;
+import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
+import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
+import org.deeplearning4j.nn.conf.Updater;
+import org.deeplearning4j.nn.conf.layers.DenseLayer;
+import org.deeplearning4j.nn.conf.layers.OutputLayer;
+import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.deeplearning4j.nn.weights.WeightInit;
+import org.deeplearning4j.util.ModelSerializer;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction;
 
+import rl.TrafficLights;
 import rnwmodel.QIRoadNetworkModel;
 import rnwmodel.Road;
 import rnwmodel.RoadNetworkModel;
@@ -61,7 +70,6 @@ public class SimulatorCore {
 	private static final Logger LOGGER = Logger.getLogger(SimulatorCore.class);
 	public static final DecimalFormat df = new DecimalFormat("#.###");
 	public static final SAXReader SAX_READER = new SAXReader();
-	private static NeuralNetwork neuralNet;
 
 	private void initialize(long seed) {
 
@@ -186,34 +194,70 @@ public class SimulatorCore {
 
 	}
 
-	public static void main(String args[]) throws InterruptedException, ExecutionException {
+	public static void main(String args[]) throws InterruptedException, ExecutionException,
+			IOException {
 
 		Random randLocal = new Random();
 		SimulatorCore core = SimulatorCore.getInstance(1);
 		core.random.setSeed(randLocal.nextLong());
 
 		Set<String> cellState = WarmupCTM.initializeCellState(core);
-		double queueThreshold[] = { 0.377, 0.552, 0.470, 0.465, 0.594, 0.546, 0.595, 0.609, 0.444,
-				0.447, 0.480 };
+		final boolean applyrampMetering = true;
+		MultiLayerNetwork model = null;
+		if (applyrampMetering) {
+			final int numberOfRamps = 11;
+			Map<Integer, String> actionMap = TrafficLights.getActionMap(numberOfRamps);
+			// Create neural network
+			MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
+					.seed(randLocal.nextLong())
+					.optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
+					.iterations(1)
+					.activation("leakyrelu")
+					.weightInit(WeightInit.XAVIER)
+					.learningRate(0.1)
+					.updater(Updater.NESTEROVS)
+					.momentum(0.98)
+					.regularization(false)
+					.list()
+					.layer(0,
+							new DenseLayer.Builder().nIn(cellState.size()).nOut(164)
+									.activation("leakyrelu").weightInit(WeightInit.XAVIER).build())
+					.layer(1,
+							new DenseLayer.Builder().nIn(164).nOut(150).activation("leakyrelu")
+									.weightInit(WeightInit.XAVIER).build())
+					.layer(2,
+							new OutputLayer.Builder(LossFunction.MSE).activation("softmax")
+									.nIn(150).nOut(actionMap.size()).build()).pretrain(false)
+					.backprop(true).build();
 
-		int layers[] = { cellState.size(), 50, queueThreshold.length };
-		neuralNet = NeuralNetwork.getNNInstance(core.random.nextLong(), layers);
-		CellTransmissionModel.setNeuralNet(neuralNet);
+			model = new MultiLayerNetwork(conf);
+			model.init();
+			// model.setListeners(new ScoreIterationListener(10));
+			CellTransmissionModel.setNeuralNet(model, cellState.size(), actionMap);
 
-		double meanQos = 0.0;
-		int trials = 5;
-		for (int i = 0; i < trials; i++) {
-			CellTransmissionModel ctm = new CellTransmissionModel(core, false, true, false, 1800);
-			ctm.intializeTrafficState(cellState);
-			System.out.println("Warm up finish..");
-			Future<Double> future = core.executor.submit(ctm);
-			Double qos = future.get();
-			meanQos += Math.round(qos);
-			System.out.print("___________________End of trial " + i
-					+ "________________________________");
 		}
 
-		System.out.println((meanQos / trials));
+		System.out.println("Warmup finish");
+
+		int epochs = 5;
+		for (int epoch = 0; epoch < epochs; epoch++) {
+			CellTransmissionModel ctm = new CellTransmissionModel(core, false, applyrampMetering,
+					false, 1800);
+			ctm.intializeTrafficState(cellState);
+			Future<Double> future = core.executor.submit(ctm);
+			Double discountedDelay = future.get();
+			// double reward = 1.0 / discountedDelay;
+			// reinforce(reward, ctm.getCellStateVector());
+			System.out.println("Trial " + epoch + "\t" + discountedDelay);
+		}
+
+		if (model != null) {
+			File tempFile = File.createTempFile("dl4j-net", ".tmp");
+			tempFile.deleteOnExit();
+			ModelSerializer.writeModel(model, tempFile, true);
+			MultiLayerNetwork network = ModelSerializer.restoreMultiLayerNetwork(tempFile);
+			System.out.format("Canonical filename: %s\n", tempFile.getCanonicalFile());
+		}
 
 		core.executor.shutdown();
 

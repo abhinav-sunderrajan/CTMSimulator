@@ -6,6 +6,7 @@
   <name>MacroscopicBenchMark</name>
   <description>This project is city scale macroscopic traffic simulation.</description>
   
+  
   <build>
 		<plugins>
 			<plugin>
@@ -29,7 +30,29 @@
 		 </repository>
 	</repositories>
 	
+	
+	
  <dependencies>
+ 	 <!-- ND4J backend. You need one in every DL4J project. Normally define artifactId as either "nd4j-native-platform" or "nd4j-cuda-7.5-platform" -->
+        <!-- https://mvnrepository.com/artifact/org.nd4j/nd4j-native -->
+		<dependency>
+		    <groupId>org.nd4j</groupId>
+		    <artifactId>nd4j-native</artifactId>
+		    <version>0.5.0</version>
+		</dependency>
+
+
+        <!-- Core DL4J functionality -->
+        <dependency>
+            <groupId>org.deeplearning4j</groupId>
+            <artifactId>deeplearning4j-core</artifactId>
+            <version>0.5.0</version>
+        </dependency>
+        <dependency>
+            <artifactId>datavec-api</artifactId>
+            <groupId>org.datavec</groupId>
+            <version>0.5.0</version>
+        </dependency>
       	<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
