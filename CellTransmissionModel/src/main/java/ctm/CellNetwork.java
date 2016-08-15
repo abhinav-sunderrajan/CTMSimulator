@@ -122,10 +122,6 @@ public class CellNetwork {
 	 * Create the cells of the CTM model. You need to have one
 	 */
 	private void createCells() {
-		int sourceCellCount = 0;
-		int sinkCellCount = 0;
-		int mergingCellCount = 0;
-		int divergingCellCount = 0;
 
 		for (Road road : roads) {
 			int roadId = road.getRoadId();
@@ -152,7 +148,6 @@ public class CellNetwork {
 						sourceCell.addSuccessor(cell);
 						cell.addPredecessor(sourceCell);
 						cellMap.put(roadId + "_source", sourceCell);
-						++sourceCellCount;
 					}
 
 				} else if (i == road.getRoadNodes().size() - 2) {
@@ -170,7 +165,6 @@ public class CellNetwork {
 
 					if (outs.size() > 1) {
 						cell = new DivergingCell(cellId, cellLength);
-						++divergingCellCount;
 					} else if (outs.size() == 0) {
 						cell = new OrdinaryCell(cellId, cellLength);
 						Cell sinkCell = new SinkCell(roadId + "_sink", 0);
@@ -178,16 +172,12 @@ public class CellNetwork {
 						cell.addSuccessor(sinkCell);
 						sinkCell.addPredecessor(cell);
 						cellMap.put(roadId + "_sink", sinkCell);
-
-						++sinkCellCount;
 					} else if (ins.size() == 2 && outs.size() == 1) {
 						if (road.getKind().equalsIgnoreCase("ramps")
 								|| road.getKind().equalsIgnoreCase("Interchange")) {
 							this.ramps.add(road);
 						}
 						cell = new MergingCell(cellId, cellLength);
-						++mergingCellCount;
-
 					} else {
 						cell = new OrdinaryCell(cellId, cellLength);
 					}
@@ -201,12 +191,6 @@ public class CellNetwork {
 
 			}
 		}
-
-		// System.out.println("Number of source cells:" + sourceCellCount);
-		// System.out.println("Number of sink cells:" + sinkCellCount);
-		// System.out.println("Number of merging cells:" + mergingCellCount);
-		// System.out.println("Number of diverging cells:" +
-		// divergingCellCount);
 
 	}
 

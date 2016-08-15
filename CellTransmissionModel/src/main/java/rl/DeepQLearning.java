@@ -22,6 +22,12 @@ import ctm.CellNetwork;
 import ctm.SinkCell;
 import ctm.SourceCell;
 
+/**
+ * Neural network based reinforcement learning.
+ * 
+ * @author abhinav.sunderrajan
+ * 
+ */
 public abstract class DeepQLearning {
 
 	protected MultiLayerNetwork model;
@@ -36,13 +42,14 @@ public abstract class DeepQLearning {
 	 * Initialize the Neural Network for deep q-learning.
 	 * 
 	 * @param numOfCells
+	 *            the number of cells in the cell network.
 	 * @param seed
+	 *            the simulation seed.
 	 * @param numOfActions
-	 * @param cellNetwork
+	 *            the number of possible actions
 	 */
-	public DeepQLearning(int numOfCells, long seed, int numOfActions, CellNetwork cellNetwork) {
+	public DeepQLearning(int numOfCells, long seed, int numOfActions) {
 		this.numOfActions = numOfActions;
-		this.cellNetwork = cellNetwork;
 		random = new Random(seed);
 		this.numOfCells = numOfCells;
 		// Create neural network
@@ -70,7 +77,6 @@ public abstract class DeepQLearning {
 			action = Nd4j.getExecutioner().execAndReturn(new IAMax(actions)).getFinalResult();
 		if (epsilon > 0.1)
 			epsilon = epsilon - 0.05;
-
 		return action;
 	}
 
@@ -81,7 +87,7 @@ public abstract class DeepQLearning {
 				.iterations(1)
 				.activation("leakyrelu")
 				.weightInit(WeightInit.XAVIER)
-				.learningRate(0.1)
+				.learningRate(0.02)
 				.updater(Updater.NESTEROVS)
 				.momentum(0.98)
 				.regularization(false)
@@ -108,19 +114,68 @@ public abstract class DeepQLearning {
 	 */
 	public INDArray getCellState() {
 		int i = 0;
-		INDArray state = Nd4j.zeros(numOfCells);
+
+		double cellDensities[] = new double[numOfCells];
 		for (Cell cell : cellNetwork.getCellMap().values()) {
 			if (!(cell instanceof SinkCell || cell instanceof SourceCell)) {
 				double density = cell.getNumOfVehicles()
 						/ (cell.getLength() * cell.getNumOfLanes());
-				state = state.putScalar(i, density);
+				cellDensities[i] = density;
 				i++;
 			}
 		}
-
+		INDArray state = Nd4j.create(cellDensities, new int[] { 1, numOfCells });
 		// Normalize
 		state = Transforms.normalizeZeroMeanAndUnitVariance(state);
 		return state;
+	}
+
+	public static INDArray getCellState(CellNetwork cellNetwork, int numOfCells) {
+		int i = 0;
+
+		double cellDensities[] = new double[numOfCells];
+		for (Cell cell : cellNetwork.getCellMap().values()) {
+			if (!(cell instanceof SinkCell || cell instanceof SourceCell)) {
+				double density = cell.getNumOfVehicles()
+						/ (cell.getLength() * cell.getNumOfLanes());
+				cellDensities[i] = density;
+				i++;
+			}
+		}
+		INDArray state = Nd4j.create(cellDensities, new int[] { 1, numOfCells });
+		// Normalize
+		state = Transforms.normalizeZeroMeanAndUnitVariance(state);
+		return state;
+	}
+
+	/**
+	 * @return the cellNetwork
+	 */
+	public CellNetwork getCellNetwork() {
+		return cellNetwork;
+	}
+
+	/**
+	 * @param cellNetwork
+	 *            the cellNetwork to set
+	 */
+	public void setCellNetwork(CellNetwork cellNetwork) {
+		this.cellNetwork = cellNetwork;
+	}
+
+	/**
+	 * @return the model
+	 */
+	public MultiLayerNetwork getModel() {
+		return model;
+	}
+
+	/**
+	 * @param model
+	 *            the model to set
+	 */
+	public void setModel(MultiLayerNetwork model) {
+		this.model = model;
 	}
 
 }

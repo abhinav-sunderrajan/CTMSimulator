@@ -3,8 +3,6 @@ package simulator;
 import java.awt.Color;
 import java.io.IOException;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,8 +16,10 @@ import main.SimulatorCore;
 import org.apache.log4j.Logger;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.api.ops.impl.indexaccum.IAMax;
+import org.nd4j.linalg.factory.Nd4j;
 
-import rl.SimpleQLearning;
+import rl.DeepQLearning;
 import rnwmodel.Road;
 import strategy.SimpleRampMeter;
 import viz.CTMSimViewer;
@@ -53,10 +53,12 @@ public class CellTransmissionModel implements Callable<Double> {
 	private Map<Cell, SimpleRampMeter> meteredRamps;
 	private boolean applyRampMetering;
 	private double netDelay = 0.0;
-	private SimulatorCore core;
+	private static Map<Integer, String> actionMap;
+	private static DeepQLearning qlearning;
+	private static boolean training = false;
+	private static boolean testing = false;
 	private static MultiLayerNetwork model;
 	private static int numberOfinputs;
-	private static Map<Integer, String> actionMap;
 	private static final boolean PRINT_FINAL_STATE = false;
 	private static final Logger LOGGER = Logger.getLogger(CellTransmissionModel.class);
 
@@ -79,24 +81,40 @@ public class CellTransmissionModel implements Callable<Double> {
 	}
 
 	/**
-	 * @return the neuralNet
+	 * Sets up the deep reinforcement learning algorithm.
+	 * 
+	 * @param numberOfInputs
+	 *            the number of cells in the cell network.
+	 * @param actionMap
+	 *            the action map in terms of red green light combination for all
+	 *            controllable ramps.
+	 * @param deepLearning
+	 *            the deep RL algorithm employed.
 	 */
-	public static MultiLayerNetwork getNeuralNet() {
-		return model;
+	public static void setUpTraining(int numberOfInputs, Map<Integer, String> actionMap,
+			DeepQLearning deepLearning) {
+		CellTransmissionModel.actionMap = actionMap;
+		CellTransmissionModel.qlearning = deepLearning;
+		CellTransmissionModel.training = true;
+		CellTransmissionModel.testing = false;
+		CellTransmissionModel.numberOfinputs = numberOfInputs;
 	}
 
 	/**
-	 * @param neuralNet
-	 *            the neuralNet to set
+	 * Evaluate the performance of deep-rl based on the configured neural
+	 * network.
+	 * 
+	 * @param nnModel
+	 *            the neural network.
 	 * @param numberOfInputs
-	 *            the number of inputs to the neural network.
-	 * @param actionMap
+	 *            the number of inputs to the neural network i.e. number of
+	 *            cells.
 	 */
-	public static void setNeuralNet(MultiLayerNetwork neuralNet, int numberOfInputs,
-			Map<Integer, String> actionMap) {
-		CellTransmissionModel.model = neuralNet;
+	public static void evaluateDeepRL(MultiLayerNetwork nnModel, int numberOfInputs) {
+		CellTransmissionModel.model = nnModel;
+		CellTransmissionModel.testing = true;
+		CellTransmissionModel.training = false;
 		CellTransmissionModel.numberOfinputs = numberOfInputs;
-		CellTransmissionModel.actionMap = actionMap;
 	}
 
 	/**
@@ -115,7 +133,6 @@ public class CellTransmissionModel implements Callable<Double> {
 	public CellTransmissionModel(SimulatorCore core, boolean haveAccident, boolean applyMetering,
 			boolean haveViz, long simTime) {
 		this.applyRampMetering = applyMetering;
-		this.core = core;
 		this.haveAccident = haveAccident;
 		meteredRamps = new LinkedHashMap<Cell, SimpleRampMeter>();
 		this.cellNetwork = new CellNetwork(core.getPieChangi().values());
@@ -175,13 +192,11 @@ public class CellTransmissionModel implements Callable<Double> {
 
 			INDArray state = null;
 			int action = -1;
-			SimpleQLearning qlearning = null;
 			if (applyRampMetering) {
-				qlearning = new SimpleQLearning(numberOfinputs, 108, actionMap.size(), cellNetwork);
+				qlearning.setCellNetwork(cellNetwork);
 				state = qlearning.getCellState();
 				action = qlearning.getBestAction(state);
 				trafficLights = actionMap.get(action);
-
 			}
 
 			double prevDelay = 1800.0;
@@ -191,18 +206,34 @@ public class CellTransmissionModel implements Callable<Double> {
 				if (applyRampMetering && simulationTime % SimpleRampMeter.PHASE_MIN == 0) {
 
 					if (simulationTime > 0) {
-						// Get reward for action taken
-						reward = (prevDelay - delay) * 0.01;
-						boolean isTerminalState = simulationTime == endTime ? true : false;
-						// The next state after updating the neural net.
-						state = qlearning.qLearning(state, action, reward, isTerminalState);
-						// get the appropriate action for this state
-						action = qlearning.getBestAction(state);
+
+						if (training) {
+							// Get reward for action taken
+							reward = (prevDelay - delay) * 0.0075;
+							boolean isTerminalState = simulationTime == endTime ? true : false;
+							// The next state after updating the neural net.
+							state = qlearning.qLearning(state, action, reward, isTerminalState);
+							// get the appropriate action for this state
+							action = qlearning.getBestAction(state);
+						}
+						if (testing) {
+							// Use the neural network to determine the best
+							// possible action.
+							INDArray cellState = DeepQLearning.getCellState(cellNetwork,
+									numberOfinputs);
+							List<INDArray> ops = model.feedForward(cellState);
+							INDArray actions = ops.get(ops.size() - 1);
+							action = Nd4j.getExecutioner().execAndReturn(new IAMax(actions))
+									.getFinalResult();
+						}
+
 						trafficLights = actionMap.get(action);
-						// if (simulationTime == endTime)
-						// System.out.println(simulationTime + "\t" + delay +
-						// "\t" + reward + "\t"
-						// + trafficLights);
+						if (testing)
+							System.out
+									.println(simulationTime + "\t" + delay + "\t" + trafficLights);
+						netDelay += delay;
+						prevDelay = delay;
+						delay = 0.0;
 
 					}
 
@@ -258,11 +289,10 @@ public class CellTransmissionModel implements Callable<Double> {
 					}
 				}
 
-				// if (simulationTime % SimpleRampMeter.PHASE_MIN == 0) {
-				// netDelay += delay;
-				// System.out.println(simulationTime + "\t" + delay);
-				// delay = 0.0;
-				// }
+				if (!applyRampMetering && simulationTime % SimpleRampMeter.PHASE_MIN == 0) {
+					netDelay += delay;
+					delay = 0.0;
+				}
 
 				// Now update the number of vehicles in each cell.
 				for (Cell cell : cellNetwork.getCellMap().values())
@@ -340,6 +370,13 @@ public class CellTransmissionModel implements Callable<Double> {
 	}
 
 	/**
+	 * @return the qlearning
+	 */
+	public static DeepQLearning getQlearning() {
+		return qlearning;
+	}
+
+	/**
 	 * @param meteredRamps
 	 *            the meteredRamps to set
 	 */
@@ -364,15 +401,6 @@ public class CellTransmissionModel implements Callable<Double> {
 		accidentCell.updateMeanSpeed();
 		accidentCell.determineSendingPotential();
 		accidentCell.determineReceivePotential();
-	}
-
-	private static <T> List<T> getMiniBatch(int size, List<T> all) {
-		Collections.shuffle(all);
-		List<T> targetList = new ArrayList<>();
-		for (int j = 0; j < size; j++) {
-			targetList.add(all.get(j));
-		}
-		return targetList;
 	}
 
 }

@@ -4,19 +4,19 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 
 public class ReplayTuple {
 	private INDArray oldState;
-	private String trafficLights;
+	private int action;
 	private INDArray nextState;
 	private double reward;
 
 	/**
 	 * @param oldState
-	 * @param trafficLights
+	 * @param action
 	 * @param nextState
 	 * @param reward
 	 */
-	public ReplayTuple(INDArray oldState, String trafficLights, INDArray nextState, double reward) {
+	public ReplayTuple(INDArray oldState, int action, INDArray nextState, double reward) {
 		this.oldState = oldState;
-		this.trafficLights = trafficLights;
+		this.action = action;
 		this.nextState = nextState;
 		this.reward = reward;
 	}
@@ -31,8 +31,8 @@ public class ReplayTuple {
 	/**
 	 * @return the trafficLights
 	 */
-	public String getTrafficLights() {
-		return trafficLights;
+	public int getTrafficLights() {
+		return action;
 	}
 
 	/**

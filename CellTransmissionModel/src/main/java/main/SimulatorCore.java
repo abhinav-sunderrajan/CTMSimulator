@@ -11,6 +11,7 @@ import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -21,20 +22,13 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.log4j.Logger;
-import org.deeplearning4j.nn.api.OptimizationAlgorithm;
-import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
-import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
-import org.deeplearning4j.nn.conf.Updater;
-import org.deeplearning4j.nn.conf.layers.DenseLayer;
-import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
-import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.util.ModelSerializer;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
-import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction;
 
+import rl.ExperienceReplay;
 import rl.TrafficLights;
 import rnwmodel.QIRoadNetworkModel;
 import rnwmodel.Road;
@@ -118,7 +112,7 @@ public class SimulatorCore {
 
 			turnRatios = new HashMap<Integer, Double>();
 			mergePriorities = new HashMap<Integer, Double>();
-			flowRates = new HashMap<Integer, Double>();
+			flowRates = new LinkedHashMap<Integer, Double>();
 
 			mergeTurnAndInterArrivals(pieChangi.values());
 		} catch (FileNotFoundException e) {
@@ -200,64 +194,60 @@ public class SimulatorCore {
 		Random randLocal = new Random();
 		SimulatorCore core = SimulatorCore.getInstance(1);
 		core.random.setSeed(randLocal.nextLong());
-
-		Set<String> cellState = WarmupCTM.initializeCellState(core);
 		final boolean applyrampMetering = true;
-		MultiLayerNetwork model = null;
+		int numOfCells = WarmupCTM.getNumberOfPhysicalCells(core);
 		if (applyrampMetering) {
 			final int numberOfRamps = 11;
 			Map<Integer, String> actionMap = TrafficLights.getActionMap(numberOfRamps);
-			// Create neural network
-			MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
-					.seed(randLocal.nextLong())
-					.optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-					.iterations(1)
-					.activation("leakyrelu")
-					.weightInit(WeightInit.XAVIER)
-					.learningRate(0.1)
-					.updater(Updater.NESTEROVS)
-					.momentum(0.98)
-					.regularization(false)
-					.list()
-					.layer(0,
-							new DenseLayer.Builder().nIn(cellState.size()).nOut(164)
-									.activation("leakyrelu").weightInit(WeightInit.XAVIER).build())
-					.layer(1,
-							new DenseLayer.Builder().nIn(164).nOut(150).activation("leakyrelu")
-									.weightInit(WeightInit.XAVIER).build())
-					.layer(2,
-							new OutputLayer.Builder(LossFunction.MSE).activation("softmax")
-									.nIn(150).nOut(actionMap.size()).build()).pretrain(false)
-					.backprop(true).build();
-
-			model = new MultiLayerNetwork(conf);
-			model.init();
-			// model.setListeners(new ScoreIterationListener(10));
-			CellTransmissionModel.setNeuralNet(model, cellState.size(), actionMap);
-
+			CellTransmissionModel.setUpTraining(numOfCells, actionMap, new ExperienceReplay(
+					numOfCells, randLocal.nextLong(), actionMap.size()));
 		}
 
-		System.out.println("Warmup finish");
-
-		int epochs = 5;
+		int epochs = 2;
 		for (int epoch = 0; epoch < epochs; epoch++) {
+			core.setRandomFlowRates();
+			Set<String> cellState = WarmupCTM.initializeCellState(core, 3);
 			CellTransmissionModel ctm = new CellTransmissionModel(core, false, applyrampMetering,
 					false, 1800);
 			ctm.intializeTrafficState(cellState);
 			Future<Double> future = core.executor.submit(ctm);
 			Double discountedDelay = future.get();
-			// double reward = 1.0 / discountedDelay;
-			// reinforce(reward, ctm.getCellStateVector());
-			System.out.println("Trial " + epoch + "\t" + discountedDelay);
+			System.out.println("Epoch " + epoch + "\t" + discountedDelay);
 		}
 
-		if (model != null) {
-			File tempFile = File.createTempFile("dl4j-net", ".tmp");
+		File tempFile = null;
+
+		if (applyrampMetering) {
+			MultiLayerNetwork model = CellTransmissionModel.getQlearning().getModel();
+			tempFile = File.createTempFile("dl4j-net", ".tmp");
 			tempFile.deleteOnExit();
 			ModelSerializer.writeModel(model, tempFile, true);
-			MultiLayerNetwork network = ModelSerializer.restoreMultiLayerNetwork(tempFile);
+			// MultiLayerNetwork network =
+			// ModelSerializer.restoreMultiLayerNetwork(tempFile);
 			System.out.format("Canonical filename: %s\n", tempFile.getCanonicalFile());
 		}
+
+		// Evaluate the trained model for efficacy
+
+		core.setRandomFlowRates();
+		Set<String> cellState = WarmupCTM.initializeCellState(core, 3);
+		// Without ramp metering.
+		CellTransmissionModel ctm = new CellTransmissionModel(core, false, false, false, 1800);
+		ctm.intializeTrafficState(cellState);
+		Future<Double> future = core.executor.submit(ctm);
+		Double discountedDelay = future.get();
+		System.out.println("Net delay without ramp metering control:" + discountedDelay);
+		future.cancel(true);
+
+		// With ramp metering
+
+		MultiLayerNetwork network = ModelSerializer.restoreMultiLayerNetwork(tempFile);
+		CellTransmissionModel.evaluateDeepRL(network, cellState.size());
+		ctm = new CellTransmissionModel(core, false, true, false, 1800);
+		ctm.intializeTrafficState(cellState);
+		future = core.executor.submit(ctm);
+		discountedDelay = future.get();
+		System.out.println("Net delay with ramp metering control:" + discountedDelay);
 
 		core.executor.shutdown();
 
@@ -307,6 +297,28 @@ public class SimulatorCore {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+
+	}
+
+	/**
+	 * Set random flow rates.
+	 */
+	private void setRandomFlowRates() {
+		double maxFlow = 0.0;
+		double minFlow = 0.0;
+		for (Integer roadId : flowRates.keySet()) {
+			if (roadId == 30633) {
+				maxFlow = 4000;
+				minFlow = 3000;
+			} else {
+				maxFlow = 1000;
+				minFlow = 1800;
+			}
+
+			double flow = minFlow + (maxFlow - minFlow) * random.nextDouble();
+			flow = (double) Math.round(flow);
+			flowRates.put(roadId, flow);
 		}
 
 	}

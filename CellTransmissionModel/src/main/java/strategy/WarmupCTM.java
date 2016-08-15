@@ -28,20 +28,22 @@ public class WarmupCTM {
 
 	/**
 	 * Returns a string representing cell id, mean speed and number of vehicles
-	 * afetr running and averaging over five simulations.
-	 * 
+	 * After running and averaging over five simulations.
 	 * 
 	 * @param core
+	 *            simulation core
+	 * @param numOfIter
+	 *            number of iterations
 	 * @return
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 */
-	public static Set<String> initializeCellState(SimulatorCore core) throws InterruptedException,
-			ExecutionException {
+	public static Set<String> initializeCellState(SimulatorCore core, int numOfIter)
+			throws InterruptedException, ExecutionException {
 		Map<Cell, Double> cellSpeed = new HashMap<Cell, Double>();
 		Map<Cell, Double> cellNumOfVehicles = new HashMap<Cell, Double>();
-
-		for (int i = 0; i < 5; i++) {
+		state.clear();
+		for (int i = 0; i < numOfIter; i++) {
 			CellTransmissionModel ctm = new CellTransmissionModel(core, false, false, false, 2000);
 			Future<Double> future = core.getExecutor().submit(ctm);
 			future.get();
@@ -64,11 +66,29 @@ public class WarmupCTM {
 		}
 
 		for (Cell cell : cellSpeed.keySet()) {
-			double meanSpeed = cellSpeed.get(cell) / 5.0;
-			double meanNt = cellNumOfVehicles.get(cell) / 5.0;
+			double meanSpeed = cellSpeed.get(cell) / numOfIter;
+			double meanNt = cellNumOfVehicles.get(cell) / numOfIter;
 			state.add(cell.getCellId() + ":" + meanSpeed + ":" + meanNt);
 		}
 
 		return state;
+	}
+
+	/**
+	 * Returns the number of physical cells in the cell network.
+	 * 
+	 * @param core
+	 * @return
+	 */
+	public static int getNumberOfPhysicalCells(SimulatorCore core) {
+		CellTransmissionModel ctm = new CellTransmissionModel(core, false, false, false, 2000);
+		CellNetwork cellNetwork = ctm.getCellNetwork();
+		int numOfCells = 0;
+		for (Cell cell : cellNetwork.getCellMap().values()) {
+			if (!(cell instanceof SinkCell || cell instanceof SourceCell)) {
+				numOfCells++;
+			}
+		}
+		return numOfCells;
 	}
 }

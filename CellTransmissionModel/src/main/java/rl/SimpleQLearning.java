@@ -6,12 +6,16 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.impl.accum.Max;
 import org.nd4j.linalg.factory.Nd4j;
 
-import ctm.CellNetwork;
-
+/**
+ * A simple version of deep q learning.
+ * 
+ * @author abhinav.sunderrajan
+ * 
+ */
 public class SimpleQLearning extends DeepQLearning {
 
-	public SimpleQLearning(int numOfCells, long seed, int numOfActions, CellNetwork cellNetwork) {
-		super(numOfCells, seed, numOfActions, cellNetwork);
+	public SimpleQLearning(int numOfCells, long seed, int numOfActions) {
+		super(numOfCells, seed, numOfActions);
 	}
 
 	/**
@@ -35,7 +39,6 @@ public class SimpleQLearning extends DeepQLearning {
 		INDArray actions = ops.get(ops.size() - 1).dup();
 		double maxQ = Nd4j.getExecutioner().execAndReturn(new Max(actions)).getFinalResult()
 				.doubleValue();
-
 		if (isTerminalState)
 			actions.getColumn(action).addi(reward);
 		else
