@@ -12,6 +12,7 @@ public class SourceCell extends Cell {
 
 	// The mean inter-arrival time in seconds.
 	private double meanNoVehiclesEveryTimeStep;
+	private double sourceDelay = 0.0;
 
 	/**
 	 * 
@@ -33,8 +34,10 @@ public class SourceCell extends Cell {
 		// The number of vehicles that enters first link is either the mean or
 		// the space left in the first link.
 		Cell successor = successors.get(0);
-		this.outflow = (int) Math.round(Math.min(poissonRandomNumber(meanNoVehiclesEveryTimeStep),
-				successor.receivePotential));
+		double send = poissonRandomNumber(meanNoVehiclesEveryTimeStep);
+		sourceDelay += send;
+		this.outflow = (int) Math.round(Math.min(sourceDelay, successor.receivePotential));
+		sourceDelay -= outflow;
 	}
 
 	@Override
@@ -81,6 +84,13 @@ public class SourceCell extends Cell {
 			p = p * u;
 		} while (p > L);
 		return k - 1;
+	}
+
+	/**
+	 * @return the delay
+	 */
+	public double getSourceDelay() {
+		return sourceDelay;
 	}
 
 }

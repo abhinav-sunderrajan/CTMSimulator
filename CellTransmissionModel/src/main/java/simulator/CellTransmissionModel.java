@@ -57,7 +57,7 @@ public class CellTransmissionModel implements Callable<Double> {
 	private static DeepQLearning qlearning;
 	private static boolean training = false;
 	private static boolean testing = false;
-	private static MultiLayerNetwork model;
+	private static MultiLayerNetwork nnModel;
 	private static int numberOfinputs;
 	private static final boolean PRINT_FINAL_STATE = false;
 	private static final Logger LOGGER = Logger.getLogger(CellTransmissionModel.class);
@@ -98,23 +98,20 @@ public class CellTransmissionModel implements Callable<Double> {
 		CellTransmissionModel.training = true;
 		CellTransmissionModel.testing = false;
 		CellTransmissionModel.numberOfinputs = numberOfInputs;
+		CellTransmissionModel.nnModel = qlearning.getModel();
 	}
 
 	/**
 	 * Evaluate the performance of deep-rl based on the configured neural
 	 * network.
 	 * 
-	 * @param nnModel
-	 *            the neural network.
-	 * @param numberOfInputs
-	 *            the number of inputs to the neural network i.e. number of
-	 *            cells.
+	 * @param multiLayerNetwork
+	 * 
 	 */
-	public static void evaluateDeepRL(MultiLayerNetwork nnModel, int numberOfInputs) {
-		CellTransmissionModel.model = nnModel;
+	public static void testModel(MultiLayerNetwork multiLayerNetwork) {
 		CellTransmissionModel.testing = true;
 		CellTransmissionModel.training = false;
-		CellTransmissionModel.numberOfinputs = numberOfInputs;
+		CellTransmissionModel.nnModel = multiLayerNetwork;
 	}
 
 	/**
@@ -189,13 +186,14 @@ public class CellTransmissionModel implements Callable<Double> {
 			int blockedLanes = 1;
 			String trafficLights = null;
 			double delay = 0.0;
-
 			INDArray state = null;
 			int action = -1;
 			if (applyRampMetering) {
 				qlearning.setCellNetwork(cellNetwork);
 				state = qlearning.getCellState();
-				action = qlearning.getBestAction(state);
+				List<INDArray> ops = nnModel.feedForward(state);
+				INDArray actions = ops.get(ops.size() - 1);
+				action = Nd4j.getExecutioner().execAndReturn(new IAMax(actions)).getFinalResult();
 				trafficLights = actionMap.get(action);
 			}
 
@@ -209,7 +207,7 @@ public class CellTransmissionModel implements Callable<Double> {
 
 						if (training) {
 							// Get reward for action taken
-							reward = (prevDelay - delay) * 0.0075;
+							reward = (prevDelay - delay) * 0.005;
 							boolean isTerminalState = simulationTime == endTime ? true : false;
 							// The next state after updating the neural net.
 							state = qlearning.qLearning(state, action, reward, isTerminalState);
@@ -219,9 +217,8 @@ public class CellTransmissionModel implements Callable<Double> {
 						if (testing) {
 							// Use the neural network to determine the best
 							// possible action.
-							INDArray cellState = DeepQLearning.getCellState(cellNetwork,
-									numberOfinputs);
-							List<INDArray> ops = model.feedForward(cellState);
+							state = qlearning.getCellState();
+							List<INDArray> ops = nnModel.feedForward(state);
 							INDArray actions = ops.get(ops.size() - 1);
 							action = Nd4j.getExecutioner().execAndReturn(new IAMax(actions))
 									.getFinalResult();
@@ -234,7 +231,6 @@ public class CellTransmissionModel implements Callable<Double> {
 						netDelay += delay;
 						prevDelay = delay;
 						delay = 0.0;
-
 					}
 
 				}
@@ -277,13 +273,18 @@ public class CellTransmissionModel implements Callable<Double> {
 
 				// Compute delay
 				for (Cell cell : cellNetwork.getCellMap().values()) {
-					if (!(cell instanceof SourceCell || cell instanceof SinkCell)) {
-						// Number of vehicles that can exit a cell under
-						// free-flow conditions.
-						double ff = (cell.getNumOfVehicles() * cell.getFreeFlowSpeed() * SimulationConstants.TIME_STEP)
-								/ cell.getLength();
-						if ((ff - cell.getOutflow()) > 0.8) {
-							delay += (ff - cell.getOutflow());
+					if (!(cell instanceof SinkCell)) {
+
+						if (cell instanceof SourceCell) {
+							delay += ((SourceCell) cell).getSourceDelay();
+						} else {
+							// Number of vehicles that can exit a cell under
+							// free-flow conditions.
+							double ff = (cell.getNumOfVehicles() * cell.getFreeFlowSpeed() * SimulationConstants.TIME_STEP)
+									/ cell.getLength();
+							if ((ff - cell.getOutflow()) > 0.8) {
+								delay += (ff - cell.getOutflow());
+							}
 						}
 
 					}
@@ -291,6 +292,7 @@ public class CellTransmissionModel implements Callable<Double> {
 
 				if (!applyRampMetering && simulationTime % SimpleRampMeter.PHASE_MIN == 0) {
 					netDelay += delay;
+					// System.out.println(simulationTime + "\t" + delay);
 					delay = 0.0;
 				}
 

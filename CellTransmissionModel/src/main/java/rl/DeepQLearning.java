@@ -15,7 +15,6 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.impl.indexaccum.IAMax;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction;
-import org.nd4j.linalg.ops.transforms.Transforms;
 
 import ctm.Cell;
 import ctm.CellNetwork;
@@ -33,7 +32,7 @@ public abstract class DeepQLearning {
 	protected MultiLayerNetwork model;
 	protected CellNetwork cellNetwork;
 	protected Random random;
-	protected double epsilon = 0.8;
+	protected double epsilon = 0.6;
 	protected int numOfCells;
 	protected int numOfActions;
 	protected static final double DISCOUNT = 0.9;
@@ -87,10 +86,11 @@ public abstract class DeepQLearning {
 				.iterations(1)
 				.activation("leakyrelu")
 				.weightInit(WeightInit.XAVIER)
-				.learningRate(0.02)
+				.learningRate(0.1)
 				.updater(Updater.NESTEROVS)
 				.momentum(0.98)
-				.regularization(false)
+				.regularization(true)
+				.l2(1e-4)
 				.list()
 				.layer(0,
 						new DenseLayer.Builder().nIn(numOfCells).nOut(164).activation("leakyrelu")
@@ -118,15 +118,15 @@ public abstract class DeepQLearning {
 		double cellDensities[] = new double[numOfCells];
 		for (Cell cell : cellNetwork.getCellMap().values()) {
 			if (!(cell instanceof SinkCell || cell instanceof SourceCell)) {
-				double density = cell.getNumOfVehicles()
-						/ (cell.getLength() * cell.getNumOfLanes());
-				cellDensities[i] = density;
+				double ratio = cell.getNumOfVehicles() / cell.getnMax();
+				ratio = ratio > 1.0 ? 1.0 : ratio;
+				cellDensities[i] = ratio;
 				i++;
 			}
 		}
 		INDArray state = Nd4j.create(cellDensities, new int[] { 1, numOfCells });
 		// Normalize
-		state = Transforms.normalizeZeroMeanAndUnitVariance(state);
+		// state = Transforms.normalizeZeroMeanAndUnitVariance(state);
 		return state;
 	}
 
@@ -136,15 +136,15 @@ public abstract class DeepQLearning {
 		double cellDensities[] = new double[numOfCells];
 		for (Cell cell : cellNetwork.getCellMap().values()) {
 			if (!(cell instanceof SinkCell || cell instanceof SourceCell)) {
-				double density = cell.getNumOfVehicles()
-						/ (cell.getLength() * cell.getNumOfLanes());
-				cellDensities[i] = density;
+				double ratio = cell.getNumOfVehicles() / cell.getnMax();
+				ratio = ratio > 1.0 ? 1.0 : ratio;
+				cellDensities[i] = ratio;
 				i++;
 			}
 		}
 		INDArray state = Nd4j.create(cellDensities, new int[] { 1, numOfCells });
 		// Normalize
-		state = Transforms.normalizeZeroMeanAndUnitVariance(state);
+		// state = Transforms.normalizeZeroMeanAndUnitVariance(state);
 		return state;
 	}
 

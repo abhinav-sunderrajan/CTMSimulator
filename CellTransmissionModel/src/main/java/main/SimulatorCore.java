@@ -28,7 +28,8 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
-import rl.ExperienceReplay;
+import rl.DeepQLearning;
+import rl.SimpleQLearning;
 import rl.TrafficLights;
 import rnwmodel.QIRoadNetworkModel;
 import rnwmodel.Road;
@@ -74,7 +75,7 @@ public class SimulatorCore {
 			executor = ThreadPoolExecutorService.getExecutorInstance().getExecutor();
 			dbConnectionProperties = new Properties();
 			dbConnectionProperties.load(new FileInputStream(
-					"src/main/resources/connectionLocal.properties"));
+					"src/main/resources/connection.properties"));
 			roadNetwork = new QIRoadNetworkModel(dbConnectionProperties, "qi_roads", "qi_nodes");
 
 			pieChangi = new HashMap<Integer, Road>();
@@ -196,17 +197,19 @@ public class SimulatorCore {
 		core.random.setSeed(randLocal.nextLong());
 		final boolean applyrampMetering = true;
 		int numOfCells = WarmupCTM.getNumberOfPhysicalCells(core);
+		DeepQLearning learning = null;
 		if (applyrampMetering) {
 			final int numberOfRamps = 11;
 			Map<Integer, String> actionMap = TrafficLights.getActionMap(numberOfRamps);
-			CellTransmissionModel.setUpTraining(numOfCells, actionMap, new ExperienceReplay(
-					numOfCells, randLocal.nextLong(), actionMap.size()));
+			learning = new SimpleQLearning(numOfCells, randLocal.nextLong(), actionMap.size());
+			CellTransmissionModel.setUpTraining(numOfCells, actionMap, learning);
 		}
 
-		int epochs = 2;
-		for (int epoch = 0; epoch < epochs; epoch++) {
-			core.setRandomFlowRates();
-			Set<String> cellState = WarmupCTM.initializeCellState(core, 3);
+		int epochs = 50;
+		// core.setRandomFlowRates();
+		System.out.println(core.flowRates);
+		Set<String> cellState = WarmupCTM.initializeCellState(core, 3);
+		for (int epoch = 0; epoch <= epochs; epoch++) {
 			CellTransmissionModel ctm = new CellTransmissionModel(core, false, applyrampMetering,
 					false, 1800);
 			ctm.intializeTrafficState(cellState);
@@ -215,39 +218,37 @@ public class SimulatorCore {
 			System.out.println("Epoch " + epoch + "\t" + discountedDelay);
 		}
 
-		File tempFile = null;
-
 		if (applyrampMetering) {
+
+			// Evaluate the trained model for efficacy
+			// With ramp metering
+
+			CellTransmissionModel.testModel(learning.getModel());
+			CellTransmissionModel ctm = new CellTransmissionModel(core, false, applyrampMetering,
+					false, 1800);
+			ctm.intializeTrafficState(cellState);
+			Future<Double> future = core.executor.submit(ctm);
+			Double discountedDelay = future.get();
+			System.out.println("Net delay with ramp metering control:" + discountedDelay);
+
+			// core.setRandomFlowRates();
+			System.out.println("Random flow rates for evaluation");
+			System.out.println(core.flowRates);
+			// Set<String> cellState = WarmupCTM.initializeCellState(core, 3);
+			// Without ramp metering.
+			ctm = new CellTransmissionModel(core, false, false, false, 1800);
+			ctm.intializeTrafficState(cellState);
+			future = core.executor.submit(ctm);
+			discountedDelay = future.get();
+			System.out.println("Net delay without ramp metering control:" + discountedDelay);
+
 			MultiLayerNetwork model = CellTransmissionModel.getQlearning().getModel();
-			tempFile = File.createTempFile("dl4j-net", ".tmp");
-			tempFile.deleteOnExit();
+			File tempFile = new File("dl4j-net.nn");
 			ModelSerializer.writeModel(model, tempFile, true);
-			// MultiLayerNetwork network =
-			// ModelSerializer.restoreMultiLayerNetwork(tempFile);
 			System.out.format("Canonical filename: %s\n", tempFile.getCanonicalFile());
+			// model = ModelSerializer.restoreMultiLayerNetwork(tempFile);
+
 		}
-
-		// Evaluate the trained model for efficacy
-
-		core.setRandomFlowRates();
-		Set<String> cellState = WarmupCTM.initializeCellState(core, 3);
-		// Without ramp metering.
-		CellTransmissionModel ctm = new CellTransmissionModel(core, false, false, false, 1800);
-		ctm.intializeTrafficState(cellState);
-		Future<Double> future = core.executor.submit(ctm);
-		Double discountedDelay = future.get();
-		System.out.println("Net delay without ramp metering control:" + discountedDelay);
-		future.cancel(true);
-
-		// With ramp metering
-
-		MultiLayerNetwork network = ModelSerializer.restoreMultiLayerNetwork(tempFile);
-		CellTransmissionModel.evaluateDeepRL(network, cellState.size());
-		ctm = new CellTransmissionModel(core, false, true, false, 1800);
-		ctm.intializeTrafficState(cellState);
-		future = core.executor.submit(ctm);
-		discountedDelay = future.get();
-		System.out.println("Net delay with ramp metering control:" + discountedDelay);
 
 		core.executor.shutdown();
 
