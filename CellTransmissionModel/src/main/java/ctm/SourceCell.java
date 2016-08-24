@@ -36,7 +36,7 @@ public class SourceCell extends Cell {
 		Cell successor = successors.get(0);
 		double send = poissonRandomNumber(meanNoVehiclesEveryTimeStep);
 		sourceDelay += send;
-		this.outflow = (int) Math.round(Math.min(sourceDelay, successor.receivePotential));
+		this.outflow = Math.round(Math.min(sourceDelay, successor.receivePotential));
 		sourceDelay -= outflow;
 	}
 

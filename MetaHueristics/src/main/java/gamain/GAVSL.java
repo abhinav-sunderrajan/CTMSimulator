@@ -188,7 +188,7 @@ public class GAVSL {
 		}
 		System.out.println("Mean-Fitness\titeration");
 		// Achieve the initial warm up state.
-		Set<String> cellState = WarmupCTM.initializeCellState(core);
+		Set<String> cellState = WarmupCTM.initializeCellState(core, 5);
 
 		for (int epoch = 0; epoch < EPOCHS; epoch++) {
 			// Analyze the fitness the of the population

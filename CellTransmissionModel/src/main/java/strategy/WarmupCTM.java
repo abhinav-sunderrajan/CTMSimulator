@@ -67,7 +67,9 @@ public class WarmupCTM {
 
 		for (Cell cell : cellSpeed.keySet()) {
 			double meanSpeed = cellSpeed.get(cell) / numOfIter;
-			double meanNt = cellNumOfVehicles.get(cell) / numOfIter;
+			double meanNt = Math.round(cellNumOfVehicles.get(cell) / numOfIter);
+			if (meanNt > cell.getnMax())
+				meanNt = cell.getnMax();
 			state.add(cell.getCellId() + ":" + meanSpeed + ":" + meanNt);
 		}
 

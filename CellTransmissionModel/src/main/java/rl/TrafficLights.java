@@ -1,10 +1,10 @@
 package rl;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class TrafficLights {
-	private static Map<Integer, String> actionMap = new HashMap<>();
+	private static Map<Integer, String> actionMap = new LinkedHashMap<>();
 	private static int counter = 0;
 
 	public static Map<Integer, String> getActionMap(int numberOfRamps) {

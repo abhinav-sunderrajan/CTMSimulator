@@ -398,10 +398,28 @@ public class PIESEMSimXMLGenerator {
 				toPoint.addElement("lat").addText(String.valueOf(lane.tNode.getY()));
 
 				Element speedRange = laneElement.addElement("speedRange");
-				speedRange.addElement("lowerLimit").addText(
-						String.valueOf(lane.associatedRoad.getSpeedLimit()[0] * 5.00 / 18));
-				speedRange.addElement("upperLimit").addText(
-						String.valueOf(lane.associatedRoad.getSpeedLimit()[1] * 5.00 / 18));
+				speedRange.addElement("lowerLimit").addText(String.valueOf(/*
+																			 * lane.
+																			 * associatedRoad
+																			 * .
+																			 * getSpeedLimit
+																			 * (
+																			 * )
+																			 * [
+																			 * 0
+																			 * ]
+																			 */80 * 5.00 / 18));
+				speedRange.addElement("upperLimit").addText(String.valueOf(/*
+																			 * lane.
+																			 * associatedRoad
+																			 * .
+																			 * getSpeedLimit
+																			 * (
+																			 * )
+																			 * [
+																			 * 1
+																			 * ]
+																			 */80 * 5.00 / 18));
 
 				Element nextLanes = laneElement.addElement("nextLanes");
 				for (Integer nextLaneId : lane.nextLaneIds)

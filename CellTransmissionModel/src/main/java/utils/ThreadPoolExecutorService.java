@@ -30,8 +30,8 @@ public class ThreadPoolExecutorService {
 			}
 		};
 
-		executor = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors(), 50, 100000,
-				TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(22000), threadFactory, handler);
+		executor = new ThreadPoolExecutor(6, 10, 100000, TimeUnit.SECONDS,
+				new ArrayBlockingQueue<Runnable>(22000), threadFactory, handler);
 
 		// executor = new
 		// ScheduledThreadPoolExecutor(Runtime.getRuntime().availableProcessors());

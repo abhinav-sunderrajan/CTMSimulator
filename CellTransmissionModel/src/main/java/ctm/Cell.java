@@ -76,7 +76,7 @@ public abstract class Cell {
 			this.meanSpeed = freeFlowSpeed;
 			double meanVehicleLength = SimulationConstants.LEFF;
 			criticalDensity = 1.0 / (SimulationConstants.TIME_GAP * freeFlowSpeed + meanVehicleLength);
-			this.nMax = length * criticalDensity * numOfLanes;
+			this.nMax = Math.round(length * criticalDensity * numOfLanes);
 			this.sdSpeed = 0;
 		}
 
@@ -291,15 +291,9 @@ public abstract class Cell {
 					* Math.exp((-1 / SimulationConstants.AM)
 							* Math.pow(densityRatio, SimulationConstants.AM));
 
-			// logic for adding noise
-			double noise = 0.0;
-			double denratio = density / criticalDensity;
-
-			if (meanSpeed >= SimulationConstants.V_OUT_MIN * 1.05 && denratio > 0.5)
-				noise = -1.25 * core.getRandom().nextDouble();
-			meanSpeed += noise;
-
 			// This is the on ramp merging term as suggested by METANET.
+
+			double temp = 1.1;
 
 			double rampTerm = -1.0;
 			if (predecessors.size() > 1) {
@@ -312,7 +306,20 @@ public abstract class Cell {
 				rampTerm = SimulationConstants.RAMP_DELTA * SimulationConstants.TIME_STEP
 						* onRampCell.getOutflow() * meanSpeed
 						/ (numOfLanes * length * (density + SimulationConstants.KAPPA));
+				temp = temp + onRampCell.getOutflow() * 0.05;
+				temp = temp > 1.5 ? 1.5 : temp;
 			}
+
+			// logic for adding noise
+			double noise = 0.0;
+			double denratio = density / criticalDensity;
+
+			if (meanSpeed >= SimulationConstants.V_OUT_MIN * 1.05 && denratio > 0.5) {
+				if (this instanceof DivergingCell)
+					temp = 1.35;
+				noise = -temp * core.getRandom().nextDouble();
+			}
+			meanSpeed += noise;
 
 			// For the speed drop occurring due lane drops at on ramp P.I.E
 			// merger.
@@ -346,11 +353,10 @@ public abstract class Cell {
 			}
 
 			this.meanSpeed = meanSpeed > freeFlowSpeed ? freeFlowSpeed : meanSpeed;
-			double meanVehicleLength = SimulationConstants.LEFF + core.getRandom().nextGaussian()
-					* 0.1;
+			double meanVehicleLength = SimulationConstants.LEFF;
 			double maxDesnsityPerlane = length
 					/ (SimulationConstants.TIME_GAP * meanSpeed + meanVehicleLength);
-			this.nMax = maxDesnsityPerlane * numOfLanes;
+			this.nMax = Math.round(maxDesnsityPerlane * numOfLanes);
 
 		}
 
@@ -376,7 +382,11 @@ public abstract class Cell {
 		double param1 = (nt * meanSpeed * SimulationConstants.TIME_STEP) / length;
 		double param2 = (nt * SimulationConstants.V_OUT_MIN * SimulationConstants.TIME_STEP)
 				/ length;
-		this.sendingPotential = Math.max(param1, param2);
+		this.sendingPotential = Math.round(Math.max(param1, param2));
+		if (sendingPotential > nt)
+			throw new IllegalStateException(
+					"The sending potential cannot be greater than the number of vehicles in the cell "
+							+ cellId);
 	}
 
 	@Override

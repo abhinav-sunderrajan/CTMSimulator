@@ -28,12 +28,23 @@ public class DivergingCell extends Cell {
 				outFlows.put(successor.getCellId(), 0.0);
 		}
 
+		double k = sendingPotential;
+		int p[] = new int[2];
+		double tr1 = core.getTurnRatios().get(successors.get(0).getRoad().getRoadId());
+		while (k > 0) {
+			if (Math.random() < tr1)
+				p[0]++;
+			else
+				p[1]++;
+			k--;
+
+		}
+		int i = 0;
 		for (Cell successor : successors) {
-			double turnRatio = core.getTurnRatios().get(successor.getRoad().getRoadId());
-			double successorOutflow = Math.min(successor.receivePotential, turnRatio
-					* this.sendingPotential);
+			double successorOutflow = Math.min(successor.receivePotential, p[i]);
 			outFlows.put(successor.getCellId(), successorOutflow);
 			outflow += successorOutflow;
+			i++;
 		}
 
 	}

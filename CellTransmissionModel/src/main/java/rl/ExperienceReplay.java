@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.deeplearning4j.datasets.iterator.impl.ListDataSetIterator;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.impl.accum.Max;
 import org.nd4j.linalg.dataset.DataSet;
+import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.factory.Nd4j;
 
 /**
@@ -42,17 +44,18 @@ public class ExperienceReplay extends DeepQLearning {
 			List<INDArray> oldQValsList = new ArrayList<>();
 
 			for (ReplayTuple memory : miniBatch) {
-				List<INDArray> outPutsOld = model.feedForward(memory.getOldState());
-				INDArray oldQVal = outPutsOld.get(outPutsOld.size() - 1);
-				List<INDArray> outPutsNew = model.feedForward(nextState);
-				INDArray newQVal = outPutsNew.get(outPutsNew.size() - 1);
+				INDArray oldQVal = model.output(memory.getOldState(), true);
+				INDArray newQVal = model.output(nextState, true);
 				double maxQ = Nd4j.getExecutioner().execAndReturn(new Max(newQVal))
 						.getFinalResult().doubleValue();
 
+				double update = 0.0;
 				if (isTerminalState)
-					oldQVal.getColumn(action).addi(reward);
+					update = reward;
 				else
-					oldQVal.getColumn(action).addi(reward + maxQ * DISCOUNT);
+					update = reward + maxQ * DISCOUNT;
+
+				oldQVal = oldQVal.putScalar(0, action, update);
 
 				oldstatesList.add(memory.getOldState());
 				oldQValsList.add(oldQVal);
@@ -61,7 +64,11 @@ public class ExperienceReplay extends DeepQLearning {
 			INDArray oldStates = Nd4j.vstack(oldstatesList);
 			INDArray oldQvals = Nd4j.vstack(oldQValsList);
 
-			model.fit(new DataSet(oldStates, oldQvals));
+			DataSet dataSet = new DataSet(oldStates, oldQvals);
+			List<DataSet> listDs = dataSet.asList();
+			DataSetIterator iterator = new ListDataSetIterator(listDs, batchSize);
+
+			model.fit(iterator);
 
 		}
 		return nextState;

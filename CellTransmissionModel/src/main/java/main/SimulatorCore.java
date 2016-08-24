@@ -29,7 +29,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 import rl.DeepQLearning;
-import rl.SimpleQLearning;
+import rl.ExperienceReplay;
 import rl.TrafficLights;
 import rnwmodel.QIRoadNetworkModel;
 import rnwmodel.Road;
@@ -74,8 +74,7 @@ public class SimulatorCore {
 			df.setRoundingMode(RoundingMode.CEILING);
 			executor = ThreadPoolExecutorService.getExecutorInstance().getExecutor();
 			dbConnectionProperties = new Properties();
-			dbConnectionProperties.load(new FileInputStream(
-					"src/main/resources/connection.properties"));
+			dbConnectionProperties.load(new FileInputStream("connection.properties"));
 			roadNetwork = new QIRoadNetworkModel(dbConnectionProperties, "qi_roads", "qi_nodes");
 
 			pieChangi = new HashMap<Integer, Road>();
@@ -192,64 +191,88 @@ public class SimulatorCore {
 	public static void main(String args[]) throws InterruptedException, ExecutionException,
 			IOException {
 
-		Random randLocal = new Random();
-		SimulatorCore core = SimulatorCore.getInstance(1);
-		core.random.setSeed(randLocal.nextLong());
+		SimulatorCore core = SimulatorCore.getInstance(108);
 		final boolean applyrampMetering = true;
 		int numOfCells = WarmupCTM.getNumberOfPhysicalCells(core);
 		DeepQLearning learning = null;
-		if (applyrampMetering) {
-			final int numberOfRamps = 11;
-			Map<Integer, String> actionMap = TrafficLights.getActionMap(numberOfRamps);
-			learning = new SimpleQLearning(numOfCells, randLocal.nextLong(), actionMap.size());
+		boolean training = args[0].equalsIgnoreCase("train");
+		boolean viz = args[1].equalsIgnoreCase("viz");
+
+		final int numberOfRamps = 11;
+		Map<Integer, String> actionMap = TrafficLights.getActionMap(numberOfRamps);
+
+		if (viz) {
+			Set<String> cellState = WarmupCTM.initializeCellState(core, 3);
+			CellTransmissionModel ctm = new CellTransmissionModel(core, false, false, viz, 3800);
+			ctm.intializeTrafficState(cellState);
+			Future<Double> future = core.executor.submit(ctm);
+			future.get();
+			System.out.println("Finished visualization exit..");
+			core.executor.shutdown();
+			System.exit(0);
+
+		}
+
+		if (applyrampMetering && training) {
+			learning = new ExperienceReplay(numOfCells, 108, actionMap.size());
 			CellTransmissionModel.setUpTraining(numOfCells, actionMap, learning);
-		}
+			int epochs = 1008;
 
-		int epochs = 50;
-		// core.setRandomFlowRates();
-		System.out.println(core.flowRates);
-		Set<String> cellState = WarmupCTM.initializeCellState(core, 3);
-		for (int epoch = 0; epoch <= epochs; epoch++) {
-			CellTransmissionModel ctm = new CellTransmissionModel(core, false, applyrampMetering,
-					false, 1800);
-			ctm.intializeTrafficState(cellState);
-			Future<Double> future = core.executor.submit(ctm);
-			Double discountedDelay = future.get();
-			System.out.println("Epoch " + epoch + "\t" + discountedDelay);
-		}
-
-		if (applyrampMetering) {
-
-			// Evaluate the trained model for efficacy
-			// With ramp metering
-
-			CellTransmissionModel.testModel(learning.getModel());
-			CellTransmissionModel ctm = new CellTransmissionModel(core, false, applyrampMetering,
-					false, 1800);
-			ctm.intializeTrafficState(cellState);
-			Future<Double> future = core.executor.submit(ctm);
-			Double discountedDelay = future.get();
-			System.out.println("Net delay with ramp metering control:" + discountedDelay);
-
-			// core.setRandomFlowRates();
-			System.out.println("Random flow rates for evaluation");
-			System.out.println(core.flowRates);
-			// Set<String> cellState = WarmupCTM.initializeCellState(core, 3);
-			// Without ramp metering.
-			ctm = new CellTransmissionModel(core, false, false, false, 1800);
-			ctm.intializeTrafficState(cellState);
-			future = core.executor.submit(ctm);
-			discountedDelay = future.get();
-			System.out.println("Net delay without ramp metering control:" + discountedDelay);
-
-			MultiLayerNetwork model = CellTransmissionModel.getQlearning().getModel();
+			for (int epoch = 1; epoch <= epochs; epoch++) {
+				core.setRandomFlowRates();
+				Set<String> cellState = WarmupCTM.initializeCellState(core, 3);
+				CellTransmissionModel ctm = new CellTransmissionModel(core, false, true, false,
+						1800);
+				ctm.intializeTrafficState(cellState);
+				Future<Double> future = core.executor.submit(ctm);
+				Double discountedDelay = future.get();
+				System.out.println("Epoch " + epoch + "\t" + discountedDelay + "\t"
+						+ core.flowRates);
+				future.cancel(true);
+			}
 			File tempFile = new File("dl4j-net.nn");
-			ModelSerializer.writeModel(model, tempFile, true);
-			System.out.format("Canonical filename: %s\n", tempFile.getCanonicalFile());
-			// model = ModelSerializer.restoreMultiLayerNetwork(tempFile);
-
+			ModelSerializer.writeModel(learning.getModel(), tempFile, true);
+			System.out.format("Write to file: %s\n", tempFile.getCanonicalFile());
 		}
 
+		if (!training) {
+			File tempFile = new File("dl4j-net.nn");
+			MultiLayerNetwork model = null;
+			if (tempFile.exists() && !tempFile.isDirectory()) {
+				System.out.println("Loading from file");
+				model = ModelSerializer.restoreMultiLayerNetwork(tempFile);
+			} else {
+				System.out.println("NN file not found exit..");
+				System.exit(0);
+			}
+
+			CellTransmissionModel.testModel(model, numOfCells, actionMap);
+			System.out.println("No RM delay\tWith RM\tFlow rates");
+
+			for (int trial = 0; trial < 50; trial++) {
+				core.setRandomFlowRates();
+				Set<String> cellState = WarmupCTM.initializeCellState(core, 3);
+				Double noRMDelay = Double.MIN_VALUE;
+				for (int noRM = 0; noRM < 5; noRM++) {
+					CellTransmissionModel ctm = new CellTransmissionModel(core, false, false,
+							false, 1800);
+					ctm.intializeTrafficState(cellState);
+					Future<Double> future = core.executor.submit(ctm);
+					Double discountedDelay = future.get();
+					if (discountedDelay > noRMDelay)
+						noRMDelay = discountedDelay;
+				}
+
+				CellTransmissionModel ctm = new CellTransmissionModel(core, false, true, false,
+						1800);
+				ctm.intializeTrafficState(cellState);
+				Future<Double> future = core.executor.submit(ctm);
+				Double rmDelay = future.get();
+				System.out.println(noRMDelay + "\t" + rmDelay + "\t" + core.flowRates);
+
+			}
+
+		}
 		core.executor.shutdown();
 
 	}
@@ -310,11 +333,13 @@ public class SimulatorCore {
 		double minFlow = 0.0;
 		for (Integer roadId : flowRates.keySet()) {
 			if (roadId == 30633) {
-				maxFlow = 4000;
-				minFlow = 3000;
+				// 4000,3600
+				maxFlow = 3900;
+				minFlow = 4000;
 			} else {
-				maxFlow = 1000;
-				minFlow = 1800;
+				// 1000,1600
+				maxFlow = 1050;
+				minFlow = 1000;
 			}
 
 			double flow = minFlow + (maxFlow - minFlow) * random.nextDouble();

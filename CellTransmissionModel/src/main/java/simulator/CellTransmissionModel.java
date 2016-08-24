@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.io.IOException;
 import java.math.RoundingMode;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -58,7 +57,8 @@ public class CellTransmissionModel implements Callable<Double> {
 	private static boolean training = false;
 	private static boolean testing = false;
 	private static MultiLayerNetwork nnModel;
-	private static int numberOfinputs;
+	private static int numOfInputs;
+	private static final double DELAY_SCALE = 5.0e-3;
 	private static final boolean PRINT_FINAL_STATE = false;
 	private static final Logger LOGGER = Logger.getLogger(CellTransmissionModel.class);
 
@@ -97,8 +97,7 @@ public class CellTransmissionModel implements Callable<Double> {
 		CellTransmissionModel.qlearning = deepLearning;
 		CellTransmissionModel.training = true;
 		CellTransmissionModel.testing = false;
-		CellTransmissionModel.numberOfinputs = numberOfInputs;
-		CellTransmissionModel.nnModel = qlearning.getModel();
+		CellTransmissionModel.numOfInputs = numberOfInputs;
 	}
 
 	/**
@@ -106,12 +105,17 @@ public class CellTransmissionModel implements Callable<Double> {
 	 * network.
 	 * 
 	 * @param multiLayerNetwork
+	 * @param numOfCells
 	 * 
 	 */
-	public static void testModel(MultiLayerNetwork multiLayerNetwork) {
-		CellTransmissionModel.testing = true;
-		CellTransmissionModel.training = false;
-		CellTransmissionModel.nnModel = multiLayerNetwork;
+	public static void testModel(MultiLayerNetwork multiLayerNetwork, int numOfCells,
+			Map<Integer, String> actionMap) {
+		CellTransmissionModel.actionMap = actionMap;
+		testing = true;
+		training = false;
+		nnModel = multiLayerNetwork;
+		nnModel.init();
+		CellTransmissionModel.numOfInputs = numOfCells;
 	}
 
 	/**
@@ -188,16 +192,22 @@ public class CellTransmissionModel implements Callable<Double> {
 			double delay = 0.0;
 			INDArray state = null;
 			int action = -1;
+			// Always start with green lights.
 			if (applyRampMetering) {
-				qlearning.setCellNetwork(cellNetwork);
-				state = qlearning.getCellState();
-				List<INDArray> ops = nnModel.feedForward(state);
-				INDArray actions = ops.get(ops.size() - 1);
-				action = Nd4j.getExecutioner().execAndReturn(new IAMax(actions)).getFinalResult();
+				if (training) {
+					qlearning.setCellNetwork(cellNetwork);
+					state = qlearning.getCellState();
+					action = actionMap.size() - 1;
+				} else {
+					state = DeepQLearning.getCellState(cellNetwork, numOfInputs);
+					INDArray actions = nnModel.output(state, false);
+					action = Nd4j.getExecutioner().execAndReturn(new IAMax(actions))
+							.getFinalResult();
+				}
 				trafficLights = actionMap.get(action);
 			}
 
-			double prevDelay = 1800.0;
+			double prevDelay = -1.0;
 			double reward = 0.0;
 
 			for (simulationTime = 0; simulationTime <= endTime; simulationTime += SimulationConstants.TIME_STEP) {
@@ -207,8 +217,16 @@ public class CellTransmissionModel implements Callable<Double> {
 
 						if (training) {
 							// Get reward for action taken
-							reward = (prevDelay - delay) * 0.005;
+							if (prevDelay == -1)
+								prevDelay = delay;
+
 							boolean isTerminalState = simulationTime == endTime ? true : false;
+							// if (isTerminalState) {
+							// /reward = (noRMDelay - (netDelay + delay)) /
+							// 5.0e4;
+							// noRMDelay = (netDelay + delay);
+							// } else
+							reward = (prevDelay - delay) * DELAY_SCALE;
 							// The next state after updating the neural net.
 							state = qlearning.qLearning(state, action, reward, isTerminalState);
 							// get the appropriate action for this state
@@ -217,17 +235,17 @@ public class CellTransmissionModel implements Callable<Double> {
 						if (testing) {
 							// Use the neural network to determine the best
 							// possible action.
-							state = qlearning.getCellState();
-							List<INDArray> ops = nnModel.feedForward(state);
-							INDArray actions = ops.get(ops.size() - 1);
+							state = DeepQLearning.getCellState(cellNetwork, numOfInputs);
+							INDArray actions = nnModel.output(state, false);
 							action = Nd4j.getExecutioner().execAndReturn(new IAMax(actions))
 									.getFinalResult();
 						}
 
 						trafficLights = actionMap.get(action);
-						if (testing)
-							System.out
-									.println(simulationTime + "\t" + delay + "\t" + trafficLights);
+						// if (testing)
+						// System.out
+						// .println(simulationTime + "\t" + delay + "\t" +
+						// trafficLights);
 						netDelay += delay;
 						prevDelay = delay;
 						delay = 0.0;
@@ -276,7 +294,7 @@ public class CellTransmissionModel implements Callable<Double> {
 					if (!(cell instanceof SinkCell)) {
 
 						if (cell instanceof SourceCell) {
-							delay += ((SourceCell) cell).getSourceDelay();
+							delay += ((SourceCell) cell).getSourceDelay() * 1.0;
 						} else {
 							// Number of vehicles that can exit a cell under
 							// free-flow conditions.

@@ -1397,8 +1397,8 @@
       <lat>1.360405974313856</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>66</laneID>
@@ -1419,8 +1419,8 @@
       <lat>1.3604079486277119</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>67</laneID>
@@ -1441,8 +1441,8 @@
       <lat>1.3593493346908112</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>68</laneID>
@@ -1463,8 +1463,8 @@
       <lat>1.359351669381622</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>69</laneID>
@@ -1485,8 +1485,8 @@
       <lat>1.3584057423001632</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>70</laneID>
@@ -1507,8 +1507,8 @@
       <lat>1.3584084846003266</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>71</laneID>
@@ -1529,8 +1529,8 @@
       <lat>1.357817926376138</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>72</laneID>
@@ -1551,8 +1551,8 @@
       <lat>1.3578208527522764</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>73</laneID>
@@ -1573,8 +1573,8 @@
       <lat>1.3570431933471165</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>74</laneID>
@@ -1595,8 +1595,8 @@
       <lat>1.357046386694233</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>75</laneID>
@@ -1617,8 +1617,8 @@
       <lat>1.3564415355339057</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>76</laneID>
@@ -1639,8 +1639,8 @@
       <lat>1.3564450710678118</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>77</laneID>
@@ -1661,8 +1661,8 @@
       <lat>1.3560146959816863</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>78</laneID>
@@ -1683,8 +1683,8 @@
       <lat>1.3560183919633726</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>79</laneID>
@@ -1705,8 +1705,8 @@
       <lat>1.3555958157639527</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>80</laneID>
@@ -1727,8 +1727,8 @@
       <lat>1.3555996315279055</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>81</laneID>
@@ -1749,8 +1749,8 @@
       <lat>1.35514006223444</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>82</laneID>
@@ -1771,8 +1771,8 @@
       <lat>1.3551441244688804</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>83</laneID>
@@ -1793,8 +1793,8 @@
       <lat>1.3543291741483834</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>84</laneID>
@@ -1815,8 +1815,8 @@
       <lat>1.3543333482967665</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>85</laneID>
@@ -1837,8 +1837,8 @@
       <lat>1.353434181679685</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>86</laneID>
@@ -1859,8 +1859,8 @@
       <lat>1.3534383633593705</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>87</laneID>
@@ -1881,8 +1881,8 @@
       <lat>1.3528941568284585</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>88</laneID>
@@ -1903,8 +1903,8 @@
       <lat>1.3528983136569168</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>89</laneID>
@@ -1925,8 +1925,8 @@
       <lat>1.3526370600768567</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>90</laneID>
@@ -1947,8 +1947,8 @@
       <lat>1.3526411201537134</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>91</laneID>
@@ -1969,8 +1969,8 @@
       <lat>1.3523798461377012</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>92</laneID>
@@ -1991,8 +1991,8 @@
       <lat>1.3523836922754027</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>93</laneID>
@@ -2013,8 +2013,8 @@
       <lat>1.3520025668397517</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>94</laneID>
@@ -2035,8 +2035,8 @@
       <lat>1.3520061336795035</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>95</laneID>
@@ -2057,8 +2057,8 @@
       <lat>1.351576315872893</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>96</laneID>
@@ -2079,8 +2079,8 @@
       <lat>1.3515796317457862</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>97</laneID>
@@ -2101,8 +2101,8 @@
       <lat>1.351398658297356</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>98</laneID>
@@ -2123,8 +2123,8 @@
       <lat>1.3514023165947124</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>99</laneID>
@@ -2145,8 +2145,8 @@
       <lat>1.3504379568183182</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>100</laneID>
@@ -2167,8 +2167,8 @@
       <lat>1.3504409136366362</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>101</laneID>
@@ -2189,8 +2189,8 @@
       <lat>1.350063274652692</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>102</laneID>
@@ -2211,8 +2211,8 @@
       <lat>1.350066549305384</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>103</laneID>
@@ -2233,8 +2233,8 @@
       <lat>1.3498632118720277</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>104</laneID>
@@ -2255,8 +2255,8 @@
       <lat>1.3498674237440558</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>105</laneID>
@@ -2277,8 +2277,8 @@
       <lat>1.34976369105876</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>106</laneID>
@@ -2299,8 +2299,8 @@
       <lat>1.3497683821175201</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>107</laneID>
@@ -2321,8 +2321,8 @@
       <lat>1.3497369936672363</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>108</laneID>
@@ -2343,8 +2343,8 @@
       <lat>1.3497419873344725</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>109</laneID>
@@ -2365,8 +2365,8 @@
       <lat>1.3496809970265828</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>110</laneID>
@@ -2387,8 +2387,8 @@
       <lat>1.349685994053166</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>111</laneID>
@@ -2409,8 +2409,8 @@
       <lat>1.3495839425034046</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>112</laneID>
@@ -2431,8 +2431,8 @@
       <lat>1.3495888426052856</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>113</laneID>
@@ -2453,8 +2453,8 @@
       <lat>1.3495657937019352</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>117</laneID>
@@ -2475,8 +2475,8 @@
       <lat>1.3495706938037009</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>117</laneID>
@@ -3218,8 +3218,8 @@
       <lat>1.3415111398404842</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>152</laneID>
@@ -3240,8 +3240,8 @@
       <lat>1.3415152796809686</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>153</laneID>
@@ -3262,8 +3262,8 @@
       <lat>1.3405666712363606</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>154</laneID>
@@ -3284,8 +3284,8 @@
       <lat>1.3405703424727213</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>155</laneID>
@@ -3306,8 +3306,8 @@
       <lat>1.3403834517177553</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>156</laneID>
@@ -3328,8 +3328,8 @@
       <lat>1.3403879034355104</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>157</laneID>
@@ -3350,8 +3350,8 @@
       <lat>1.3403569409695382</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>158</laneID>
@@ -3372,8 +3372,8 @@
       <lat>1.3403618819390763</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>159</laneID>
@@ -3394,8 +3394,8 @@
       <lat>1.340355</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>160</laneID>
@@ -3416,8 +3416,8 @@
       <lat>1.34036</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>161</laneID>
@@ -3438,8 +3438,8 @@
       <lat>1.340534367913779</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>162</laneID>
@@ -3460,8 +3460,8 @@
       <lat>1.3405387358275578</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>163</laneID>
@@ -3482,8 +3482,8 @@
       <lat>1.3406088127022093</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>164</laneID>
@@ -3504,8 +3504,8 @@
       <lat>1.3406136254044185</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>165</laneID>
@@ -3526,8 +3526,8 @@
       <lat>1.340596982291113</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>166</laneID>
@@ -3548,8 +3548,8 @@
       <lat>1.340601964582226</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>167</laneID>
@@ -3570,8 +3570,8 @@
       <lat>1.3405133023769453</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>168</laneID>
@@ -3592,8 +3592,8 @@
       <lat>1.3405176047538907</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>169</laneID>
@@ -3614,8 +3614,8 @@
       <lat>1.340367903623408</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>170</laneID>
@@ -3636,8 +3636,8 @@
       <lat>1.340370807246816</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>171</laneID>
@@ -3658,8 +3658,8 @@
       <lat>1.3401810217558023</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>172</laneID>
@@ -3680,8 +3680,8 @@
       <lat>1.3401830435116049</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>173</laneID>
@@ -3702,8 +3702,8 @@
       <lat>1.3400083059752363</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>174</laneID>
@@ -3724,8 +3724,8 @@
       <lat>1.340009611950473</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>175</laneID>
@@ -3746,8 +3746,8 @@
       <lat>1.3397730587987802</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>176</laneID>
@@ -3768,8 +3768,8 @@
       <lat>1.3397721175975603</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>177</laneID>
@@ -3790,8 +3790,8 @@
       <lat>1.3396318757024668</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>178</laneID>
@@ -3812,8 +3812,8 @@
       <lat>1.3396307514049335</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>179</laneID>
@@ -3834,8 +3834,8 @@
       <lat>1.339482385857232</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>180</laneID>
@@ -3856,8 +3856,8 @@
       <lat>1.339479771714464</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>181</laneID>
@@ -3878,8 +3878,8 @@
       <lat>1.338925675256879</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes/>
     <rightLaneID>-1</rightLaneID>
@@ -3898,8 +3898,8 @@
       <lat>1.3389222505137577</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes/>
     <rightLaneID>180</rightLaneID>
@@ -4158,8 +4158,8 @@
       <lat>1.3382811991820398</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>11.11111111111111</lowerLimit>
-      <upperLimit>16.666666666666668</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>196</laneID>
@@ -4180,8 +4180,8 @@
       <lat>1.3382861983640792</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>11.11111111111111</lowerLimit>
-      <upperLimit>16.666666666666668</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>197</laneID>
@@ -4202,8 +4202,8 @@
       <lat>1.3383225899811115</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>11.11111111111111</lowerLimit>
-      <upperLimit>16.666666666666668</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>198</laneID>
@@ -4224,8 +4224,8 @@
       <lat>1.338327579962223</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>11.11111111111111</lowerLimit>
-      <upperLimit>16.666666666666668</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>199</laneID>
@@ -4246,8 +4246,8 @@
       <lat>1.3383916275546832</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>11.11111111111111</lowerLimit>
-      <upperLimit>16.666666666666668</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>200</laneID>
@@ -4268,8 +4268,8 @@
       <lat>1.3383964551093663</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>11.11111111111111</lowerLimit>
-      <upperLimit>16.666666666666668</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>201</laneID>
@@ -4290,8 +4290,8 @@
       <lat>1.3384902053300374</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>11.11111111111111</lowerLimit>
-      <upperLimit>16.666666666666668</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>202</laneID>
@@ -4312,8 +4312,8 @@
       <lat>1.3384946106600746</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>11.11111111111111</lowerLimit>
-      <upperLimit>16.666666666666668</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>203</laneID>
@@ -4334,8 +4334,8 @@
       <lat>1.3388946315002146</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>204</laneID>
@@ -4356,8 +4356,8 @@
       <lat>1.338898163000429</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>205</laneID>
@@ -4378,8 +4378,8 @@
       <lat>1.3394829382239044</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>206</laneID>
@@ -4400,8 +4400,8 @@
       <lat>1.3394863764478089</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>207</laneID>
@@ -4422,8 +4422,8 @@
       <lat>1.3396779036234079</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>208</laneID>
@@ -4444,8 +4444,8 @@
       <lat>1.3396808072468158</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>209</laneID>
@@ -4466,8 +4466,8 @@
       <lat>1.3398795443638316</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>210</laneID>
@@ -4488,8 +4488,8 @@
       <lat>1.339880088727663</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>211</laneID>
@@ -4510,8 +4510,8 @@
       <lat>1.340079428764886</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>212</laneID>
@@ -4532,8 +4532,8 @@
       <lat>1.3400788575297717</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>213</laneID>
@@ -4554,8 +4554,8 @@
       <lat>1.3402691430466183</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>214</laneID>
@@ -4576,8 +4576,8 @@
       <lat>1.3402672860932365</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>215</laneID>
@@ -4598,8 +4598,8 @@
       <lat>1.3404401984531615</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>216</laneID>
@@ -4620,8 +4620,8 @@
       <lat>1.3404373969063232</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>217</laneID>
@@ -4642,8 +4642,8 @@
       <lat>1.3405183576165454</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>218</laneID>
@@ -4664,8 +4664,8 @@
       <lat>1.340513715233091</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>219</laneID>
@@ -4686,8 +4686,8 @@
       <lat>1.340525</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>220</laneID>
@@ -4708,8 +4708,8 @@
       <lat>1.34052</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>221</laneID>
@@ -4730,8 +4730,8 @@
       <lat>1.3404623299912486</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>222</laneID>
@@ -4752,8 +4752,8 @@
       <lat>1.3404576599824969</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>223</laneID>
@@ -4774,8 +4774,8 @@
       <lat>1.3403038487565324</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>224</laneID>
@@ -4796,8 +4796,8 @@
       <lat>1.3403006975130651</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>225</laneID>
@@ -4818,8 +4818,8 @@
       <lat>1.340090828957313</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>226</laneID>
@@ -4840,8 +4840,8 @@
       <lat>1.3400896579146258</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>227</laneID>
@@ -4862,8 +4862,8 @@
       <lat>1.339864122750333</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>228</laneID>
@@ -4884,8 +4884,8 @@
       <lat>1.339865245500666</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>229</laneID>
@@ -4906,8 +4906,8 @@
       <lat>1.3396267854671282</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>230</laneID>
@@ -4928,8 +4928,8 @@
       <lat>1.3396295709342563</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>231</laneID>
@@ -4950,8 +4950,8 @@
       <lat>1.3389286812731</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>232</laneID>
@@ -4972,8 +4972,8 @@
       <lat>1.3389323625462</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>233</laneID>
@@ -4994,8 +4994,8 @@
       <lat>1.3385161685213611</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>234</laneID>
@@ -5016,8 +5016,8 @@
       <lat>1.3385192025327617</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>235</laneID>
@@ -5038,8 +5038,8 @@
       <lat>1.3384466045120946</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>239</laneID>
@@ -5060,8 +5060,8 @@
       <lat>1.3384496385230824</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>239</laneID>
@@ -5699,8 +5699,8 @@
       <lat>1.3340149326312694</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>266</laneID>
@@ -5719,8 +5719,8 @@
       <lat>1.3340198652625386</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>267</laneID>
@@ -5739,8 +5739,8 @@
       <lat>1.3337168735982408</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>268</laneID>
@@ -5759,8 +5759,8 @@
       <lat>1.3337217471964817</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>269</laneID>
@@ -5779,8 +5779,8 @@
       <lat>1.333603911874525</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>270</laneID>
@@ -5799,8 +5799,8 @@
       <lat>1.3336088237490502</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>271</laneID>
@@ -5819,8 +5819,8 @@
       <lat>1.333595</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>272</laneID>
@@ -5839,8 +5839,8 @@
       <lat>1.3336000000000001</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>273</laneID>
@@ -5859,8 +5859,8 @@
       <lat>1.33367572297579</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>274</laneID>
@@ -5879,8 +5879,8 @@
       <lat>1.33368044595158</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>275</laneID>
@@ -5899,8 +5899,8 @@
       <lat>1.3338733998106844</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>276</laneID>
@@ -5919,8 +5919,8 @@
       <lat>1.3338777996213689</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>277</laneID>
@@ -5939,8 +5939,8 @@
       <lat>1.3339398232103672</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>278</laneID>
@@ -5959,8 +5959,8 @@
       <lat>1.3339446464207347</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>279</laneID>
@@ -5979,8 +5979,8 @@
       <lat>1.333945</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>280</laneID>
@@ -5999,8 +5999,8 @@
       <lat>1.33395</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>281</laneID>
@@ -6019,8 +6019,8 @@
       <lat>1.3338997922603923</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>282</laneID>
@@ -6039,8 +6039,8 @@
       <lat>1.3339045845207844</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>283</laneID>
@@ -6059,8 +6059,8 @@
       <lat>1.333804880935301</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>284</laneID>
@@ -6079,8 +6079,8 @@
       <lat>1.333809761870602</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>285</laneID>
@@ -6099,8 +6099,8 @@
       <lat>1.333795</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>286</laneID>
@@ -6119,8 +6119,8 @@
       <lat>1.3338</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>287</laneID>
@@ -6139,8 +6139,8 @@
       <lat>1.3338307788950439</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>288</laneID>
@@ -6159,8 +6159,8 @@
       <lat>1.3338355577900876</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>289</laneID>
@@ -6179,8 +6179,8 @@
       <lat>1.3338795789410438</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes/>
     <rightLaneID>-1</rightLaneID>
@@ -6197,8 +6197,8 @@
       <lat>1.3338841578820877</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes/>
     <rightLaneID>288</rightLaneID>
@@ -6677,8 +6677,8 @@
       <lat>1.3341385486351085</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>313</laneID>
@@ -6699,8 +6699,8 @@
       <lat>1.334137097270217</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>314</laneID>
@@ -6721,8 +6721,8 @@
       <lat>1.3331802908527421</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>315</laneID>
@@ -6743,8 +6743,8 @@
       <lat>1.3331775817054845</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>316</laneID>
@@ -6765,8 +6765,8 @@
       <lat>1.3329080194193241</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>317</laneID>
@@ -6787,8 +6787,8 @@
       <lat>1.3329070388386486</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>318</laneID>
@@ -6809,8 +6809,8 @@
       <lat>1.3326921590104384</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>319</laneID>
@@ -6831,8 +6831,8 @@
       <lat>1.332692318020877</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>320</laneID>
@@ -6853,8 +6853,8 @@
       <lat>1.332536693597341</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>321</laneID>
@@ -6875,8 +6875,8 @@
       <lat>1.3325383871946823</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>322</laneID>
@@ -6897,8 +6897,8 @@
       <lat>1.3323343545666202</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>323</laneID>
@@ -6919,8 +6919,8 @@
       <lat>1.3323377091332402</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>324</laneID>
@@ -6941,8 +6941,8 @@
       <lat>1.3319090419827733</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>325</laneID>
@@ -6963,8 +6963,8 @@
       <lat>1.3319130839655464</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>326</laneID>
@@ -6985,8 +6985,8 @@
       <lat>1.3311302525766626</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>327</laneID>
@@ -7007,8 +7007,8 @@
       <lat>1.3311344425671132</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>328</laneID>
@@ -7029,8 +7029,8 @@
       <lat>1.3310266413879934</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>332</laneID>
@@ -7051,8 +7051,8 @@
       <lat>1.3310308313775188</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>332</laneID>
@@ -7778,8 +7778,8 @@
       <lat>1.3271950146781377</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>363</laneID>
@@ -7800,8 +7800,8 @@
       <lat>1.3271990293562757</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>364</laneID>
@@ -7822,8 +7822,8 @@
       <lat>1.3269373830658011</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>365</laneID>
@@ -7844,8 +7844,8 @@
       <lat>1.3269417661316023</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>366</laneID>
@@ -7866,8 +7866,8 @@
       <lat>1.3268068420347465</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>367</laneID>
@@ -7888,8 +7888,8 @@
       <lat>1.3268116840694932</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>368</laneID>
@@ -7910,8 +7910,8 @@
       <lat>1.3267769963895786</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>369</laneID>
@@ -7932,8 +7932,8 @@
       <lat>1.3267819927791569</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>370</laneID>
@@ -7954,8 +7954,8 @@
       <lat>1.326837963978065</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>371</laneID>
@@ -7976,8 +7976,8 @@
       <lat>1.32684292795613</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>372</laneID>
@@ -7998,8 +7998,8 @@
       <lat>1.3269346644033466</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>373</laneID>
@@ -8020,8 +8020,8 @@
       <lat>1.3269393288066933</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>374</laneID>
@@ -8042,8 +8042,8 @@
       <lat>1.327060535533906</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>375</laneID>
@@ -8064,8 +8064,8 @@
       <lat>1.327064071067812</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>376</laneID>
@@ -8086,8 +8086,8 @@
       <lat>1.3272416008766241</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>377</laneID>
@@ -8108,8 +8108,8 @@
       <lat>1.3272422017532481</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>378</laneID>
@@ -8130,8 +8130,8 @@
       <lat>1.3274565036867416</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>379</laneID>
@@ -8152,8 +8152,8 @@
       <lat>1.3274550073734832</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>380</laneID>
@@ -8174,8 +8174,8 @@
       <lat>1.327574879790379</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>381</laneID>
@@ -8196,8 +8196,8 @@
       <lat>1.327570759580758</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>382</laneID>
@@ -8218,8 +8218,8 @@
       <lat>1.327585</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>383</laneID>
@@ -8240,8 +8240,8 @@
       <lat>1.32758</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>384</laneID>
@@ -8262,8 +8262,8 @@
       <lat>1.3275042351500277</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>385</laneID>
@@ -8284,8 +8284,8 @@
       <lat>1.3274994703000553</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>386</laneID>
@@ -8306,8 +8306,8 @@
       <lat>1.3273612802084316</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>387</laneID>
@@ -8328,8 +8328,8 @@
       <lat>1.3273575604168633</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>388</laneID>
@@ -8350,8 +8350,8 @@
       <lat>1.327175767589579</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>389</laneID>
@@ -8372,8 +8372,8 @@
       <lat>1.3271725351791583</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>390</laneID>
@@ -8394,8 +8394,8 @@
       <lat>1.326905700728762</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>391</laneID>
@@ -8416,8 +8416,8 @@
       <lat>1.3269034014575236</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>392</laneID>
@@ -8438,8 +8438,8 @@
       <lat>1.3265621580478826</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes/>
     <rightLaneID>-1</rightLaneID>
@@ -8458,8 +8458,8 @@
       <lat>1.326561116095765</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes/>
     <rightLaneID>391</rightLaneID>
@@ -9402,8 +9402,8 @@
       <lat>1.3267660595855506</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>437</laneID>
@@ -9424,8 +9424,8 @@
       <lat>1.326767119171101</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>438</laneID>
@@ -9446,8 +9446,8 @@
       <lat>1.3271138854336817</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>439</laneID>
@@ -9468,8 +9468,8 @@
       <lat>1.3271157708673633</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>440</laneID>
@@ -9490,8 +9490,8 @@
       <lat>1.3272330254163376</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>441</laneID>
@@ -9512,8 +9512,8 @@
       <lat>1.3272360508326753</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>442</laneID>
@@ -9534,8 +9534,8 @@
       <lat>1.3274776819879672</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>443</laneID>
@@ -9556,8 +9556,8 @@
       <lat>1.3274813639759346</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>444</laneID>
@@ -9578,8 +9578,8 @@
       <lat>1.3276211265363065</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>445</laneID>
@@ -9600,8 +9600,8 @@
       <lat>1.3276252530726127</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>446</laneID>
@@ -9622,8 +9622,8 @@
       <lat>1.327679775031084</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>447</laneID>
@@ -9644,8 +9644,8 @@
       <lat>1.3276845500621681</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>448</laneID>
@@ -9666,8 +9666,8 @@
       <lat>1.3276939930891467</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>449</laneID>
@@ -9688,8 +9688,8 @@
       <lat>1.3276989861782935</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>450</laneID>
@@ -9710,8 +9710,8 @@
       <lat>1.3276589531056462</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>451</laneID>
@@ -9732,8 +9732,8 @@
       <lat>1.3276639062112923</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>452</laneID>
@@ -9754,8 +9754,8 @@
       <lat>1.3274387656213358</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>453</laneID>
@@ -9776,8 +9776,8 @@
       <lat>1.3274435312426713</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>454</laneID>
@@ -9798,8 +9798,8 @@
       <lat>1.3269916335082133</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>455</laneID>
@@ -9820,8 +9820,8 @@
       <lat>1.3269962670164264</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>456</laneID>
@@ -9842,8 +9842,8 @@
       <lat>1.3266742783046048</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>457</laneID>
@@ -9864,8 +9864,8 @@
       <lat>1.3266785566092094</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>458</laneID>
@@ -9886,8 +9886,8 @@
       <lat>1.3264337649424323</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>459</laneID>
@@ -9908,8 +9908,8 @@
       <lat>1.326437814468287</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>460</laneID>
@@ -9930,8 +9930,8 @@
       <lat>1.3263866845718546</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>464</laneID>
@@ -9952,8 +9952,8 @@
       <lat>1.3263907340974228</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>464</laneID>
@@ -10327,8 +10327,8 @@
       <lat>1.3261988777282572</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes/>
     <rightLaneID>-1</rightLaneID>
@@ -10347,8 +10347,8 @@
       <lat>1.3262034554565145</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes/>
     <rightLaneID>477</rightLaneID>
@@ -10565,8 +10565,8 @@
       <lat>1.3264584707635185</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>490</laneID>
@@ -10587,8 +10587,8 @@
       <lat>1.326463341527037</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>491</laneID>
@@ -10609,8 +10609,8 @@
       <lat>1.3265043666282215</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>492</laneID>
@@ -10631,8 +10631,8 @@
       <lat>1.3265093443695597</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>493</laneID>
@@ -10653,8 +10653,8 @@
       <lat>1.3265125542843739</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>497</laneID>
@@ -10675,8 +10675,8 @@
       <lat>1.326517532025761</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>497</laneID>
@@ -10786,8 +10786,8 @@
       <lat>1.3274203538841365</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>500</laneID>
@@ -10808,8 +10808,8 @@
       <lat>1.3274248077682729</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>501</laneID>
@@ -10830,8 +10830,8 @@
       <lat>1.3276275329386067</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>502</laneID>
@@ -10852,8 +10852,8 @@
       <lat>1.3276322658772135</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>503</laneID>
@@ -10874,8 +10874,8 @@
       <lat>1.3278446648220525</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes/>
     <rightLaneID>-1</rightLaneID>
@@ -10894,8 +10894,8 @@
       <lat>1.327849229644105</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes/>
     <rightLaneID>502</rightLaneID>
@@ -11706,8 +11706,8 @@
       <lat>1.330656492355621</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>11.11111111111111</lowerLimit>
-      <upperLimit>16.666666666666668</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>542</laneID>
@@ -11728,8 +11728,8 @@
       <lat>1.330658984711242</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>11.11111111111111</lowerLimit>
-      <upperLimit>16.666666666666668</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>543</laneID>
@@ -11750,8 +11750,8 @@
       <lat>1.3303810272177885</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>11.11111111111111</lowerLimit>
-      <upperLimit>16.666666666666668</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>544</laneID>
@@ -11772,8 +11772,8 @@
       <lat>1.3303840544355772</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>11.11111111111111</lowerLimit>
-      <upperLimit>16.666666666666668</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>545</laneID>
@@ -11794,8 +11794,8 @@
       <lat>1.3300253900294818</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>11.11111111111111</lowerLimit>
-      <upperLimit>16.666666666666668</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>546</laneID>
@@ -11816,8 +11816,8 @@
       <lat>1.330029280058964</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>11.11111111111111</lowerLimit>
-      <upperLimit>16.666666666666668</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>547</laneID>
@@ -11838,8 +11838,8 @@
       <lat>1.3297951890270598</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>11.11111111111111</lowerLimit>
-      <upperLimit>16.666666666666668</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>548</laneID>
@@ -11860,8 +11860,8 @@
       <lat>1.32979887805412</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>11.11111111111111</lowerLimit>
-      <upperLimit>16.666666666666668</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>549</laneID>
@@ -11882,8 +11882,8 @@
       <lat>1.329566262090074</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>11.11111111111111</lowerLimit>
-      <upperLimit>16.666666666666668</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>550</laneID>
@@ -11904,8 +11904,8 @@
       <lat>1.329569524180148</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>11.11111111111111</lowerLimit>
-      <upperLimit>16.666666666666668</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>551</laneID>
@@ -11926,8 +11926,8 @@
       <lat>1.3293454863224072</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>552</laneID>
@@ -11948,8 +11948,8 @@
       <lat>1.3293489726448142</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>553</laneID>
@@ -11970,8 +11970,8 @@
       <lat>1.3292703611393215</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>554</laneID>
@@ -11992,8 +11992,8 @@
       <lat>1.329274722278643</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>555</laneID>
@@ -12014,8 +12014,8 @@
       <lat>1.3292650000000001</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>556</laneID>
@@ -12036,8 +12036,8 @@
       <lat>1.3292700000000002</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>557</laneID>
@@ -12058,8 +12058,8 @@
       <lat>1.3293816019252338</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>558</laneID>
@@ -12080,8 +12080,8 @@
       <lat>1.3293862038504676</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>559</laneID>
@@ -12102,8 +12102,8 @@
       <lat>1.3294937284329964</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>560</laneID>
@@ -12124,8 +12124,8 @@
       <lat>1.3294984568659929</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>561</laneID>
@@ -12146,8 +12146,8 @@
       <lat>1.3295768290162917</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>562</laneID>
@@ -12168,8 +12168,8 @@
       <lat>1.3295816580325832</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>563</laneID>
@@ -12190,8 +12190,8 @@
       <lat>1.329665842464663</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>564</laneID>
@@ -12212,8 +12212,8 @@
       <lat>1.329670684929326</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>565</laneID>
@@ -12234,8 +12234,8 @@
       <lat>1.3297289563312533</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>566</laneID>
@@ -12256,8 +12256,8 @@
       <lat>1.3297339126625065</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>567</laneID>
@@ -12278,8 +12278,8 @@
       <lat>1.3297350000000001</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>568</laneID>
@@ -12300,8 +12300,8 @@
       <lat>1.3297400000000001</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>569</laneID>
@@ -12322,8 +12322,8 @@
       <lat>1.3297181745382898</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>570</laneID>
@@ -12344,8 +12344,8 @@
       <lat>1.3297231724208536</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>571</laneID>
@@ -12366,8 +12366,8 @@
       <lat>1.3297151286220685</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>575</laneID>
@@ -12388,8 +12388,8 @@
       <lat>1.3297201265046124</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>575</laneID>
@@ -12674,8 +12674,8 @@
       <lat>1.3311194887806963</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>586</laneID>
@@ -12696,8 +12696,8 @@
       <lat>1.3311179775613924</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>587</laneID>
@@ -12718,8 +12718,8 @@
       <lat>1.33054</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>588</laneID>
@@ -12740,8 +12740,8 @@
       <lat>1.33054</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>589</laneID>
@@ -12762,8 +12762,8 @@
       <lat>1.3302555957261029</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>590</laneID>
@@ -12784,8 +12784,8 @@
       <lat>1.330256191452206</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>591</laneID>
@@ -12806,8 +12806,8 @@
       <lat>1.330116048553804</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>592</laneID>
@@ -12828,8 +12828,8 @@
       <lat>1.3301190971076078</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>593</laneID>
@@ -12850,8 +12850,8 @@
       <lat>1.3299873795114017</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>594</laneID>
@@ -12872,8 +12872,8 @@
       <lat>1.3299917590228032</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>595</laneID>
@@ -12894,8 +12894,8 @@
       <lat>1.3299569985799913</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>596</laneID>
@@ -12916,8 +12916,8 @@
       <lat>1.3299619971599823</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>597</laneID>
@@ -12938,8 +12938,8 @@
       <lat>1.329761653685301</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>598</laneID>
@@ -12960,8 +12960,8 @@
       <lat>1.3297666199757263</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>599</laneID>
@@ -12982,8 +12982,8 @@
       <lat>1.329735487111854</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>604</laneID>
@@ -13004,8 +13004,8 @@
       <lat>1.3297404534020554</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>604</laneID>
@@ -13137,8 +13137,8 @@
       <lat>1.3294729960678833</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>607</laneID>
@@ -13159,8 +13159,8 @@
       <lat>1.3294779921357667</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>608</laneID>
@@ -13181,8 +13181,8 @@
       <lat>1.329438998513453</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>609</laneID>
@@ -13203,8 +13203,8 @@
       <lat>1.3294439970269063</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>610</laneID>
@@ -13225,8 +13225,8 @@
       <lat>1.3295155230195885</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>611</laneID>
@@ -13247,8 +13247,8 @@
       <lat>1.329520046039177</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>612</laneID>
@@ -13269,8 +13269,8 @@
       <lat>1.329640029294076</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>613</laneID>
@@ -13291,8 +13291,8 @@
       <lat>1.3296430585881518</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>614</laneID>
@@ -13313,8 +13313,8 @@
       <lat>1.329840560766445</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>615</laneID>
@@ -13335,8 +13335,8 @@
       <lat>1.32984212153289</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>616</laneID>
@@ -13357,8 +13357,8 @@
       <lat>1.3301928919171526</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes/>
     <rightLaneID>-1</rightLaneID>
@@ -13377,8 +13377,8 @@
       <lat>1.3301927838343053</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes/>
     <rightLaneID>615</rightLaneID>
@@ -13749,8 +13749,8 @@
       <lat>1.3306835371524155</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>635</laneID>
@@ -13771,8 +13771,8 @@
       <lat>1.3306850743048309</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>636</laneID>
@@ -13793,8 +13793,8 @@
       <lat>1.3303079448601853</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>637</laneID>
@@ -13815,8 +13815,8 @@
       <lat>1.3303098897203707</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>638</laneID>
@@ -13837,8 +13837,8 @@
       <lat>1.3296329350584077</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>639</laneID>
@@ -13859,8 +13859,8 @@
       <lat>1.3296348701168152</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>640</laneID>
@@ -13881,8 +13881,8 @@
       <lat>1.3294100372505382</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>641</laneID>
@@ -13903,8 +13903,8 @@
       <lat>1.3294130745010766</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>642</laneID>
@@ -13925,8 +13925,8 @@
       <lat>1.3293130236206512</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>643</laneID>
@@ -13947,8 +13947,8 @@
       <lat>1.3293170472413023</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>644</laneID>
@@ -13969,8 +13969,8 @@
       <lat>1.3292689531056463</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>645</laneID>
@@ -13991,8 +13991,8 @@
       <lat>1.3292739062112924</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>646</laneID>
@@ -14013,8 +14013,8 @@
       <lat>1.3292995151516462</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>647</laneID>
@@ -14035,8 +14035,8 @@
       <lat>1.3293045117944777</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>648</laneID>
@@ -14057,8 +14057,8 @@
       <lat>1.3293048320327403</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>653</laneID>
@@ -14079,8 +14079,8 @@
       <lat>1.3293098286756122</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>653</laneID>
@@ -14322,8 +14322,8 @@
       <lat>1.3302863188945047</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes/>
     <rightLaneID>-1</rightLaneID>
@@ -14342,8 +14342,8 @@
       <lat>1.3302906377890091</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes/>
     <rightLaneID>659</rightLaneID>
@@ -15418,8 +15418,8 @@
       <lat>1.333229726543877</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>711</laneID>
@@ -15440,8 +15440,8 @@
       <lat>1.333228853087754</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>712</laneID>
@@ -15462,8 +15462,8 @@
       <lat>1.3324904925155836</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>713</laneID>
@@ -15484,8 +15484,8 @@
       <lat>1.3324907850311671</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>714</laneID>
@@ -15506,8 +15506,8 @@
       <lat>1.3316991455079654</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>715</laneID>
@@ -15528,8 +15528,8 @@
       <lat>1.3316992910159309</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>716</laneID>
@@ -15550,8 +15550,8 @@
       <lat>1.331368672407359</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>717</laneID>
@@ -15572,8 +15572,8 @@
       <lat>1.3313693448147184</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>718</laneID>
@@ -15594,8 +15594,8 @@
       <lat>1.331107142065803</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>719</laneID>
@@ -15616,8 +15616,8 @@
       <lat>1.331108284131606</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>720</laneID>
@@ -15638,8 +15638,8 @@
       <lat>1.3308573067636833</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>721</laneID>
@@ -15660,8 +15660,8 @@
       <lat>1.3308596135273665</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>722</laneID>
@@ -15682,8 +15682,8 @@
       <lat>1.3305630994933753</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>723</laneID>
@@ -15704,8 +15704,8 @@
       <lat>1.3305661989867505</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>724</laneID>
@@ -15726,8 +15726,8 @@
       <lat>1.3303720236206515</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>725</laneID>
@@ -15748,8 +15748,8 @@
       <lat>1.3303760472413029</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>726</laneID>
@@ -15770,8 +15770,8 @@
       <lat>1.33018334918251</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>727</laneID>
@@ -15792,8 +15792,8 @@
       <lat>1.3301876983650198</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>728</laneID>
@@ -15814,8 +15814,8 @@
       <lat>1.3298946274330388</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>729</laneID>
@@ -15836,8 +15836,8 @@
       <lat>1.3298992548660777</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>730</laneID>
@@ -15858,8 +15858,8 @@
       <lat>1.3295765573195504</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>731</laneID>
@@ -15880,8 +15880,8 @@
       <lat>1.3295811146391008</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>732</laneID>
@@ -15902,8 +15902,8 @@
       <lat>1.3291554868936086</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>733</laneID>
@@ -15924,8 +15924,8 @@
       <lat>1.3291600846489366</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>734</laneID>
@@ -15946,8 +15946,8 @@
       <lat>1.3290963632146535</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>739</laneID>
@@ -15968,8 +15968,8 @@
       <lat>1.329100960969498</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>739</laneID>
@@ -16871,8 +16871,8 @@
       <lat>1.3264440142627685</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>777</laneID>
@@ -16893,8 +16893,8 @@
       <lat>1.3264480285255367</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>778</laneID>
@@ -16915,8 +16915,8 @@
       <lat>1.3258913866563464</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes/>
     <rightLaneID>-1</rightLaneID>
@@ -16935,8 +16935,8 @@
       <lat>1.325894773312693</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes/>
     <rightLaneID>777</rightLaneID>
@@ -18099,8 +18099,8 @@
       <lat>1.3235051938477067</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>833</laneID>
@@ -18121,8 +18121,8 @@
       <lat>1.3235083876954132</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>834</laneID>
@@ -18143,8 +18143,8 @@
       <lat>1.3223152103383597</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>835</laneID>
@@ -18165,8 +18165,8 @@
       <lat>1.3223184206767198</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>836</laneID>
@@ -18187,8 +18187,8 @@
       <lat>1.321986773500981</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>837</laneID>
@@ -18209,8 +18209,8 @@
       <lat>1.321989547001962</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>838</laneID>
@@ -18231,8 +18231,8 @@
       <lat>1.3218277735009811</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>839</laneID>
@@ -18253,8 +18253,8 @@
       <lat>1.3218305470019622</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>840</laneID>
@@ -18275,8 +18275,8 @@
       <lat>1.3216232530560106</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>841</laneID>
@@ -18297,8 +18297,8 @@
       <lat>1.321625506112021</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>842</laneID>
@@ -18319,8 +18319,8 @@
       <lat>1.3213141567786708</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>843</laneID>
@@ -18341,8 +18341,8 @@
       <lat>1.3213163135573416</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>844</laneID>
@@ -18363,8 +18363,8 @@
       <lat>1.321102724941753</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>845</laneID>
@@ -18385,8 +18385,8 @@
       <lat>1.3211054498835062</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>846</laneID>
@@ -18407,8 +18407,8 @@
       <lat>1.3208580254163378</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>847</laneID>
@@ -18429,8 +18429,8 @@
       <lat>1.3208610508326757</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>848</laneID>
@@ -18451,8 +18451,8 @@
       <lat>1.3207168103109874</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>849</laneID>
@@ -18473,8 +18473,8 @@
       <lat>1.3207206206219746</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>850</laneID>
@@ -18495,8 +18495,8 @@
       <lat>1.3205511800081948</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>851</laneID>
@@ -18517,8 +18517,8 @@
       <lat>1.3205553600163897</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>852</laneID>
@@ -18539,8 +18539,8 @@
       <lat>1.320417472135955</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>853</laneID>
@@ -18561,8 +18561,8 @@
       <lat>1.3204219442719098</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>854</laneID>
@@ -18583,8 +18583,8 @@
       <lat>1.320287580432648</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>855</laneID>
@@ -18605,8 +18605,8 @@
       <lat>1.320292160865296</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>856</laneID>
@@ -18627,8 +18627,8 @@
       <lat>1.3201935230195883</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>857</laneID>
@@ -18649,8 +18649,8 @@
       <lat>1.3201980460391767</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>858</laneID>
@@ -18671,8 +18671,8 @@
       <lat>1.3201308905296447</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>859</laneID>
@@ -18693,8 +18693,8 @@
       <lat>1.3201357810592897</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>860</laneID>
@@ -18715,8 +18715,8 @@
       <lat>1.3200889302725192</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>861</laneID>
@@ -18737,8 +18737,8 @@
       <lat>1.3200938605450383</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>862</laneID>
@@ -18759,8 +18759,8 @@
       <lat>1.3199927668582523</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>863</laneID>
@@ -18781,8 +18781,8 @@
       <lat>1.3199976948231393</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>864</laneID>
@@ -18803,8 +18803,8 @@
       <lat>1.3199756878418158</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>869</laneID>
@@ -18825,8 +18825,8 @@
       <lat>1.319980615806591</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>869</laneID>
@@ -19507,8 +19507,8 @@
       <lat>1.3154260105292153</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>897</laneID>
@@ -19529,8 +19529,8 @@
       <lat>1.3154250210584306</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>898</laneID>
@@ -19551,8 +19551,8 @@
       <lat>1.315848719952495</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>899</laneID>
@@ -19573,8 +19573,8 @@
       <lat>1.3158484399049901</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>900</laneID>
@@ -19595,8 +19595,8 @@
       <lat>1.316376</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>901</laneID>
@@ -19617,8 +19617,8 @@
       <lat>1.316376</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>902</laneID>
@@ -19639,8 +19639,8 @@
       <lat>1.316754</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>903</laneID>
@@ -19661,8 +19661,8 @@
       <lat>1.316754</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>904</laneID>
@@ -19683,8 +19683,8 @@
       <lat>1.3171053278642717</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>905</laneID>
@@ -19705,8 +19705,8 @@
       <lat>1.3171056557285434</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>906</laneID>
@@ -19727,8 +19727,8 @@
       <lat>1.3174832605544329</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>907</laneID>
@@ -19749,8 +19749,8 @@
       <lat>1.3174845211088655</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>908</laneID>
@@ -19771,8 +19771,8 @@
       <lat>1.3184480489419692</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>909</laneID>
@@ -19793,8 +19793,8 @@
       <lat>1.3184490978839383</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>910</laneID>
@@ -19815,8 +19815,8 @@
       <lat>1.3188664617868278</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>911</laneID>
@@ -19837,8 +19837,8 @@
       <lat>1.3188679235736556</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>912</laneID>
@@ -19859,8 +19859,8 @@
       <lat>1.3190910063820256</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>913</laneID>
@@ -19881,8 +19881,8 @@
       <lat>1.319093012764051</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>914</laneID>
@@ -19903,8 +19903,8 @@
       <lat>1.3193645611930516</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>915</laneID>
@@ -19925,8 +19925,8 @@
       <lat>1.319367122386103</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>916</laneID>
@@ -19947,8 +19947,8 @@
       <lat>1.319609113525372</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>917</laneID>
@@ -19969,8 +19969,8 @@
       <lat>1.319612227050744</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>918</laneID>
@@ -19991,8 +19991,8 @@
       <lat>1.3197871450059606</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>919</laneID>
@@ -20013,8 +20013,8 @@
       <lat>1.3197912900119213</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>920</laneID>
@@ -20035,8 +20035,8 @@
       <lat>1.3199214686799117</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>921</laneID>
@@ -20057,8 +20057,8 @@
       <lat>1.3199259373598236</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>922</laneID>
@@ -20079,8 +20079,8 @@
       <lat>1.3200427511477049</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>923</laneID>
@@ -20101,8 +20101,8 @@
       <lat>1.3200475022954097</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>924</laneID>
@@ -20123,8 +20123,8 @@
       <lat>1.3201358848092741</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>925</laneID>
@@ -20145,8 +20145,8 @@
       <lat>1.320140769618548</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>926</laneID>
@@ -20167,8 +20167,8 @@
       <lat>1.3201989602518107</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>927</laneID>
@@ -20189,8 +20189,8 @@
       <lat>1.3202039205036213</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>928</laneID>
@@ -20211,8 +20211,8 @@
       <lat>1.3202319889746823</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>929</laneID>
@@ -20233,8 +20233,8 @@
       <lat>1.3202369779493646</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>930</laneID>
@@ -20255,8 +20255,8 @@
       <lat>1.320207992763501</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>931</laneID>
@@ -20277,8 +20277,8 @@
       <lat>1.3202129855270022</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>932</laneID>
@@ -20299,8 +20299,8 @@
       <lat>1.320205</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>933</laneID>
@@ -20321,8 +20321,8 @@
       <lat>1.32021</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>934</laneID>
@@ -20343,8 +20343,8 @@
       <lat>1.3202319906170163</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>935</laneID>
@@ -20365,8 +20365,8 @@
       <lat>1.3202369812340324</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>936</laneID>
@@ -20387,8 +20387,8 @@
       <lat>1.3202709414165277</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>937</laneID>
@@ -20409,8 +20409,8 @@
       <lat>1.320275882833055</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>938</laneID>
@@ -20431,8 +20431,8 @@
       <lat>1.3203737284329966</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>939</laneID>
@@ -20453,8 +20453,8 @@
       <lat>1.320378456865993</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>940</laneID>
@@ -20475,8 +20475,8 @@
       <lat>1.320563582365111</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>941</laneID>
@@ -20497,8 +20497,8 @@
       <lat>1.3205684189089426</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>942</laneID>
@@ -20519,8 +20519,8 @@
       <lat>1.3205936971908578</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>948</laneID>
@@ -20541,8 +20541,8 @@
       <lat>1.3205985337349069</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>948</laneID>
@@ -21356,8 +21356,8 @@
       <lat>1.3227628465525874</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes/>
     <rightLaneID>-1</rightLaneID>
@@ -21376,8 +21376,8 @@
       <lat>1.3227676931051748</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>8.333333333333334</lowerLimit>
-      <upperLimit>13.88888888888889</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes/>
     <rightLaneID>979</rightLaneID>
@@ -21396,8 +21396,8 @@
       <lat>1.3225289685154151</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>986</laneID>
@@ -21418,8 +21418,8 @@
       <lat>1.32253393703083</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>987</laneID>
@@ -21440,8 +21440,8 @@
       <lat>1.322538905546245</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>988</laneID>
@@ -21462,8 +21462,8 @@
       <lat>1.3225438740616602</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>989</laneID>
@@ -21484,8 +21484,8 @@
       <lat>1.3225488425770753</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>990</laneID>
@@ -21506,8 +21506,8 @@
       <lat>1.3227248903039783</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>991</laneID>
@@ -21528,8 +21528,8 @@
       <lat>1.3227297806079565</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>992</laneID>
@@ -21550,8 +21550,8 @@
       <lat>1.3227346709119348</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>993</laneID>
@@ -21572,8 +21572,8 @@
       <lat>1.322739561215913</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>994</laneID>
@@ -21594,8 +21594,8 @@
       <lat>1.3227444515198912</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>995</laneID>
@@ -21616,8 +21616,8 @@
       <lat>1.3236898621782949</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>996</laneID>
@@ -21638,8 +21638,8 @@
       <lat>1.3236947243565897</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>997</laneID>
@@ -21660,8 +21660,8 @@
       <lat>1.3236995865348848</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>998</laneID>
@@ -21682,8 +21682,8 @@
       <lat>1.3237044487131797</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>999</laneID>
@@ -21704,8 +21704,8 @@
       <lat>1.3237093108914746</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes>
       <laneID>1000</laneID>
@@ -21726,8 +21726,8 @@
       <lat>1.3239839098716668</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes/>
     <rightLaneID>-1</rightLaneID>
@@ -21746,8 +21746,8 @@
       <lat>1.3239888197433336</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes/>
     <rightLaneID>996</rightLaneID>
@@ -21766,8 +21766,8 @@
       <lat>1.3239937296150004</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes/>
     <rightLaneID>997</rightLaneID>
@@ -21786,8 +21786,8 @@
       <lat>1.3239986394866672</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes/>
     <rightLaneID>998</rightLaneID>
@@ -21806,8 +21806,8 @@
       <lat>1.324003549358334</lat>
     </toPoint>
     <speedRange>
-      <lowerLimit>19.444444444444443</lowerLimit>
-      <upperLimit>25.0</upperLimit>
+      <lowerLimit>22.22222222222222</lowerLimit>
+      <upperLimit>22.22222222222222</upperLimit>
     </speedRange>
     <nextLanes/>
     <rightLaneID>999</rightLaneID>

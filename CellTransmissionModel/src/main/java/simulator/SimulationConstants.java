@@ -32,12 +32,12 @@ public class SimulationConstants {
 	public static double V_OUT_MIN = 1.78;
 
 	// METANET ramp merging term
-	public static double RAMP_DELTA = 0.012;
+	public static double RAMP_DELTA = 0.12;
 
 	// METANET constant term for on ramp merging term
-	public static final double KAPPA = 0.452;
+	public static final double KAPPA = 0.04;
 
 	// METANET constant term for on ramp lane dropping.
-	public static double PHI = 2.7;
+	public static double PHI = 1.5;
 
 }

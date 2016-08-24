@@ -1,6 +1,5 @@
 package rl;
 
-import java.util.List;
 import java.util.Random;
 
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
@@ -35,7 +34,7 @@ public abstract class DeepQLearning {
 	protected double epsilon = 0.6;
 	protected int numOfCells;
 	protected int numOfActions;
-	protected static final double DISCOUNT = 0.9;
+	protected static final double DISCOUNT = 0.95;
 
 	/**
 	 * Initialize the Neural Network for deep q-learning.
@@ -66,8 +65,7 @@ public abstract class DeepQLearning {
 	 * @return
 	 */
 	public int getBestAction(INDArray s) {
-		List<INDArray> ops = model.feedForward(s);
-		INDArray actions = ops.get(ops.size() - 1);
+		INDArray actions = model.output(s, true);
 		// Decide on the action to take.
 		int action = -1;
 		if (Math.random() < epsilon)
@@ -86,7 +84,7 @@ public abstract class DeepQLearning {
 				.iterations(1)
 				.activation("leakyrelu")
 				.weightInit(WeightInit.XAVIER)
-				.learningRate(0.1)
+				.learningRate(0.01)
 				.updater(Updater.NESTEROVS)
 				.momentum(0.98)
 				.regularization(true)
@@ -114,7 +112,6 @@ public abstract class DeepQLearning {
 	 */
 	public INDArray getCellState() {
 		int i = 0;
-
 		double cellDensities[] = new double[numOfCells];
 		for (Cell cell : cellNetwork.getCellMap().values()) {
 			if (!(cell instanceof SinkCell || cell instanceof SourceCell)) {
@@ -132,7 +129,6 @@ public abstract class DeepQLearning {
 
 	public static INDArray getCellState(CellNetwork cellNetwork, int numOfCells) {
 		int i = 0;
-
 		double cellDensities[] = new double[numOfCells];
 		for (Cell cell : cellNetwork.getCellMap().values()) {
 			if (!(cell instanceof SinkCell || cell instanceof SourceCell)) {

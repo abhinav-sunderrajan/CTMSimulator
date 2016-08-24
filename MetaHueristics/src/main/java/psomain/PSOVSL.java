@@ -96,7 +96,7 @@ public class PSOVSL {
 
 		System.out.println("Generation\tbest fitness\tmean fitness");
 		long tStart = System.currentTimeMillis();
-		Set<String> cellState = WarmupCTM.initializeCellState(core);
+		Set<String> cellState = WarmupCTM.initializeCellState(core, 5);
 		int iter = 1;
 		do {
 			// Analyze the fitness the of the population

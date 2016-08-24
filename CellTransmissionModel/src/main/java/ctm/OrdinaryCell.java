@@ -18,9 +18,8 @@ public class OrdinaryCell extends Cell {
 	public void updateOutFlow() {
 		Cell Ek = this.successors.get(0);
 		if (Ek instanceof SinkCell) {
-			this.outflow = Math.min(
-					Math.max(0.85 * sendingPotential + core.getRandom().nextGaussian(), 0.0),
-					sendingPotential);
+			double temp = 0.6 + 0.4 * core.getRandom().nextDouble();
+			this.outflow = Math.round(temp * sendingPotential);
 		} else {
 			this.outflow = Math.min(Ek.receivePotential, sendingPotential);
 		}

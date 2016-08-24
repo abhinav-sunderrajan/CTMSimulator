@@ -2,8 +2,11 @@ package rl;
 
 import java.util.List;
 
+import org.deeplearning4j.datasets.iterator.impl.ListDataSetIterator;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.impl.accum.Max;
+import org.nd4j.linalg.dataset.DataSet;
+import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.factory.Nd4j;
 
 /**
@@ -35,17 +38,22 @@ public class SimpleQLearning extends DeepQLearning {
 	 */
 	public INDArray qLearning(INDArray prevState, int action, double reward, boolean isTerminalState) {
 		INDArray nextState = getCellState();
-		List<INDArray> ops = model.feedForward(nextState);
-		INDArray actions = ops.get(ops.size() - 1).dup();
+		INDArray actions = model.output(nextState, true);
 		double maxQ = Nd4j.getExecutioner().execAndReturn(new Max(actions)).getFinalResult()
 				.doubleValue();
+		double update = 0.0;
 		if (isTerminalState)
-			actions.getColumn(action).addi(reward);
+			update = reward;
 		else
-			actions.getColumn(action).addi(reward + maxQ * DISCOUNT);
+			update = reward + maxQ * DISCOUNT;
 
-		model.fit(prevState, actions);
+		actions = actions.putScalar(0, action, update);
+
+		DataSet dataSet = new DataSet(prevState, actions);
+		List<DataSet> listDs = dataSet.asList();
+		DataSetIterator iterator = new ListDataSetIterator(listDs, 1);
+
+		model.fit(iterator);
 		return nextState;
 	}
-
 }

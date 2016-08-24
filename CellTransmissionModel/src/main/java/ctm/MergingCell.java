@@ -41,8 +41,8 @@ public class MergingCell extends Cell {
 	public void updateOutFlow() {
 		Cell Ek = this.successors.get(0);
 
-		double temp = (mergePriority * Ek.receivePotential)
-				/ (mergePriority + othermergingCell.mergePriority);
+		double temp = Math.round((mergePriority * Ek.receivePotential)
+				/ (mergePriority + othermergingCell.mergePriority));
 		this.outflow = Math.min(temp, sendingPotential);
 
 	}
