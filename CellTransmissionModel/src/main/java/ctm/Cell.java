@@ -310,17 +310,6 @@ public abstract class Cell {
 				temp = temp > 1.5 ? 1.5 : temp;
 			}
 
-			// logic for adding noise
-			double noise = 0.0;
-			double denratio = density / criticalDensity;
-
-			if (meanSpeed >= SimulationConstants.V_OUT_MIN * 1.05 && denratio > 0.5) {
-				if (this instanceof DivergingCell)
-					temp = 1.35;
-				noise = -temp * core.getRandom().nextDouble();
-			}
-			meanSpeed += noise;
-
 			// For the speed drop occurring due lane drops at on ramp P.I.E
 			// merger.
 
@@ -337,20 +326,21 @@ public abstract class Cell {
 				this.meanSpeed = this.meanSpeed - laneDropTerm;
 			}
 
-			if (applyRampMetering) {
-				double minSpeed = SimulationConstants.V_OUT_MIN;
-				if (ramps.contains(road)) {
-					minSpeed = 0.0;
-				}
-				if (this.meanSpeed < minSpeed) {
-					this.meanSpeed = minSpeed;
-				}
-
-			} else {
-				if (this.meanSpeed < SimulationConstants.V_OUT_MIN) {
-					this.meanSpeed = SimulationConstants.V_OUT_MIN;
-				}
+			// logic for adding noise
+			double noise = 0.0;
+			if (this instanceof DivergingCell) {
+				temp = 1.35;
+			} else if (meanSpeed <= SimulationConstants.V_OUT_MIN * 1.2) {
+				temp = 1.3;
 			}
+
+			noise = -temp * core.getRandom().nextDouble();
+			meanSpeed += noise;
+
+			double scaleDown = (Math.pow(8.0, nt / nMax) - 1) / 7.0;
+			double minSpeed = SimulationConstants.V_OUT_MIN * (1.0 - scaleDown);
+			if (meanSpeed < minSpeed)
+				meanSpeed = minSpeed;
 
 			this.meanSpeed = meanSpeed > freeFlowSpeed ? freeFlowSpeed : meanSpeed;
 			double meanVehicleLength = SimulationConstants.LEFF;

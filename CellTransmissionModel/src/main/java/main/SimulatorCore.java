@@ -196,7 +196,7 @@ public class SimulatorCore {
 		int numOfCells = WarmupCTM.getNumberOfPhysicalCells(core);
 		DeepQLearning learning = null;
 		boolean training = args[0].equalsIgnoreCase("train");
-		boolean viz = args[1].equalsIgnoreCase("viz");
+		boolean viz = true;
 
 		final int numberOfRamps = 11;
 		Map<Integer, String> actionMap = TrafficLights.getActionMap(numberOfRamps);
