@@ -337,7 +337,7 @@ public abstract class Cell {
 			noise = -temp * core.getRandom().nextDouble();
 			meanSpeed += noise;
 
-			double scaleDown = (Math.pow(8.0, nt / nMax) - 1) / 7.0;
+			double scaleDown = (Math.pow(8.0, (nt / nMax)) - 1) / 7.0;
 			double minSpeed = SimulationConstants.V_OUT_MIN * (1.0 - scaleDown);
 			if (meanSpeed < minSpeed)
 				meanSpeed = minSpeed;

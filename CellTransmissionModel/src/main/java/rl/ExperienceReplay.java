@@ -21,11 +21,11 @@ public class ExperienceReplay extends DeepQLearning {
 
 	private List<ReplayTuple> replayList;
 	private static int h = 0;
-	private static final int bufferSize = 80;
-	private static final int batchSize = 40;
+	private static final int bufferSize = 120;
+	private static final int batchSize = 60;
 
-	public ExperienceReplay(int numOfCells, long seed, int numOfActions) {
-		super(numOfCells, seed, numOfActions);
+	public ExperienceReplay(int numOfCells, long seed, int numOfActions, double learningRate) {
+		super(numOfCells, seed, numOfActions, learningRate);
 		replayList = new ArrayList<ReplayTuple>();
 	}
 
@@ -41,7 +41,7 @@ public class ExperienceReplay extends DeepQLearning {
 			List<ReplayTuple> miniBatch = getMiniBatch(batchSize, replayList);
 
 			List<INDArray> oldstatesList = new ArrayList<>();
-			List<INDArray> oldQValsList = new ArrayList<>();
+			List<INDArray> newQValsList = new ArrayList<>();
 
 			for (ReplayTuple memory : miniBatch) {
 				INDArray oldQVal = model.output(memory.getOldState(), true);
@@ -55,14 +55,13 @@ public class ExperienceReplay extends DeepQLearning {
 				else
 					update = reward + maxQ * DISCOUNT;
 
-				oldQVal = oldQVal.putScalar(0, action, update);
-
+				INDArray nextQval = oldQVal.putScalar(0, action, update);
 				oldstatesList.add(memory.getOldState());
-				oldQValsList.add(oldQVal);
+				newQValsList.add(nextQval);
 				// data.add(new DataSet(memory.getOldState(), oldQVal));
 			}
 			INDArray oldStates = Nd4j.vstack(oldstatesList);
-			INDArray oldQvals = Nd4j.vstack(oldQValsList);
+			INDArray oldQvals = Nd4j.vstack(newQValsList);
 
 			DataSet dataSet = new DataSet(oldStates, oldQvals);
 			List<DataSet> listDs = dataSet.asList();

@@ -40,6 +40,7 @@ public class DivergingCell extends Cell {
 
 		}
 		int i = 0;
+
 		for (Cell successor : successors) {
 			double successorOutflow = Math.min(successor.receivePotential, p[i]);
 			outFlows.put(successor.getCellId(), successorOutflow);

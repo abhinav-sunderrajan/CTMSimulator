@@ -29,7 +29,7 @@ public class SimulationConstants {
 
 	// The rate at which vehicles move at the down stream section of a
 	// congested region.
-	public static double V_OUT_MIN = 1.78;
+	public static double V_OUT_MIN = 1.6;
 
 	// METANET ramp merging term
 	public static double RAMP_DELTA = 0.12;

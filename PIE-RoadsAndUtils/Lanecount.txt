@@ -6,7 +6,6 @@
 30635	P.I.E (Changi)	4
 28485	EXIT 22 ENG NEO AVENUE	2
 30636	P.I.E (Changi)	3
-38541	P.I.E (Changi)	3
 38260	Eng Neo Avenue	2
 29309	P.I.E Changi Ramp	2
 29310	P.I.E Changi Ramp	2
@@ -57,6 +56,6 @@
 30651	P.I.E (Changi)	5
 31985	EXIT 2B P.I.E (Changi)	2
 31991	P.I.E Changi Exit	2
-30580	P.I.E (Changi)	5
+30580	P.I.E (Changi)	6
 28500	EXIT 11 PAYA LEBAR ROAD	2
 30581	P.I.E (Changi)	5

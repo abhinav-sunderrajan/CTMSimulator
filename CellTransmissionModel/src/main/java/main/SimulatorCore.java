@@ -27,6 +27,9 @@ import org.deeplearning4j.util.ModelSerializer;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.api.ops.impl.accum.Max;
+import org.nd4j.linalg.factory.Nd4j;
 
 import rl.DeepQLearning;
 import rl.ExperienceReplay;
@@ -65,6 +68,7 @@ public class SimulatorCore {
 	private static final Logger LOGGER = Logger.getLogger(SimulatorCore.class);
 	public static final DecimalFormat df = new DecimalFormat("#.###");
 	public static final SAXReader SAX_READER = new SAXReader();
+	private static int epochs = 200;
 
 	private void initialize(long seed) {
 
@@ -191,90 +195,141 @@ public class SimulatorCore {
 	public static void main(String args[]) throws InterruptedException, ExecutionException,
 			IOException {
 
-		SimulatorCore core = SimulatorCore.getInstance(108);
+		final SimulatorCore core = SimulatorCore.getInstance(108);
 		final boolean applyrampMetering = true;
 		int numOfCells = WarmupCTM.getNumberOfPhysicalCells(core);
-		DeepQLearning learning = null;
 		boolean training = args[0].equalsIgnoreCase("train");
-		boolean viz = true;
-
-		final int numberOfRamps = 11;
-		Map<Integer, String> actionMap = TrafficLights.getActionMap(numberOfRamps);
+		boolean viz = args[1].equalsIgnoreCase("viz");
 
 		if (viz) {
 			Set<String> cellState = WarmupCTM.initializeCellState(core, 3);
-			CellTransmissionModel ctm = new CellTransmissionModel(core, false, false, viz, 3800);
+			CellTransmissionModel ctm = new CellTransmissionModel(core, false, false, viz, 1800);
 			ctm.intializeTrafficState(cellState);
 			Future<Double> future = core.executor.submit(ctm);
-			future.get();
-			System.out.println("Finished visualization exit..");
+			Double delay = future.get();
+			System.out.println("The delay expereinced by all vehicles =" + delay
+					+ "\nFinished visualization exit..");
 			core.executor.shutdown();
 			System.exit(0);
 
 		}
 
-		if (applyrampMetering && training) {
-			learning = new ExperienceReplay(numOfCells, 108, actionMap.size());
-			CellTransmissionModel.setUpTraining(numOfCells, actionMap, learning);
-			int epochs = 1008;
+		if (applyrampMetering) {
+			final int numberOfRamps = 11;
+			Map<Integer, String> actionMap = TrafficLights.getActionMap(numberOfRamps);
+			double learningRate = 0.5;
+			double delayScale = 1.0e-4;
 
-			for (int epoch = 1; epoch <= epochs; epoch++) {
-				core.setRandomFlowRates();
-				Set<String> cellState = WarmupCTM.initializeCellState(core, 3);
-				CellTransmissionModel ctm = new CellTransmissionModel(core, false, true, false,
+			if (training) {
+				if (args.length > 2) {
+					epochs = Integer.parseInt(args[2]);
+					learningRate = Double.parseDouble(args[3]);
+					delayScale = Double.parseDouble(args[4]);
+					System.out.println("Learning-Rate:" + learningRate + "\t Delay Scale"
+							+ delayScale);
+
+				}
+				final DeepQLearning learning = new ExperienceReplay(numOfCells, 108,
+						actionMap.size(), learningRate);
+
+				final Set<String> cellState = WarmupCTM.initializeCellState(core, 3);
+				Double noRMDelay = getNoRMDelay(cellState, core);
+
+				// Get Q states for Q value evaluation.
+				CellTransmissionModel ctm = new CellTransmissionModel(core, false, false, false,
 						1800);
+				CellTransmissionModel.generateStates(true, numOfCells);
 				ctm.intializeTrafficState(cellState);
-				Future<Double> future = core.executor.submit(ctm);
-				Double discountedDelay = future.get();
-				System.out.println("Epoch " + epoch + "\t" + discountedDelay + "\t"
-						+ core.flowRates);
-				future.cancel(true);
-			}
-			File tempFile = new File("dl4j-net.nn");
-			ModelSerializer.writeModel(learning.getModel(), tempFile, true);
-			System.out.format("Write to file: %s\n", tempFile.getCanonicalFile());
-		}
+				core.executor.submit(ctm).get();
+				final List<INDArray> states = CellTransmissionModel.getStates();
+				CellTransmissionModel.generateStates(false, numOfCells);
 
-		if (!training) {
-			File tempFile = new File("dl4j-net.nn");
-			MultiLayerNetwork model = null;
-			if (tempFile.exists() && !tempFile.isDirectory()) {
-				System.out.println("Loading from file");
-				model = ModelSerializer.restoreMultiLayerNetwork(tempFile);
-			} else {
-				System.out.println("NN file not found exit..");
-				System.exit(0);
-			}
+				CellTransmissionModel.setUpTraining(numOfCells, actionMap, learning, noRMDelay,
+						delayScale);
 
-			CellTransmissionModel.testModel(model, numOfCells, actionMap);
-			System.out.println("No RM delay\tWith RM\tFlow rates");
-
-			for (int trial = 0; trial < 50; trial++) {
-				core.setRandomFlowRates();
-				Set<String> cellState = WarmupCTM.initializeCellState(core, 3);
-				Double noRMDelay = Double.MIN_VALUE;
-				for (int noRM = 0; noRM < 5; noRM++) {
-					CellTransmissionModel ctm = new CellTransmissionModel(core, false, false,
-							false, 1800);
+				for (int epoch = 1; epoch <= epochs; epoch++) {
+					// core.setRandomFlowRates();
+					ctm = new CellTransmissionModel(core, false, true, false, 1800);
 					ctm.intializeTrafficState(cellState);
 					Future<Double> future = core.executor.submit(ctm);
 					Double discountedDelay = future.get();
-					if (discountedDelay > noRMDelay)
-						noRMDelay = discountedDelay;
+					future.cancel(true);
+
+					double avg = 0.0;
+					for (INDArray s : states) {
+						INDArray actions = learning.getModel().output(s, true);
+						avg += Nd4j.getExecutioner().execAndReturn(new Max(actions))
+								.getFinalResult().doubleValue();
+					}
+					avg /= states.size();
+
+					System.out.println("Epoch " + epoch + "\t" + discountedDelay + "\t" + avg
+							+ "\t" + learning.getEpsilon() + "\t" + core.flowRates);
+					double epsilon = learning.getEpsilon() - (1.0 / epochs);
+					if (epsilon > 0.1)
+						learning.setEpsilon((epsilon));
+
 				}
 
-				CellTransmissionModel ctm = new CellTransmissionModel(core, false, true, false,
-						1800);
+				// test it here it self
+				CellTransmissionModel.testModel(learning.getModel(), numOfCells, actionMap, true);
+				ctm = new CellTransmissionModel(core, false, true, false, 1800);
 				ctm.intializeTrafficState(cellState);
 				Future<Double> future = core.executor.submit(ctm);
 				Double rmDelay = future.get();
 				System.out.println(noRMDelay + "\t" + rmDelay + "\t" + core.flowRates);
 
+				// Write neural network to file.
+				File tempFile = new File("dl4j-net.nn");
+				ModelSerializer.writeModel(learning.getModel(), tempFile, true);
+				System.out.format("Write to file: %s\n", tempFile.getCanonicalFile());
+
+			} else {
+				File tempFile = new File("dl4j-net.nn");
+				MultiLayerNetwork model = null;
+				if (tempFile.exists() && !tempFile.isDirectory()) {
+					System.out.println("Loading from file");
+					model = ModelSerializer.restoreMultiLayerNetwork(tempFile);
+				} else {
+					System.out.println("NN file not found exit..");
+					System.exit(0);
+				}
+
+				CellTransmissionModel.testModel(model, numOfCells, actionMap, false);
+				System.out.println("No RM delay\tWith RM\tFlow rates");
+
+				for (int trial = 0; trial < 1; trial++) {
+					// core.setRandomFlowRates();
+					Set<String> cellState = WarmupCTM.initializeCellState(core, 3);
+					Double noRMDelay = getNoRMDelay(cellState, core);
+					CellTransmissionModel ctm = new CellTransmissionModel(core, false, true, false,
+							1800);
+					ctm.intializeTrafficState(cellState);
+					Future<Double> future = core.executor.submit(ctm);
+					Double rmDelay = future.get();
+					System.out.println(noRMDelay + "\t" + rmDelay + "\t" + core.flowRates);
+
+				}
 			}
 
 		}
+
 		core.executor.shutdown();
 
+	}
+
+	private static Double getNoRMDelay(Set<String> cellState, SimulatorCore core)
+			throws InterruptedException, ExecutionException {
+		Double noRMDelay = Double.MAX_VALUE;
+		for (int noRM = 0; noRM < 5; noRM++) {
+			CellTransmissionModel ctm = new CellTransmissionModel(core, false, false, false, 1800);
+			ctm.intializeTrafficState(cellState);
+			Future<Double> future = core.executor.submit(ctm);
+			Double discountedDelay = future.get();
+			if (discountedDelay < noRMDelay)
+				noRMDelay = discountedDelay;
+		}
+		return noRMDelay;
 	}
 
 	/**

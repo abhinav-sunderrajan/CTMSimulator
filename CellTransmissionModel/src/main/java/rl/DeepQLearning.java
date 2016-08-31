@@ -31,7 +31,7 @@ public abstract class DeepQLearning {
 	protected MultiLayerNetwork model;
 	protected CellNetwork cellNetwork;
 	protected Random random;
-	protected double epsilon = 0.6;
+	protected double epsilon;
 	protected int numOfCells;
 	protected int numOfActions;
 	protected static final double DISCOUNT = 0.95;
@@ -45,15 +45,17 @@ public abstract class DeepQLearning {
 	 *            the simulation seed.
 	 * @param numOfActions
 	 *            the number of possible actions
+	 * @param learningRate
 	 */
-	public DeepQLearning(int numOfCells, long seed, int numOfActions) {
+	public DeepQLearning(int numOfCells, long seed, int numOfActions, double learningRate) {
 		this.numOfActions = numOfActions;
 		random = new Random(seed);
 		this.numOfCells = numOfCells;
 		// Create neural network
-		MultiLayerConfiguration conf = getNNConfig();
+		MultiLayerConfiguration conf = getNNConfig(learningRate);
 		model = new MultiLayerNetwork(conf);
 		model.init();
+		epsilon = 0.9;
 	}
 
 	/**
@@ -72,21 +74,19 @@ public abstract class DeepQLearning {
 			action = random.nextInt(actions.length());
 		else
 			action = Nd4j.getExecutioner().execAndReturn(new IAMax(actions)).getFinalResult();
-		if (epsilon > 0.1)
-			epsilon = epsilon - 0.05;
 		return action;
 	}
 
-	private MultiLayerConfiguration getNNConfig() {
+	private MultiLayerConfiguration getNNConfig(double learningRate) {
 		MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
 				.seed(random.nextLong())
 				.optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
 				.iterations(1)
 				.activation("leakyrelu")
 				.weightInit(WeightInit.XAVIER)
-				.learningRate(0.01)
-				.updater(Updater.NESTEROVS)
-				.momentum(0.98)
+				.learningRate(learningRate)
+				.updater(Updater.RMSPROP)
+				.rmsDecay(0.9)
 				.regularization(true)
 				.l2(1e-4)
 				.list()
@@ -172,6 +172,21 @@ public abstract class DeepQLearning {
 	 */
 	public void setModel(MultiLayerNetwork model) {
 		this.model = model;
+	}
+
+	/**
+	 * @return the epsilon
+	 */
+	public double getEpsilon() {
+		return epsilon;
+	}
+
+	/**
+	 * @param epsilon
+	 *            the epsilon to set
+	 */
+	public void setEpsilon(double epsilon) {
+		this.epsilon = epsilon;
 	}
 
 }
