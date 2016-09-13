@@ -81,7 +81,7 @@ public class PSORampMetering {
 
 				List<Future<Double>> futureSeeds = new ArrayList<Future<Double>>();
 				for (int seed = 0; seed < NSEEDS; seed++) {
-					core.getRandom().setSeed(pso.getRandom().nextLong());
+					SimulatorCore.SIMCORE_RANDOM.setSeed(pso.getRandom().nextLong());
 					CellTransmissionModel ctm = new CellTransmissionModel(core, false, true, false,
 							1800);
 					ctm.intializeTrafficState(cellState);

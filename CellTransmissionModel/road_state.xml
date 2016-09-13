@@ -5,16 +5,16 @@
 <Flow>
 	<source id="30633">3800</source>
 	<source id="82">1200</source>
-	<source id="29310">1000</source>
-	<source id="28946">1000</source>
+	<source id="29310">1400</source>
+	<source id="28946">1000</source><!-- Controllable -->
 	<source id="30790">1400</source>
-	<source id="37980">1000</source>
+	<source id="37980">1400</source>
 	<source id="28595">1400</source>
-	<source id="29152">1400</source>
-	<source id="29005">1400</source>
-	<source id="29553">1000</source>
-	<source id="28613">1400</source>
-	<source id="31991">1000</source>
+	<source id="29152">1000</source><!-- Controllable -->
+	<source id="29005">1000</source><!-- Controllable -->
+	<source id="29553">1600</source>
+	<source id="28613">1500</source>
+	<source id="31991">1000</source><!-- Controllable -->
 </Flow>
 
 <MergePriorities>

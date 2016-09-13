@@ -95,7 +95,7 @@ public class SimulatedAnnealing {
 		double meanFitness = 0.0;
 
 		for (int i = 0; i < NSEEDS; i++) {
-			core.getRandom().setSeed(randomLocal.nextLong());
+			SimulatorCore.SIMCORE_RANDOM.setSeed(randomLocal.nextLong());
 			CellTransmissionModel ctm = new CellTransmissionModel(core, true, true, false, 2200);
 			int index = 0;
 			for (RampMeterQueueThreshhold meter : ctm.getMeteredRamps().values())

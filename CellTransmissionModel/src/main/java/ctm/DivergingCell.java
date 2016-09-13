@@ -3,6 +3,8 @@ package ctm;
 import java.util.HashMap;
 import java.util.Map;
 
+import main.SimulatorCore;
+
 /**
  * Update method for divergent cells.
  * 
@@ -32,7 +34,7 @@ public class DivergingCell extends Cell {
 		int p[] = new int[2];
 		double tr1 = core.getTurnRatios().get(successors.get(0).getRoad().getRoadId());
 		while (k > 0) {
-			if (Math.random() < tr1)
+			if (SimulatorCore.SIMCORE_RANDOM.nextDouble() < tr1)
 				p[0]++;
 			else
 				p[1]++;

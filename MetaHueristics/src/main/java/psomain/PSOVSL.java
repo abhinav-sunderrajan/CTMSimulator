@@ -105,7 +105,7 @@ public class PSOVSL {
 
 				List<Future<Double>> futureSeeds = new ArrayList<Future<Double>>();
 				for (int seed = 0; seed < NSEEDS; seed++) {
-					core.getRandom().setSeed(random.nextLong());
+					SimulatorCore.SIMCORE_RANDOM.setSeed(random.nextLong());
 					CellTransmissionModel ctm = new CellTransmissionModel(core, false, false,
 							false, 1500);
 					ctm.intializeTrafficState(cellState);

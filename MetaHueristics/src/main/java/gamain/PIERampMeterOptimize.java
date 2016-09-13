@@ -129,7 +129,7 @@ public class PIERampMeterOptimize {
 					List<Future<Double>> futureSeeds = new ArrayList<Future<Double>>();
 					for (int seed = 0; seed < 1; seed++) {
 						// core.getRandom().setSeed(randomGA.nextLong());
-						core.getRandom().setSeed(1);
+						SimulatorCore.SIMCORE_RANDOM.setSeed(1);
 						CellTransmissionModel ctm = new CellTransmissionModel(core, false, true,
 								false, 2100);
 						List<Double> queuePercentages = entry.getKey();

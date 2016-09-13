@@ -189,7 +189,8 @@ public class ReduceCTMSEMSimDifference {
 			}
 
 			while (newGen.size() < POPULATION_SIZE) {
-				Map<List<Double>, Integer> newChild = ga.tournamentSelection(core.getRandom());
+				Map<List<Double>, Integer> newChild = ga
+						.tournamentSelection(SimulatorCore.SIMCORE_RANDOM);
 				for (Entry<List<Double>, Integer> entry : newChild.entrySet())
 					newGen.put(entry.getKey(), entry.getValue());
 			}

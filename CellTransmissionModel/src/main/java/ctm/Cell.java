@@ -329,12 +329,10 @@ public abstract class Cell {
 			// logic for adding noise
 			double noise = 0.0;
 			if (this instanceof DivergingCell) {
-				temp = 1.35;
-			} else if (meanSpeed <= SimulationConstants.V_OUT_MIN * 1.2) {
-				temp = 1.3;
+				temp = 1.25;
 			}
 
-			noise = -temp * core.getRandom().nextDouble();
+			noise = -temp * SimulatorCore.SIMCORE_RANDOM.nextDouble();
 			meanSpeed += noise;
 
 			double scaleDown = (Math.pow(8.0, (nt / nMax)) - 1) / 7.0;

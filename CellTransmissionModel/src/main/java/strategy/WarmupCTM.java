@@ -44,7 +44,7 @@ public class WarmupCTM {
 		Map<Cell, Double> cellNumOfVehicles = new HashMap<Cell, Double>();
 		state.clear();
 		for (int i = 0; i < numOfIter; i++) {
-			CellTransmissionModel ctm = new CellTransmissionModel(core, false, false, false, 2000);
+			CellTransmissionModel ctm = new CellTransmissionModel(core, false, false, false, 1800);
 			Future<Double> future = core.getExecutor().submit(ctm);
 			future.get();
 			CellNetwork cellNetwork = ctm.getCellNetwork();

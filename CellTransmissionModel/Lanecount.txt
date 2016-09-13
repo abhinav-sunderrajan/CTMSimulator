@@ -15,7 +15,7 @@
 30638	P.I.E (Changi)	3
 28946	P.I.E Changi Ramp	2
 28947	P.I.E Changi Ramp	2
-30639	P.I.E (Changi)	4
+30639	P.I.E (Changi)	3
 28516	EXIT 19 STEVEN ROAD	2
 30640	P.I.E (Changi)	3
 30788	P.I.E Changi Ramp	2
@@ -38,13 +38,13 @@
 22009	Lorong 2 Toa Payoh	2
 29152	P.I.E Changi Ramp	2
 28594	P.I.E Changi Ramp	2
-30645	P.I.E (Changi)	5
+30645	P.I.E (Changi)	4
 28597	EXIT 16A LORONG 6 TOA PAYOH	2
 30646	P.I.E (Changi)	4
 19116	Kim Keat Link	2
 19117	Kim Keat Link	2
 29005	P.I.E Changi Ramp	2
-30647	P.I.E (Changi)	5
+30647	P.I.E (Changi)	4
 28387	EXIT 15 C.T.E AMK	2
 30648	P.I.E (Changi)	4
 29552	P.I.E Changi Exit	2

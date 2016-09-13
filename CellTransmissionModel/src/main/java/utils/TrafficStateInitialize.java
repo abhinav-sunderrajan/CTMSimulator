@@ -76,9 +76,8 @@ public class TrafficStateInitialize {
 									pieMainRoads[roadIndex] + "_" + s);
 							cell.setMeanSpeed(meanSpeed);
 							cell.setSdSpeed(sdSpeed);
-							int density = core.getRandom().nextInt(
-									(upperDensity - lowerDensity) + 1)
-									+ lowerDensity;
+							int density = SimulatorCore.SIMCORE_RANDOM
+									.nextInt((upperDensity - lowerDensity) + 1) + lowerDensity;
 							cell.setNumberOfvehicles((int) Math.round(density * cell.getLength()
 									* 0.001));
 							cell.setInitilalized(true);

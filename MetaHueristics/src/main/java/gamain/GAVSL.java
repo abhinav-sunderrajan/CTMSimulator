@@ -196,7 +196,7 @@ public class GAVSL {
 				if (entry.getValue() == Double.MAX_VALUE) {
 					List<Future<Double>> futureSeeds = new ArrayList<Future<Double>>();
 					for (int seed = 0; seed < NSEEDS; seed++) {
-						core.getRandom().setSeed(RANDOM.nextLong());
+						SimulatorCore.SIMCORE_RANDOM.setSeed(RANDOM.nextLong());
 						Vector speedLimits = entry.getKey();
 						CellTransmissionModel ctm = new CellTransmissionModel(core, false, false,
 								false, 1200);

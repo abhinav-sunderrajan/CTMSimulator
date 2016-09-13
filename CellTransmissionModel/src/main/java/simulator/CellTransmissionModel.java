@@ -4,10 +4,10 @@ import java.awt.Color;
 import java.io.IOException;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -66,6 +66,8 @@ public class CellTransmissionModel implements Callable<Double> {
 	private static final Logger LOGGER = Logger.getLogger(CellTransmissionModel.class);
 	private static boolean generateStates;
 	private static List<INDArray> states = new ArrayList<>();
+	private static SimulatorCore simCore;
+	private static final Integer rampControl[] = { 28947, 28594, 29005, 31991 };
 
 	/**
 	 * Initialize cell state.
@@ -121,7 +123,10 @@ public class CellTransmissionModel implements Callable<Double> {
 		testing = true;
 		training = false;
 		nnModel = multiLayerNetwork;
-		nnModel.init();
+		if (!nnModel.isInitCalled()) {
+			nnModel.init();
+		}
+
 		CellTransmissionModel.numOfInputs = numOfCells;
 		CellTransmissionModel.printActions = printActions;
 	}
@@ -141,6 +146,8 @@ public class CellTransmissionModel implements Callable<Double> {
 	 */
 	public CellTransmissionModel(SimulatorCore core, boolean haveAccident, boolean applyMetering,
 			boolean haveViz, long simTime) {
+		if (CellTransmissionModel.simCore == null)
+			simCore = core;
 		this.applyRampMetering = applyMetering;
 		this.haveAccident = haveAccident;
 		meteredRamps = new LinkedHashMap<Cell, SimpleRampMeter>();
@@ -150,7 +157,8 @@ public class CellTransmissionModel implements Callable<Double> {
 		for (Road ramp : cellNetwork.getRamps()) {
 			SimpleRampMeter rampMeter = new SimpleRampMeter(cellNetwork);
 			rampMeter.setRamp(ramp);
-			meteredRamps.put(rampMeter.getMeterCell(), rampMeter);
+			if (Arrays.asList(rampControl).contains(ramp.getRoadId()))
+				meteredRamps.put(rampMeter.getMeterCell(), rampMeter);
 		}
 
 		cellColorMap = new ConcurrentHashMap<Cell, Color>();
@@ -221,17 +229,18 @@ public class CellTransmissionModel implements Callable<Double> {
 				if (applyRampMetering && simulationTime % SimpleRampMeter.PHASE_MIN == 0) {
 
 					if (simulationTime > 0) {
-
+						netDelay += delay;
 						if (training) {
 							// Get reward for action taken
 							if (prevDelay == -1)
 								prevDelay = delay;
 
 							boolean isTerminalState = simulationTime == endTime ? true : false;
-							double reward = (prevDelay - delay) * delayScale;
-							// if (isTerminalState)
-							// reward = (noRMDelay - netDelay - delay) *
-							// delayScale / 100.0;
+							double reward = (-delay) * 1.0e-5;
+
+							if (isTerminalState && noRMDelay > netDelay * 1.01) {
+								reward = 150.0 + (noRMDelay - netDelay) * 2.0e-4;
+							}
 							// The next state after updating the neural net.
 							state = qlearning.qLearning(state, action, reward, isTerminalState);
 							// get the appropriate action for this state
@@ -242,15 +251,18 @@ public class CellTransmissionModel implements Callable<Double> {
 							// possible action.
 							state = DeepQLearning.getCellState(cellNetwork, numOfInputs);
 							INDArray actions = nnModel.output(state, false);
-							action = Nd4j.getExecutioner().execAndReturn(new IAMax(actions))
-									.getFinalResult();
+							if (SimulatorCore.SIMCORE_RANDOM.nextDouble() > 0.05)
+								action = Nd4j.getExecutioner().execAndReturn(new IAMax(actions))
+										.getFinalResult();
+							else
+								action = SimulatorCore.SIMCORE_RANDOM.nextInt(actions.length());
 						}
 
 						trafficLights = actionMap.get(action);
 						if (printActions)
 							System.out
 									.println(simulationTime + "\t" + delay + "\t" + trafficLights);
-						netDelay += delay;
+
 						prevDelay = delay;
 						delay = 0.0;
 					}
@@ -308,7 +320,8 @@ public class CellTransmissionModel implements Callable<Double> {
 							// free-flow conditions.
 							double ff = (cell.getNumOfVehicles() * cell.getFreeFlowSpeed() * SimulationConstants.TIME_STEP)
 									/ cell.getLength();
-							if ((ff - cell.getOutflow()) > 0.8) {
+							ff = Math.round(ff);
+							if ((ff - cell.getOutflow()) > 0) {
 								delay += (ff - cell.getOutflow());
 							}
 						}
@@ -366,23 +379,6 @@ public class CellTransmissionModel implements Callable<Double> {
 	}
 
 	/**
-	 * Returns a random real number uniformly in [a, b).
-	 * 
-	 * @param a
-	 *            the left end-point
-	 * @param b
-	 *            the right end-point
-	 * @return a random real number uniformly in [a, b)
-	 * @throws IllegalArgumentException
-	 *             unless <tt>a < b</tt>
-	 */
-	public double uniform(double a, double b, Random rand) {
-		if (!(a < b))
-			throw new IllegalArgumentException("Invalid range");
-		return a + rand.nextDouble() * (b - a);
-	}
-
-	/**
 	 * @return the meteredRamps
 	 */
 	public Map<Cell, SimpleRampMeter> getMeteredRamps() {
@@ -434,6 +430,14 @@ public class CellTransmissionModel implements Callable<Double> {
 		generateStates = b;
 		numOfInputs = numOfCells;
 
+	}
+
+	/**
+	 * @param noRMDelay
+	 *            the noRMDelay to set
+	 */
+	public static void setNoRMDelay(Double noRMDelay) {
+		CellTransmissionModel.noRMDelay = noRMDelay;
 	}
 
 }

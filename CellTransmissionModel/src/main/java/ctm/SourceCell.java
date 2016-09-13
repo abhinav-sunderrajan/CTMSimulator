@@ -1,5 +1,6 @@
 package ctm;
 
+import main.SimulatorCore;
 import simulator.SimulationConstants;
 
 /**
@@ -80,7 +81,7 @@ public class SourceCell extends Cell {
 		double p = 1;
 		do {
 			k = k + 1;
-			double u = core.getRandom().nextDouble();
+			double u = SimulatorCore.SIMCORE_RANDOM.nextDouble();
 			p = p * u;
 		} while (p > L);
 		return k - 1;
@@ -90,7 +91,8 @@ public class SourceCell extends Cell {
 	 * @return the delay
 	 */
 	public double getSourceDelay() {
-		return sourceDelay;
+		double weightedDelay = sourceDelay * 2.0;
+		return weightedDelay;
 	}
 
 }

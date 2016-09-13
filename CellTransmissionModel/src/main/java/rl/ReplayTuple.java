@@ -7,18 +7,22 @@ public class ReplayTuple {
 	private int action;
 	private INDArray nextState;
 	private double reward;
+	private boolean isTerminalState;
 
 	/**
 	 * @param oldState
 	 * @param action
 	 * @param nextState
 	 * @param reward
+	 * @param isTerminalState
 	 */
-	public ReplayTuple(INDArray oldState, int action, INDArray nextState, double reward) {
+	public ReplayTuple(INDArray oldState, int action, INDArray nextState, double reward,
+			boolean isTerminalState) {
 		this.oldState = oldState;
 		this.action = action;
 		this.nextState = nextState;
 		this.reward = reward;
+		this.isTerminalState = isTerminalState;
 	}
 
 	/**
@@ -31,7 +35,7 @@ public class ReplayTuple {
 	/**
 	 * @return the trafficLights
 	 */
-	public int getTrafficLights() {
+	public int getAction() {
 		return action;
 	}
 
@@ -47,6 +51,13 @@ public class ReplayTuple {
 	 */
 	public double getReward() {
 		return reward;
+	}
+
+	/**
+	 * @return the isTerminalState
+	 */
+	public boolean isTerminalState() {
+		return isTerminalState;
 	}
 
 }
