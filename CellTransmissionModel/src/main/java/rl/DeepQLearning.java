@@ -90,16 +90,16 @@ public abstract class DeepQLearning {
 				.updater(Updater.RMSPROP)
 				.rmsDecay(0.95)
 				.regularization(true)
-				.l2(1.0e-4)
+				.l2(2.0e-4)
 				.list()
 				.layer(0,
-						new DenseLayer.Builder().nIn(numOfCells).nOut(200).activation("leakyrelu")
+						new DenseLayer.Builder().nIn(numOfCells).nOut(100).activation("leakyrelu")
 								.weightInit(WeightInit.RELU).build())
 				.layer(1,
-						new DenseLayer.Builder().nIn(200).nOut(150).activation("leakyrelu")
+						new DenseLayer.Builder().nIn(100).nOut(100).activation("leakyrelu")
 								.weightInit(WeightInit.RELU).build())
 				.layer(2,
-						new OutputLayer.Builder(LossFunction.MSE).activation("identity").nIn(150)
+						new OutputLayer.Builder(LossFunction.MSE).activation("identity").nIn(100)
 								.nOut(numOfActions).build()).pretrain(false).backprop(true).build();
 		return conf;
 	}

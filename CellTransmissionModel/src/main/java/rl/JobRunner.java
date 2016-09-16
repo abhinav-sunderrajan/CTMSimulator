@@ -29,7 +29,7 @@ public class JobRunner implements Runnable {
 		while (true) {
 			try {
 				if (jobIdQueue.isEmpty()) {
-					Thread.sleep(1);
+					Thread.sleep(100);
 					continue;
 				}
 

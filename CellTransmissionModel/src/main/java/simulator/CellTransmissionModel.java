@@ -54,13 +54,13 @@ public class CellTransmissionModel implements Callable<Double> {
 	private Map<Cell, SimpleRampMeter> meteredRamps;
 	private boolean applyRampMetering;
 	private double netDelay = 0.0;
+	private Double noRMDelay;
 	private static Map<Integer, String> actionMap;
 	private static DeepQLearning qlearning;
 	private static boolean training = false;
 	private static boolean testing = false;
 	private static MultiLayerNetwork nnModel;
 	private static int numOfInputs;
-	private static Double noRMDelay;
 	private static double delayScale = 1.0e-4;
 	private static boolean printActions;
 	private static final Logger LOGGER = Logger.getLogger(CellTransmissionModel.class);
@@ -98,13 +98,12 @@ public class CellTransmissionModel implements Callable<Double> {
 	 * @param delayScale2
 	 */
 	public static void setUpTraining(int numberOfInputs, Map<Integer, String> actionMap,
-			DeepQLearning deepLearning, Double noRMDelay, double delayScale2) {
+			DeepQLearning deepLearning, double delayScale2) {
 		CellTransmissionModel.actionMap = actionMap;
 		CellTransmissionModel.qlearning = deepLearning;
 		CellTransmissionModel.training = true;
 		CellTransmissionModel.testing = false;
 		CellTransmissionModel.numOfInputs = numberOfInputs;
-		CellTransmissionModel.noRMDelay = noRMDelay;
 		delayScale = delayScale2;
 	}
 
@@ -238,9 +237,11 @@ public class CellTransmissionModel implements Callable<Double> {
 							boolean isTerminalState = simulationTime == endTime ? true : false;
 							double reward = (-delay) * 1.0e-5;
 
-							if (isTerminalState && noRMDelay > netDelay * 1.01) {
-								reward = 150.0 + (noRMDelay - netDelay) * 2.0e-4;
+							if (isTerminalState) {
+								if (noRMDelay > netDelay * 1.01)
+									reward = 180.0 + (noRMDelay - netDelay) * 1.0e-4;
 							}
+
 							// The next state after updating the neural net.
 							state = qlearning.qLearning(state, action, reward, isTerminalState);
 							// get the appropriate action for this state
@@ -251,7 +252,7 @@ public class CellTransmissionModel implements Callable<Double> {
 							// possible action.
 							state = DeepQLearning.getCellState(cellNetwork, numOfInputs);
 							INDArray actions = nnModel.output(state, false);
-							if (SimulatorCore.SIMCORE_RANDOM.nextDouble() > 0.05)
+							if (SimulatorCore.SIMCORE_RANDOM.nextDouble() > 0.01)
 								action = Nd4j.getExecutioner().execAndReturn(new IAMax(actions))
 										.getFinalResult();
 							else
@@ -314,7 +315,10 @@ public class CellTransmissionModel implements Callable<Double> {
 					if (!(cell instanceof SinkCell)) {
 
 						if (cell instanceof SourceCell) {
-							delay += ((SourceCell) cell).getSourceDelay() * 1.0;
+							delay += ((SourceCell) cell).getSourceDelay();
+						} else if (applyRampMetering && meteredRamps.containsKey(cell)) {
+							SimpleRampMeter sr = meteredRamps.get(cell);
+							delay += sr.getDelay();
 						} else {
 							// Number of vehicles that can exit a cell under
 							// free-flow conditions.
@@ -331,7 +335,6 @@ public class CellTransmissionModel implements Callable<Double> {
 
 				if (!applyRampMetering && simulationTime % SimpleRampMeter.PHASE_MIN == 0) {
 					netDelay += delay;
-					// System.out.println(simulationTime + "\t" + delay);
 					delay = 0.0;
 				}
 
@@ -436,8 +439,8 @@ public class CellTransmissionModel implements Callable<Double> {
 	 * @param noRMDelay
 	 *            the noRMDelay to set
 	 */
-	public static void setNoRMDelay(Double noRMDelay) {
-		CellTransmissionModel.noRMDelay = noRMDelay;
+	public void setNoRMDelay(Double noRMDelay) {
+		this.noRMDelay = noRMDelay;
 	}
 
 }

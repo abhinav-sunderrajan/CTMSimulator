@@ -5,6 +5,8 @@ import ctm.CellNetwork;
 
 public class SimpleRampMeter extends RampMeterQueueThreshhold {
 
+	int cycle = 0;
+
 	public SimpleRampMeter(CellNetwork cellNetwork) {
 		super(cellNetwork);
 	}
@@ -14,12 +16,34 @@ public class SimpleRampMeter extends RampMeterQueueThreshhold {
 
 		if (!allow) {
 			meterCell.setOutflow(0);
-			totalRedTime += SimulationConstants.TIME_STEP;
-			redCycleTime += SimulationConstants.TIME_STEP;
+			cycle++;
 		} else {
 			meterCell.updateOutFlow();
-			totalGreenTime += SimulationConstants.TIME_STEP;
+			cycle = 0;
 		}
+
+	}
+
+	/**
+	 * Weighted delay for on-ramp when signal is red.
+	 * 
+	 * @return
+	 */
+	public double getDelay() {
+		double mult = 1;
+		double delay = 0.0;
+		if (!allow) {
+			// 1 complete phase cycle of 12 seconds of RED will result in mult
+			// being increased by 0.33 until a max of 4.0.
+			mult = (1.0 + cycle / 9.0) > 4.0 ? 4.0 : (1.0 + cycle / 9.0);
+		}
+		double ff = (meterCell.getNumOfVehicles() * meterCell.getFreeFlowSpeed() * SimulationConstants.TIME_STEP)
+				/ meterCell.getLength();
+		ff = Math.round(ff);
+		if ((ff - meterCell.getOutflow()) > 0) {
+			delay = mult * (ff - meterCell.getOutflow());
+		}
+		return delay;
 
 	}
 }

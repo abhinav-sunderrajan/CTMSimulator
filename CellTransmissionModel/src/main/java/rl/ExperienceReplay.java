@@ -23,18 +23,20 @@ public class ExperienceReplay extends DeepQLearning {
 
 	private List<ReplayTuple> replayList;
 	private static int h = 0;
-	private static final int bufferSize = 150000;
+	private static final int bufferSize = 500000;
 	private static final int batchSize = 32;
 	private List<Integer> batchList;
 	private int sucessCount = 0;
 	private MultiLayerNetwork targetModel;
 	private long step = 0;
+	private boolean beginTraining;
 
 	public ExperienceReplay(int numOfCells, int numOfActions, double learningRate) {
 		super(numOfCells, numOfActions, learningRate);
 		replayList = new ArrayList<ReplayTuple>();
 		batchList = new ArrayList<Integer>();
 		targetModel = model.clone();
+		beginTraining = false;
 	}
 
 	@Override
@@ -42,7 +44,7 @@ public class ExperienceReplay extends DeepQLearning {
 		INDArray nextState = getCellState();
 		ReplayTuple replay = new ReplayTuple(prevState.dup(), action, nextState.dup(), reward,
 				isTerminalState);
-		if (replayList.size() < bufferSize) {
+		if (replayList.size() < bufferSize || !beginTraining) {
 			if (isTerminalState && reward > 50.0)
 				sucessCount++;
 			replayList.add(replay);
@@ -79,7 +81,7 @@ public class ExperienceReplay extends DeepQLearning {
 			DataSetIterator iterator = new ListDataSetIterator(listDs, batchSize);
 			model.fit(iterator);
 			step++;
-			if (step % 30 == 0) {
+			if (step % 100 == 0) {
 				targetModel = model.clone();
 			}
 		}
@@ -125,6 +127,21 @@ public class ExperienceReplay extends DeepQLearning {
 	 */
 	public MultiLayerNetwork getTargetModel() {
 		return targetModel;
+	}
+
+	/**
+	 * @return the beginTraining
+	 */
+	public boolean isBeginTraining() {
+		return beginTraining;
+	}
+
+	/**
+	 * @param beginTraining
+	 *            the beginTraining to set
+	 */
+	public void setBeginTraining(boolean beginTraining) {
+		this.beginTraining = beginTraining;
 	}
 
 }
