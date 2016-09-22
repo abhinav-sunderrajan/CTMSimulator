@@ -14,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import main.SimulatorCore;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -55,6 +56,7 @@ public class CellTransmissionModel implements Callable<Double> {
 	private boolean applyRampMetering;
 	private double netDelay = 0.0;
 	private Double noRMDelay;
+	private double mainPIEDelay = 0.0;
 	private static Map<Integer, String> actionMap;
 	private static DeepQLearning qlearning;
 	private static boolean training = false;
@@ -235,11 +237,12 @@ public class CellTransmissionModel implements Callable<Double> {
 								prevDelay = delay;
 
 							boolean isTerminalState = simulationTime == endTime ? true : false;
-							double reward = (-delay) * 1.0e-5;
+							double reward = (-delay) * 0.005;
 
 							if (isTerminalState) {
-								if (noRMDelay > netDelay * 1.01)
-									reward = 180.0 + (noRMDelay - netDelay) * 1.0e-4;
+								if (noRMDelay > netDelay) {
+									reward = (noRMDelay - netDelay) * 0.25;
+								}
 							}
 
 							// The next state after updating the neural net.
@@ -327,6 +330,12 @@ public class CellTransmissionModel implements Callable<Double> {
 							ff = Math.round(ff);
 							if ((ff - cell.getOutflow()) > 0) {
 								delay += (ff - cell.getOutflow());
+								if (testing
+										&& ArrayUtils.contains(SimulatorCore.PIE_MAIN_ROADS, cell
+												.getRoad().getRoadId())) {
+									mainPIEDelay += delay;
+								}
+
 							}
 						}
 
@@ -363,7 +372,6 @@ public class CellTransmissionModel implements Callable<Double> {
 							cellColorMap.put(cell, c);
 						}
 					}
-
 					viewer.getMapFrame().repaint();
 					Thread.sleep(50);
 				}
@@ -441,6 +449,13 @@ public class CellTransmissionModel implements Callable<Double> {
 	 */
 	public void setNoRMDelay(Double noRMDelay) {
 		this.noRMDelay = noRMDelay;
+	}
+
+	/**
+	 * @return the mainPIEDelay
+	 */
+	public double getMainPIEDelay() {
+		return mainPIEDelay;
 	}
 
 }

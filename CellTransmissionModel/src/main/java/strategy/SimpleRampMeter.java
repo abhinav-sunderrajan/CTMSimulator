@@ -32,10 +32,10 @@ public class SimpleRampMeter extends RampMeterQueueThreshhold {
 	public double getDelay() {
 		double mult = 1;
 		double delay = 0.0;
-		if (!allow) {
+		if (!allow && cycle > 0) {
 			// 1 complete phase cycle of 12 seconds of RED will result in mult
-			// being increased by 0.33 until a max of 4.0.
-			mult = (1.0 + cycle / 9.0) > 4.0 ? 4.0 : (1.0 + cycle / 9.0);
+			// being increased by 0.33 until a max of 7.0.
+			// mult = (1.0 + cycle / 9.0) > 7.0 ? 7.0 : (1.0 + cycle / 9.0);
 		}
 		double ff = (meterCell.getNumOfVehicles() * meterCell.getFreeFlowSpeed() * SimulationConstants.TIME_STEP)
 				/ meterCell.getLength();

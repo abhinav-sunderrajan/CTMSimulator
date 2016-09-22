@@ -1,5 +1,13 @@
 package rl;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +31,7 @@ public class ExperienceReplay extends DeepQLearning {
 
 	private List<ReplayTuple> replayList;
 	private static int h = 0;
-	private static final int bufferSize = 500000;
+	private static final int bufferSize = 250000;
 	private static final int batchSize = 32;
 	private List<Integer> batchList;
 	private int sucessCount = 0;
@@ -31,9 +39,32 @@ public class ExperienceReplay extends DeepQLearning {
 	private long step = 0;
 	private boolean beginTraining;
 
-	public ExperienceReplay(int numOfCells, int numOfActions, double learningRate) {
-		super(numOfCells, numOfActions, learningRate);
-		replayList = new ArrayList<ReplayTuple>();
+	@SuppressWarnings("unchecked")
+	public ExperienceReplay(int numOfCells, int numOfActions, double learningRate,
+			double regularization) throws IOException {
+		super(numOfCells, numOfActions, learningRate, regularization);
+		File f = new File("exp-rl.ser");
+		FileInputStream in = null;
+		if (f.exists() && f.canRead()) {
+			try {
+				in = new FileInputStream(f);
+				System.out.println("Reading experience replay from file..");
+				InputStream buffer = new BufferedInputStream(in);
+				@SuppressWarnings("resource")
+				ObjectInput input = new ObjectInputStream(buffer);
+				replayList = (List<ReplayTuple>) input.readObject();
+				System.out.println("Size of replay list read from file is: " + replayList.size());
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} finally {
+				in.close();
+			}
+		} else {
+			replayList = new ArrayList<ReplayTuple>();
+		}
+
 		batchList = new ArrayList<Integer>();
 		targetModel = model.clone();
 		beginTraining = false;
@@ -69,14 +100,14 @@ public class ExperienceReplay extends DeepQLearning {
 					update = memory.getReward();
 				else
 					update = memory.getReward() + maxQ * DISCOUNT;
-				INDArray nextQval = oldQVal.putScalar(0, memory.getAction(), update);
+				INDArray newQVal = oldQVal.putScalar(0, memory.getAction(), update);
 				x.add(memory.getOldState());
-				y.add(nextQval);
+				y.add(newQVal);
 			}
 			INDArray oldStates = Nd4j.vstack(x);
-			INDArray oldQvals = Nd4j.vstack(y);
+			INDArray newQVals = Nd4j.vstack(y);
 
-			DataSet dataSet = new DataSet(oldStates, oldQvals);
+			DataSet dataSet = new DataSet(oldStates, newQVals);
 			List<DataSet> listDs = dataSet.asList();
 			DataSetIterator iterator = new ListDataSetIterator(listDs, batchSize);
 			model.fit(iterator);

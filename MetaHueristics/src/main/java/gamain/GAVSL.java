@@ -158,7 +158,7 @@ public class GAVSL {
 		gavsl.populationFitnessMap.clear();
 		for (int i = 0; i < POPULATION_SIZE; i++) {
 
-			double[] speedLimit = new double[SimulatorCore.getPieMainRoads().length];
+			double[] speedLimit = new double[SimulatorCore.PIE_MAIN_ROADS.length];
 			int prev = -1;
 			if (i == 0) {
 				for (int sl = 0; sl < speedLimit.length; sl++)

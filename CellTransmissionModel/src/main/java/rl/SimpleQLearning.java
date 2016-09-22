@@ -17,8 +17,9 @@ import org.nd4j.linalg.factory.Nd4j;
  */
 public class SimpleQLearning extends DeepQLearning {
 
-	public SimpleQLearning(int numOfCells, int numOfActions, double learningRate) {
-		super(numOfCells, numOfActions, learningRate);
+	public SimpleQLearning(int numOfCells, int numOfActions, double learningRate,
+			double regularization) {
+		super(numOfCells, numOfActions, learningRate, regularization);
 	}
 
 	/**

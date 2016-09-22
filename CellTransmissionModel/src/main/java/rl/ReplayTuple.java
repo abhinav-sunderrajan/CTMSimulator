@@ -1,8 +1,14 @@
 package rl;
 
+import java.io.Serializable;
+
 import org.nd4j.linalg.api.ndarray.INDArray;
 
-public class ReplayTuple {
+public class ReplayTuple implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private INDArray oldState;
 	private int action;
 	private INDArray nextState;

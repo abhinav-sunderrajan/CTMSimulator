@@ -1,13 +1,18 @@
 package main;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.Collection;
@@ -60,7 +65,7 @@ public class SimulatorCore {
 	private Map<Integer, Road> pieChangi;
 	private static SimulatorCore instance;
 	private static final Logger LOGGER = Logger.getLogger(SimulatorCore.class);
-	private static int epochs = 500;
+	private static int epochs = 540;
 	private static final JobRunner jobRunner = new JobRunner();
 	private static final int SIM_TIME = 1500;
 
@@ -230,20 +235,22 @@ public class SimulatorCore {
 		if (applyrampMetering) {
 			final int numberOfRamps = 4;
 			Map<Integer, String> actionMap = TrafficLights.getActionMap(numberOfRamps);
-			double learningRate = 0.025;
+			double learningRate = 0.0009;
 			double delayScale = 5.0e-6;
+			double regularization = 2.0e-4;
 
 			if (training) {
 				if (args.length > 2) {
 					epochs = Integer.parseInt(args[2]);
 					learningRate = Double.parseDouble(args[3]);
 					delayScale = Double.parseDouble(args[4]);
+					regularization = Double.parseDouble(args[5]);
 					System.out.println("Learning-Rate:" + learningRate + "\t Delay Scale"
-							+ delayScale);
+							+ delayScale + "\t Regularization:" + regularization);
 
 				}
 				final DeepQLearning learning = new ExperienceReplay(numOfCells, actionMap.size(),
-						learningRate);
+						learningRate, regularization);
 				ExperienceReplay expRL = ((ExperienceReplay) learning);
 
 				final Set<String> cellState = WarmupCTM.initializeCellState(core, 3);
@@ -265,44 +272,69 @@ public class SimulatorCore {
 				// Replay Buffer.
 
 				int trial = 0;
-				final double decrement = 100.0 / (ExperienceReplay.getBuffersize() + epochs * 125.0);
-				while (expRL.getReplayList().size() < ExperienceReplay.getBuffersize()) {
-					// Begin random flow rate set up
-					core.setRandomFlowRates();
-					double epsilon = learning.getEpsilon() - decrement;
-					learning.setEpsilon(epsilon);
-					Set<String> warmUp = WarmupCTM.initializeCellState(core, 3);
-					noRMDelay = getNoRMDelay(warmUp, core, 3);
-					// End random flow rate set up
+				final double decrement = 125.0 / (ExperienceReplay.getBuffersize() + epochs * 125.0);
+				if (expRL.getReplayList().size() < ExperienceReplay.getBuffersize()) {
+					while (expRL.getReplayList().size() < ExperienceReplay.getBuffersize()) {
+						// Begin random flow rate set up
+						core.setRandomFlowRates();
+						double epsilon = learning.getEpsilon() - decrement;
+						learning.setEpsilon(epsilon);
+						Set<String> warmUp = WarmupCTM.initializeCellState(core, 3);
+						noRMDelay = getNoRMDelay(warmUp, core, 3);
+						// End random flow rate set up
 
-					ctm = new CellTransmissionModel(core, false, true, false, SIM_TIME);
-					ctm.intializeTrafficState(warmUp);
-					ctm.setNoRMDelay(noRMDelay);
-					Future<Double> future = core.executor.submit(ctm);
-					jobRunner.addJob(future);
-					trial++;
-					if (expRL.getReplayList().size() % 1000 == 0)
-						System.out
-								.println("Experience replay size:" + expRL.getReplayList().size());
+						ctm = new CellTransmissionModel(core, false, true, false, SIM_TIME);
+						ctm.intializeTrafficState(warmUp);
+						ctm.setNoRMDelay(noRMDelay);
+						Future<Double> future = core.executor.submit(ctm);
+						jobRunner.addJob(future);
+						trial++;
+						if (expRL.getReplayList().size() % 1000 == 0)
+							System.out.println("Experience replay size:"
+									+ expRL.getReplayList().size());
+					}
+					while (trial != jobRunner.getJobCount())
+						Thread.sleep(5000);
+
+					// Is it worth going in for reinforcement learning?
+					double sucessRatio = expRL.getSucessCount()
+							/ ((double) jobRunner.getResultMap().size());
+					jobRunner.getResultMap().clear();
+					if (sucessRatio < 0.1) {
+						System.out.println("Not much success better ditch ramp metering : "
+								+ sucessRatio);
+						System.exit(0);
+					} else {
+						System.out.println("Go for RL have success percentage of "
+								+ (sucessRatio * 100.0) + "%");
+					}
+
+					// Store experience replay buffer to file
+					OutputStream file = new FileOutputStream("exp-rl.ser");
+					OutputStream buffer = new BufferedOutputStream(file);
+					ObjectOutput output = new ObjectOutputStream(buffer);
+					System.out.println("Start writing experience replay to  file.");
+					output.writeObject(expRL.getReplayList());
+					output.close();
+					System.out.println("Finish writing experience replay to  file.");
 				}
-				while (trial != jobRunner.getJobCount())
-					Thread.sleep(5000);
+
+				if (learning.getEpsilon() == 1.0) {
+					learning.setEpsilon(1.0 - ExperienceReplay.getBuffersize() / 125.0 * decrement);
+				}
 
 				expRL.setBeginTraining(true);
-				double sucessRatio = expRL.getSucessCount()
-						/ ((double) jobRunner.getResultMap().size());
-				jobRunner.getResultMap().clear();
-				if (sucessRatio < 0.1) {
-					System.out.println("Not much success better ditch ramp metering : "
-							+ sucessRatio);
-					System.exit(0);
-				}
 
 				System.out.println("replay buffer, full start training..");
 				BufferedWriter bw = new BufferedWriter(
 						new FileWriter(new File("train-results.txt")));
 
+				bw.write("Epoch\tR.M Delay\tNo R.M delay\tQ Value\tepsilon\tMean flow rates\n");
+
 				for (int epoch = 1; epoch <= epochs; epoch++) {
+
+					// Set random seed
+					SimulatorCore.SIMCORE_RANDOM.setSeed(System.currentTimeMillis());
 					// Begin random flow rate set up
 					core.setRandomFlowRates();
 					Set<String> warmUp = WarmupCTM.initializeCellState(core, 3);
@@ -323,10 +355,9 @@ public class SimulatorCore {
 								.getFinalResult().doubleValue();
 					}
 					avg /= states.size();
-
-					bw.write("Epoch " + epoch + "\t" + rmDelay + "\t" + noRMDelay + "\t" + avg
-							+ "\t" + learning.getEpsilon() + "\t" + core.flowRates + "\n");
-					double epsilon = learning.getEpsilon() - (1.0 / epochs);
+					bw.write(epoch + "\t" + rmDelay + "\t" + noRMDelay + "\t" + avg + "\t"
+							+ learning.getEpsilon() + "\t" + core.flowRates + "\n");
+					double epsilon = learning.getEpsilon() - (1.0 / (epochs + trial));
 					if (epsilon > 0.05)
 						learning.setEpsilon((epsilon));
 					if (epoch % 10 == 0)
@@ -336,14 +367,14 @@ public class SimulatorCore {
 
 				// Write neural network to file.
 				File tempFile = new File("dl4j-net.nn");
-				ModelSerializer.writeModel(expRL.getTargetModel(), tempFile, true);
+				ModelSerializer.writeModel(expRL.getModel(), tempFile, true);
 				System.out.format("Write to file: %s\n", tempFile.getCanonicalFile());
 
 			} else {
 				File tempFile = new File("dl4j-net.nn");
 				MultiLayerNetwork model = null;
 				if (tempFile.exists() && !tempFile.isDirectory()) {
-					System.out.println("Loading from file");
+					System.out.println("Loading neural network from file");
 					model = ModelSerializer.restoreMultiLayerNetwork(tempFile);
 				} else {
 					System.out.println("NN file not found exit..");
@@ -352,20 +383,33 @@ public class SimulatorCore {
 
 				CellTransmissionModel.testModel(model, numOfCells, actionMap, true);
 
-				System.out.println("No RM delay\tWith RM\tFlow rates");
-				for (int trial = 0; trial < 10; trial++) {
+				System.out
+						.println("No RM delay\tWith RM\t No RM mainline\t RM mainline\tFlow rates");
+				for (int trial = 0; trial < 50; trial++) {
 					SimulatorCore.SIMCORE_RANDOM.setSeed(System.currentTimeMillis());
 					core.setRandomFlowRates();
 					Set<String> warmUp = WarmupCTM.initializeCellState(core, 3);
-					Double noRMDelay = getNoRMDelay(warmUp, core, 3);
 
-					CellTransmissionModel ctm = new CellTransmissionModel(core, false, true, false,
-							SIM_TIME);
+					CellTransmissionModel ctm = new CellTransmissionModel(core, false, false,
+							false, SIM_TIME);
 					ctm.intializeTrafficState(warmUp);
 					Future<Double> future = core.executor.submit(ctm);
-					Double rmDelay = future.get();
-					System.out.println(noRMDelay + "\t" + rmDelay + "\t" + core.flowRates);
+					Double noRMDelay = future.get();
+					Double noRMMailine = ctm.getMainPIEDelay();
 					future.cancel(true);
+
+					ctm = new CellTransmissionModel(core, false, true, false, SIM_TIME);
+					ctm.intializeTrafficState(warmUp);
+					future = core.executor.submit(ctm);
+					Double rmDelay = future.get();
+					Double rmMailine = ctm.getMainPIEDelay();
+					future.cancel(true);
+
+					System.out.println(noRMDelay + "\t" + rmDelay + "\t" + noRMMailine + "\t"
+							+ rmMailine + "\t" + core.flowRates);
+					System.out
+							.println("________________________________________________________________________________________");
+
 				}
 			}
 
@@ -449,11 +493,11 @@ public class SimulatorCore {
 		double minFlow = 0.0;
 		for (Integer roadId : flowRates.keySet()) {
 			if (roadId == 30633) {
-				maxFlow = 3900;
+				maxFlow = 4000;
 				minFlow = 3700;
 			} else if (roadId == 28946 || roadId == 29152 || roadId == 29005 || roadId == 31991) {
-				maxFlow = 1050;
-				minFlow = 900;
+				maxFlow = 1100;
+				minFlow = 950;
 			} else {
 				maxFlow = 1600;
 				minFlow = 1400;
@@ -520,13 +564,6 @@ public class SimulatorCore {
 	 */
 	public ThreadPoolExecutor getExecutor() {
 		return executor;
-	}
-
-	/**
-	 * @return the pieMainRoads
-	 */
-	public static int[] getPieMainRoads() {
-		return PIE_MAIN_ROADS;
 	}
 
 }

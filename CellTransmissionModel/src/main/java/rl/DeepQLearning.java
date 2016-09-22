@@ -33,7 +33,7 @@ public abstract class DeepQLearning {
 	protected double epsilon;
 	protected int numOfCells;
 	protected int numOfActions;
-	protected static final double DISCOUNT = 0.98;
+	protected static final double DISCOUNT = 0.99;
 
 	/**
 	 * Initialize the Neural Network for deep q-learning.
@@ -49,11 +49,12 @@ public abstract class DeepQLearning {
 	 * @param instance
 	 *            of random.
 	 */
-	public DeepQLearning(int numOfCells, int numOfActions, double learningRate) {
+	public DeepQLearning(int numOfCells, int numOfActions, double learningRate,
+			double regularization) {
 		this.numOfActions = numOfActions;
 		this.numOfCells = numOfCells;
 		// Create neural network
-		MultiLayerConfiguration conf = getNNConfig(learningRate);
+		MultiLayerConfiguration conf = getNNConfig(learningRate, regularization);
 		model = new MultiLayerNetwork(conf);
 		model.init();
 		// IterationListener it = new HistogramIterationListener(1);
@@ -80,7 +81,7 @@ public abstract class DeepQLearning {
 		return action;
 	}
 
-	private MultiLayerConfiguration getNNConfig(double learningRate) {
+	private MultiLayerConfiguration getNNConfig(double learningRate, double regularization) {
 		long seed = SimulatorCore.SIMCORE_RANDOM.nextLong();
 		MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
 				.seed(seed)
@@ -90,16 +91,16 @@ public abstract class DeepQLearning {
 				.updater(Updater.RMSPROP)
 				.rmsDecay(0.95)
 				.regularization(true)
-				.l2(2.0e-4)
+				.l2(regularization)
 				.list()
 				.layer(0,
-						new DenseLayer.Builder().nIn(numOfCells).nOut(100).activation("leakyrelu")
+						new DenseLayer.Builder().nIn(numOfCells).nOut(204).activation("leakyrelu")
 								.weightInit(WeightInit.RELU).build())
 				.layer(1,
-						new DenseLayer.Builder().nIn(100).nOut(100).activation("leakyrelu")
+						new DenseLayer.Builder().nIn(204).nOut(150).activation("leakyrelu")
 								.weightInit(WeightInit.RELU).build())
 				.layer(2,
-						new OutputLayer.Builder(LossFunction.MSE).activation("identity").nIn(100)
+						new OutputLayer.Builder(LossFunction.MSE).activation("identity").nIn(150)
 								.nOut(numOfActions).build()).pretrain(false).backprop(true).build();
 		return conf;
 	}
