@@ -47,6 +47,11 @@
 		    <version>0.4.0</version>
 		    <classifier>linux-x86_64</classifier>
   		 </dependency> 
+  		  <dependency>
+		        <groupId>com.esotericsoftware</groupId>
+		        <artifactId>kryo</artifactId>
+		        <version>4.0.0</version>
+    </dependency>
 	
 
 

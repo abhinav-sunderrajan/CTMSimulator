@@ -89,7 +89,8 @@ public class SimulatorCore {
 			df.setRoundingMode(RoundingMode.CEILING);
 			executor = ThreadPoolExecutorService.getExecutorInstance().getExecutor();
 			dbConnectionProperties = new Properties();
-			dbConnectionProperties.load(new FileInputStream("connection.properties"));
+			dbConnectionProperties.load(new FileInputStream(
+					"src/main/resources/connectionLocal.properties"));
 			roadNetwork = new QIRoadNetworkModel(dbConnectionProperties, "qi_roads", "qi_nodes");
 
 			pieChangi = new HashMap<Integer, Road>();
@@ -235,7 +236,7 @@ public class SimulatorCore {
 		if (applyrampMetering) {
 			final int numberOfRamps = 4;
 			Map<Integer, String> actionMap = TrafficLights.getActionMap(numberOfRamps);
-			double learningRate = 0.0009;
+			double learningRate = 0.025;
 			double delayScale = 5.0e-6;
 			double regularization = 2.0e-4;
 
@@ -275,6 +276,7 @@ public class SimulatorCore {
 				final double decrement = 125.0 / (ExperienceReplay.getBuffersize() + epochs * 125.0);
 				if (expRL.getReplayList().size() < ExperienceReplay.getBuffersize()) {
 					while (expRL.getReplayList().size() < ExperienceReplay.getBuffersize()) {
+						SIMCORE_RANDOM.setSeed(System.currentTimeMillis());
 						// Begin random flow rate set up
 						core.setRandomFlowRates();
 						double epsilon = learning.getEpsilon() - decrement;
@@ -320,7 +322,9 @@ public class SimulatorCore {
 				}
 
 				if (learning.getEpsilon() == 1.0) {
-					learning.setEpsilon(1.0 - ExperienceReplay.getBuffersize() / 125.0 * decrement);
+					double epsilon = 1.0 - ExperienceReplay.getBuffersize() / 125.0 * decrement;
+					epsilon = epsilon < 0.2 ? 0.2 : epsilon;
+					learning.setEpsilon(epsilon);
 				}
 
 				expRL.setBeginTraining(true);
@@ -334,7 +338,7 @@ public class SimulatorCore {
 				for (int epoch = 1; epoch <= epochs; epoch++) {
 
 					// Set random seed
-					SimulatorCore.SIMCORE_RANDOM.setSeed(System.currentTimeMillis());
+					SIMCORE_RANDOM.setSeed(System.currentTimeMillis());
 					// Begin random flow rate set up
 					core.setRandomFlowRates();
 					Set<String> warmUp = WarmupCTM.initializeCellState(core, 3);
@@ -381,7 +385,7 @@ public class SimulatorCore {
 					System.exit(0);
 				}
 
-				CellTransmissionModel.testModel(model, numOfCells, actionMap, true);
+				CellTransmissionModel.testModel(model, numOfCells, actionMap, false);
 
 				System.out
 						.println("No RM delay\tWith RM\t No RM mainline\t RM mainline\tFlow rates");
@@ -404,12 +408,8 @@ public class SimulatorCore {
 					Double rmDelay = future.get();
 					Double rmMailine = ctm.getMainPIEDelay();
 					future.cancel(true);
-
 					System.out.println(noRMDelay + "\t" + rmDelay + "\t" + noRMMailine + "\t"
 							+ rmMailine + "\t" + core.flowRates);
-					System.out
-							.println("________________________________________________________________________________________");
-
 				}
 			}
 

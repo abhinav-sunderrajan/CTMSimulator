@@ -188,9 +188,7 @@ public class CellTransmissionModel implements Callable<Double> {
 			}
 
 		}
-
 		endTime = simTime;
-
 	}
 
 	/**
@@ -237,12 +235,12 @@ public class CellTransmissionModel implements Callable<Double> {
 								prevDelay = delay;
 
 							boolean isTerminalState = simulationTime == endTime ? true : false;
-							double reward = (-delay) * 0.005;
+							double reward = (-delay) * 0.0;
 
 							if (isTerminalState) {
-								if (noRMDelay > netDelay) {
-									reward = (noRMDelay - netDelay) * 0.25;
-								}
+								reward = (noRMDelay - netDelay) * 10.0 / noRMDelay;
+								reward = Math.abs(reward) > 1.0 ? 1.0 * Math.signum(reward)
+										: reward;
 							}
 
 							// The next state after updating the neural net.
@@ -333,7 +331,7 @@ public class CellTransmissionModel implements Callable<Double> {
 								if (testing
 										&& ArrayUtils.contains(SimulatorCore.PIE_MAIN_ROADS, cell
 												.getRoad().getRoadId())) {
-									mainPIEDelay += delay;
+									mainPIEDelay += (ff - cell.getOutflow());
 								}
 
 							}

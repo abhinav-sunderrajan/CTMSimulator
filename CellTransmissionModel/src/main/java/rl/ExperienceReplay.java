@@ -31,7 +31,7 @@ public class ExperienceReplay extends DeepQLearning {
 
 	private List<ReplayTuple> replayList;
 	private static int h = 0;
-	private static final int bufferSize = 250000;
+	private static final int bufferSize = 400000;
 	private static final int batchSize = 32;
 	private List<Integer> batchList;
 	private int sucessCount = 0;
@@ -76,7 +76,7 @@ public class ExperienceReplay extends DeepQLearning {
 		ReplayTuple replay = new ReplayTuple(prevState.dup(), action, nextState.dup(), reward,
 				isTerminalState);
 		if (replayList.size() < bufferSize || !beginTraining) {
-			if (isTerminalState && reward > 50.0)
+			if (isTerminalState && reward > 0.0)
 				sucessCount++;
 			replayList.add(replay);
 		} else {

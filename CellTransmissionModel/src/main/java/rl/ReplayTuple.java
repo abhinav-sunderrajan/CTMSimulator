@@ -15,6 +15,10 @@ public class ReplayTuple implements Serializable {
 	private double reward;
 	private boolean isTerminalState;
 
+	public ReplayTuple() {
+
+	}
+
 	/**
 	 * @param oldState
 	 * @param action
