@@ -23,6 +23,9 @@ public abstract class Cell {
 
 	protected int numOfLanes;
 
+	// cell capacity is veh/hour
+	protected double cellCapacity;
+
 	// model parameters
 
 	// Cell length
@@ -75,11 +78,22 @@ public abstract class Cell {
 		if (length > 0) {
 			this.meanSpeed = freeFlowSpeed;
 			double meanVehicleLength = SimulationConstants.LEFF;
-			criticalDensity = 1.0 / (SimulationConstants.TIME_GAP * freeFlowSpeed + meanVehicleLength);
+			criticalDensity = 1.0
+					/ (SimulationConstants.TIME_GAP * freeFlowSpeed + meanVehicleLength);
 			this.nMax = Math.round(length * criticalDensity * numOfLanes);
+			cellCapacity = numOfLanes
+					/ (SimulationConstants.TIME_GAP + (SimulationConstants.LEFF / freeFlowSpeed));
+
 			this.sdSpeed = 0;
 		}
 
+	}
+
+	/**
+	 * @return the cellCapacity
+	 */
+	public double getCellCapacity() {
+		return cellCapacity;
 	}
 
 	/**
@@ -284,12 +298,8 @@ public abstract class Cell {
 			}
 
 			double densityRatio = densityAntic / criticalDensity;
-			meanSpeed = beta
-					* vinTerm
-					+ (1 - beta)
-					* freeFlowSpeed
-					* Math.exp((-1 / SimulationConstants.AM)
-							* Math.pow(densityRatio, SimulationConstants.AM));
+			meanSpeed = beta * vinTerm + (1 - beta) * freeFlowSpeed * Math.exp(
+					(-1 / SimulationConstants.AM) * Math.pow(densityRatio, SimulationConstants.AM));
 
 			// This is the on ramp merging term as suggested by METANET.
 
@@ -501,7 +511,8 @@ public abstract class Cell {
 	 */
 	public void setFreeFlowSpeed(double freeFlowSpeed) {
 		this.freeFlowSpeed = freeFlowSpeed;
-		criticalDensity = 1.0 / (SimulationConstants.TIME_GAP * freeFlowSpeed + SimulationConstants.LEFF);
+		criticalDensity = 1.0
+				/ (SimulationConstants.TIME_GAP * freeFlowSpeed + SimulationConstants.LEFF);
 	}
 
 	/**
