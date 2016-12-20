@@ -65,7 +65,7 @@ public class SimulatorCore {
 	private Map<Integer, Road> pieChangi;
 	private static SimulatorCore instance;
 	private static final Logger LOGGER = Logger.getLogger(SimulatorCore.class);
-	private static int epochs = 540;
+	private static int epochs = 500;
 	private static final JobRunner jobRunner = new JobRunner();
 	private static final int SIM_TIME = 1500;
 
@@ -76,11 +76,14 @@ public class SimulatorCore {
 	public static final int PIE_MAIN_ROADS[] = { 30633, 30634, 30635, 30636, 30637, 30638, 30639,
 			30640, 30641, 37981, 30642, 30643, 38539, 30644, 30645, 30646, 30647, 30648, 30649,
 			30650, 30651, 30580, 30581 };
-	public static final int PIE_ALL_ROADS[] = { 30633, 30634, 82, 28377, 30635, 28485, 30636,
-			29310, 30637, 28578, 30638, 28946, 28947, 30639, 28516, 30640, 30790, 30641, 37976,
-			37981, 37980, 30642, 37982, 30643, 38539, 28595, 30644, 29152, 28594, 30645, 28597,
-			30646, 29005, 30647, 28387, 30648, 29553, 30649, 28611, 30650, 28613, 29131, 30651,
-			31991, 30580, 28500, 30581 };
+	public static final int PIE_ALL_ROADS[] = { 30633, 30634, 82, 28377, 30635, 28485, 30636, 29310,
+			30637, 28578, 30638, 28946, 28947, 30639, 28516, 30640, 30790, 30641, 37976, 37981,
+			37980, 30642, 37982, 30643, 38539, 28595, 30644, 29152, 28594, 30645, 28597, 30646,
+			29005, 30647, 28387, 30648, 29553, 30649, 28611, 30650, 28613, 29131, 30651, 31991,
+			30580, 28500, 30581 };
+	public static final int OFF_RAMPS[] = {};
+	public static final int ON_RAMPS[] = { 82, 28377, 29310, 28946, 30790, 37980, 28595, 29152,
+			28594, 29005, 29553, 28613, 29131, 31991 };
 
 	private void initialize() {
 		try {
@@ -89,8 +92,7 @@ public class SimulatorCore {
 			df.setRoundingMode(RoundingMode.CEILING);
 			executor = ThreadPoolExecutorService.getExecutorInstance().getExecutor();
 			dbConnectionProperties = new Properties();
-			dbConnectionProperties.load(new FileInputStream(
-					"src/main/resources/connectionLocal.properties"));
+			dbConnectionProperties.load(new FileInputStream("connection.properties"));
 			roadNetwork = new QIRoadNetworkModel(dbConnectionProperties, "qi_roads", "qi_nodes");
 
 			pieChangi = new HashMap<Integer, Road>();
@@ -105,8 +107,8 @@ public class SimulatorCore {
 				String line = br.readLine();
 				String[] split = line.split("\t");
 				if (pieChangi.containsKey(Integer.parseInt(split[0])))
-					pieChangi.get(Integer.parseInt(split[0])).setLaneCount(
-							Integer.parseInt(split[2]));
+					pieChangi.get(Integer.parseInt(split[0]))
+							.setLaneCount(Integer.parseInt(split[2]));
 			}
 			br.close();
 
@@ -205,8 +207,8 @@ public class SimulatorCore {
 
 	}
 
-	public static void main(String args[]) throws InterruptedException, ExecutionException,
-			IOException {
+	public static void main(String args[])
+			throws InterruptedException, ExecutionException, IOException {
 
 		final SimulatorCore core = SimulatorCore.getInstance(System.currentTimeMillis());
 		core.executor.submit(jobRunner);
@@ -218,7 +220,8 @@ public class SimulatorCore {
 		if (viz) {
 			core.setRandomFlowRates();
 			Set<String> cellState = WarmupCTM.initializeCellState(core, 3);
-			CellTransmissionModel ctm = new CellTransmissionModel(core, false, false, viz, SIM_TIME);
+			CellTransmissionModel ctm = new CellTransmissionModel(core, false, false, viz,
+					SIM_TIME * 3);
 			ctm.intializeTrafficState(cellState);
 			Future<Double> future = core.executor.submit(ctm);
 			int jobId = future.hashCode();
@@ -273,7 +276,8 @@ public class SimulatorCore {
 				// Replay Buffer.
 
 				int trial = 0;
-				final double decrement = 125.0 / (ExperienceReplay.getBuffersize() + epochs * 125.0);
+				final double decrement = 125.0
+						/ (ExperienceReplay.getBuffersize() + epochs * 125.0);
 				if (expRL.getReplayList().size() < ExperienceReplay.getBuffersize()) {
 					while (expRL.getReplayList().size() < ExperienceReplay.getBuffersize()) {
 						SIMCORE_RANDOM.setSeed(System.currentTimeMillis());
@@ -292,8 +296,8 @@ public class SimulatorCore {
 						jobRunner.addJob(future);
 						trial++;
 						if (expRL.getReplayList().size() % 1000 == 0)
-							System.out.println("Experience replay size:"
-									+ expRL.getReplayList().size());
+							System.out.println(
+									"Experience replay size:" + expRL.getReplayList().size());
 					}
 					while (trial != jobRunner.getJobCount())
 						Thread.sleep(5000);
@@ -302,9 +306,9 @@ public class SimulatorCore {
 					double sucessRatio = expRL.getSucessCount()
 							/ ((double) jobRunner.getResultMap().size());
 					jobRunner.getResultMap().clear();
-					if (sucessRatio < 0.1) {
-						System.out.println("Not much success better ditch ramp metering : "
-								+ sucessRatio);
+					if (sucessRatio < 0.05) {
+						System.out.println(
+								"Not much success better ditch ramp metering : " + sucessRatio);
 						System.exit(0);
 					} else {
 						System.out.println("Go for RL have success percentage of "
@@ -321,9 +325,9 @@ public class SimulatorCore {
 					System.out.println("Finish writing experience replay to  file.");
 				}
 
-				if (learning.getEpsilon() == 1.0) {
+				if (learning.getEpsilon() > 0.8) {
 					double epsilon = 1.0 - ExperienceReplay.getBuffersize() / 125.0 * decrement;
-					epsilon = epsilon < 0.2 ? 0.2 : epsilon;
+					epsilon = epsilon < 0.3 ? 0.3 : epsilon;
 					learning.setEpsilon(epsilon);
 				}
 
@@ -336,7 +340,6 @@ public class SimulatorCore {
 				bw.write("Epoch\tR.M Delay\tNo R.M delay\tQ Value\tepsilon\tMean flow rates\n");
 
 				for (int epoch = 1; epoch <= epochs; epoch++) {
-
 					// Set random seed
 					SIMCORE_RANDOM.setSeed(System.currentTimeMillis());
 					// Begin random flow rate set up
@@ -373,44 +376,11 @@ public class SimulatorCore {
 				File tempFile = new File("dl4j-net.nn");
 				ModelSerializer.writeModel(expRL.getModel(), tempFile, true);
 				System.out.format("Write to file: %s\n", tempFile.getCanonicalFile());
+				train(expRL.getModel(), null, core, actionMap, numOfCells, true);
 
 			} else {
-				File tempFile = new File("dl4j-net.nn");
-				MultiLayerNetwork model = null;
-				if (tempFile.exists() && !tempFile.isDirectory()) {
-					System.out.println("Loading neural network from file");
-					model = ModelSerializer.restoreMultiLayerNetwork(tempFile);
-				} else {
-					System.out.println("NN file not found exit..");
-					System.exit(0);
-				}
+				train(null, "dl4j-net.nn", core, actionMap, numOfCells, false);
 
-				CellTransmissionModel.testModel(model, numOfCells, actionMap, false);
-
-				System.out
-						.println("No RM delay\tWith RM\t No RM mainline\t RM mainline\tFlow rates");
-				for (int trial = 0; trial < 50; trial++) {
-					SimulatorCore.SIMCORE_RANDOM.setSeed(System.currentTimeMillis());
-					core.setRandomFlowRates();
-					Set<String> warmUp = WarmupCTM.initializeCellState(core, 3);
-
-					CellTransmissionModel ctm = new CellTransmissionModel(core, false, false,
-							false, SIM_TIME);
-					ctm.intializeTrafficState(warmUp);
-					Future<Double> future = core.executor.submit(ctm);
-					Double noRMDelay = future.get();
-					Double noRMMailine = ctm.getMainPIEDelay();
-					future.cancel(true);
-
-					ctm = new CellTransmissionModel(core, false, true, false, SIM_TIME);
-					ctm.intializeTrafficState(warmUp);
-					future = core.executor.submit(ctm);
-					Double rmDelay = future.get();
-					Double rmMailine = ctm.getMainPIEDelay();
-					future.cancel(true);
-					System.out.println(noRMDelay + "\t" + rmDelay + "\t" + noRMMailine + "\t"
-							+ rmMailine + "\t" + core.flowRates);
-				}
 			}
 
 		}
@@ -421,6 +391,56 @@ public class SimulatorCore {
 			System.exit(0);
 		}
 
+	}
+
+	private static void train(MultiLayerNetwork model, String nnPath, SimulatorCore core,
+			Map<Integer, String> actionMap, int numOfCells, boolean printActions)
+			throws IOException, InterruptedException, ExecutionException {
+		if (model == null) {
+			File tempFile = new File(nnPath);
+
+			if (tempFile.exists() && !tempFile.isDirectory()) {
+				System.out.println("Loading neural network from file");
+				model = ModelSerializer.restoreMultiLayerNetwork(tempFile);
+			} else {
+				System.out.println("NN file not found exit..");
+				System.exit(0);
+			}
+		}
+
+		CellTransmissionModel.testModel(model, numOfCells, actionMap, printActions);
+		BufferedWriter bw = new BufferedWriter(new FileWriter(new File("resultsTrain.txt")));
+		bw.write(
+				"Avg Density\tNo_RM_All\tRM_All\tNo_RM_EXP\tRM_EXP\tNo_RM_OR\tRM_OR\tFlow rates\n");
+		for (int trial = 0; trial < 5; trial++) {
+			SimulatorCore.SIMCORE_RANDOM.setSeed(System.currentTimeMillis());
+			core.setRandomFlowRates();
+			Set<String> warmUp = WarmupCTM.initializeCellState(core, 3);
+
+			CellTransmissionModel ctm = new CellTransmissionModel(core, false, false, false,
+					SIM_TIME);
+			double avgDensity = ctm.intializeTrafficState(warmUp);
+			Future<Double> future = core.executor.submit(ctm);
+			Double noRMDelay = future.get();
+			Double noRMMailine = ctm.getMainPIEDelay();
+			Double noRMOR = ctm.getRampsDelay();
+			future.cancel(true);
+
+			ctm = new CellTransmissionModel(core, false, true, false, SIM_TIME);
+			ctm.intializeTrafficState(warmUp);
+			future = core.executor.submit(ctm);
+			Double rmDelay = future.get();
+			Double rmMailine = ctm.getMainPIEDelay();
+			Double rmOR = ctm.getRampsDelay();
+
+			future.cancel(true);
+			if (trial % 10 == 0)
+				System.out.println("Finished " + trial + " trials");
+			bw.write(avgDensity + "\t" + noRMDelay + "\t" + rmDelay + "\t" + noRMMailine + "\t"
+					+ rmMailine + "\t" + noRMOR + "\t" + rmOR + "\t" + core.flowRates + "\n");
+		}
+		bw.flush();
+		bw.close();
 	}
 
 	private static Double getNoRMDelay(Set<String> cellState, SimulatorCore core, int count)
@@ -485,26 +505,23 @@ public class SimulatorCore {
 
 	}
 
-	/**
-	 * Set random flow rates.
-	 */
 	private void setRandomFlowRates() {
 		double maxFlow = 0.0;
 		double minFlow = 0.0;
 		for (Integer roadId : flowRates.keySet()) {
 			if (roadId == 30633) {
 				maxFlow = 4000;
-				minFlow = 3700;
+				minFlow = 3900;
 			} else if (roadId == 28946 || roadId == 29152 || roadId == 29005 || roadId == 31991) {
-				maxFlow = 1100;
-				minFlow = 950;
+				maxFlow = 1000;
+				minFlow = 900;
 			} else {
-				maxFlow = 1600;
+				maxFlow = 1500;
 				minFlow = 1400;
 			}
 
-			double flow = minFlow + (maxFlow - minFlow) * SIMCORE_RANDOM.nextDouble();
-			flow = (double) Math.round(flow);
+			double flow = Math
+					.round((minFlow + (maxFlow - minFlow) * SIMCORE_RANDOM.nextDouble()) / 10) * 10;
 			flowRates.put(roadId, flow);
 		}
 

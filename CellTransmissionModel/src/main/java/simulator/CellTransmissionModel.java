@@ -12,8 +12,6 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 
-import main.SimulatorCore;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
@@ -21,16 +19,17 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.impl.indexaccum.IAMax;
 import org.nd4j.linalg.factory.Nd4j;
 
-import rl.DeepQLearning;
-import rnwmodel.Road;
-import strategy.SimpleRampMeter;
-import viz.CTMSimViewer;
 import ctm.Cell;
 import ctm.CellNetwork;
 import ctm.MergingCell;
 import ctm.OrdinaryCell;
 import ctm.SinkCell;
 import ctm.SourceCell;
+import main.SimulatorCore;
+import rl.DeepQLearning;
+import rnwmodel.Road;
+import strategy.SimpleRampMeter;
+import viz.CTMSimViewer;
 
 /**
  * Initialize and advance a PIE scale macroscopic Cell transmission based
@@ -57,6 +56,7 @@ public class CellTransmissionModel implements Callable<Double> {
 	private double netDelay = 0.0;
 	private Double noRMDelay;
 	private double mainPIEDelay = 0.0;
+	private double rampsDelay = 0.0;
 	private static Map<Integer, String> actionMap;
 	private static DeepQLearning qlearning;
 	private static boolean training = false;
@@ -75,15 +75,22 @@ public class CellTransmissionModel implements Callable<Double> {
 	 * Initialize cell state.
 	 * 
 	 * @param cellState
+	 * @return
 	 */
-	public void intializeTrafficState(Set<String> cellState) {
+	public double intializeTrafficState(Set<String> cellState) {
+
+		double avgDensity = 0.0;
+		double i = 0;
 		for (String state : cellState) {
 			String split[] = state.split(":");
 			Cell cell = cellNetwork.getCellMap().get(split[0]);
 			cell.setMeanSpeed(Double.parseDouble(split[1]));
 			cell.setNumberOfvehicles(Double.parseDouble(split[2]));
 			cell.setInitilalized(true);
+			avgDensity += cell.getDensity();
+			i++;
 		}
+		return avgDensity * 1000.0 / i;
 	}
 
 	/**
@@ -317,21 +324,29 @@ public class CellTransmissionModel implements Callable<Double> {
 
 						if (cell instanceof SourceCell) {
 							delay += ((SourceCell) cell).getSourceDelay();
+							if (testing && ArrayUtils.contains(SimulatorCore.ON_RAMPS,
+									cell.getRoad().getRoadId())) {
+								rampsDelay += ((SourceCell) cell).getSourceDelay();
+							}
 						} else if (applyRampMetering && meteredRamps.containsKey(cell)) {
 							SimpleRampMeter sr = meteredRamps.get(cell);
 							delay += sr.getDelay();
 						} else {
 							// Number of vehicles that can exit a cell under
 							// free-flow conditions.
-							double ff = (cell.getNumOfVehicles() * cell.getFreeFlowSpeed() * SimulationConstants.TIME_STEP)
-									/ cell.getLength();
+							double ff = (cell.getNumOfVehicles() * cell.getFreeFlowSpeed()
+									* SimulationConstants.TIME_STEP) / cell.getLength();
 							ff = Math.round(ff);
 							if ((ff - cell.getOutflow()) > 0) {
 								delay += (ff - cell.getOutflow());
-								if (testing
-										&& ArrayUtils.contains(SimulatorCore.PIE_MAIN_ROADS, cell
-												.getRoad().getRoadId())) {
-									mainPIEDelay += (ff - cell.getOutflow());
+								if (testing) {
+									if (ArrayUtils.contains(SimulatorCore.PIE_MAIN_ROADS,
+											cell.getRoad().getRoadId()))
+										mainPIEDelay += (ff - cell.getOutflow());
+									if (ArrayUtils.contains(SimulatorCore.ON_RAMPS,
+											cell.getRoad().getRoadId()))
+										rampsDelay += (ff - cell.getOutflow());
+
 								}
 
 							}
@@ -454,6 +469,13 @@ public class CellTransmissionModel implements Callable<Double> {
 	 */
 	public double getMainPIEDelay() {
 		return mainPIEDelay;
+	}
+
+	/**
+	 * @return the rampsDelay
+	 */
+	public double getRampsDelay() {
+		return rampsDelay;
 	}
 
 }
